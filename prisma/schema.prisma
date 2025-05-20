@@ -8,23 +8,36 @@ datasource db {
 }
 
 enum Role {
-  SUPER_ADMIN
-  SUPPORT_ADMIN
+  ADMIN
+  EDITOR
   RESELLER
+  USER
+}
+
+enum ResellerLevel {
+  BEGINNER
+  BRONZE
+  SILVER
+  GOLD
+  ELITE
+  LEGENDARY
 }
 
 model User {
   id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  email         String        @unique
-  password      String
   name          String
-  phone         String?
-  role          Role          @default(RESELLER)
+  phone         String        @unique
+  password      String
+  email         String?       @unique
+  address       String?
+  profileImage  String?
+  role          Role          @default(USER)
   verified      Boolean       @default(false)
+  isActive      Boolean       @default(false)
   wallet        Float         @default(0)
   companyName   String?
   resellerLevel ResellerLevel @default(BEGINNER)
-  referralCode  String        @unique
+  referralCode  Float         @unique
   referredBy    String? // referralCode of inviter
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
@@ -142,13 +155,6 @@ model PlatformSetting {
 }
 
 // Enums Start
-
-enum ResellerLevel {
-  BEGINNER
-  BRONZE
-  SILVER
-  GOLD
-}
 
 enum OrderStatus {
   PENDING

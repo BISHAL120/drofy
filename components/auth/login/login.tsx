@@ -14,7 +14,7 @@ import { loginSchema } from "@/lib/zod/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRightCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import Image from "next/image";
-// import { signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
@@ -37,9 +37,38 @@ export default function LoginPage() {
 
     async function onSubmit(values: z.infer<typeof loginSchema>) {
         try {
-            console.log("Form Values :", values);
-            setIsLoading(false);
-            router.refresh();
+            setIsLoading(true);
+            toast.loading("প্রসেসিং...", {
+                style: {
+                    background: "#FFA500",
+                    border: "2px solid #FF8C00",
+                    color: "white",
+                    fontWeight: "600",
+                    fontSize: "16px",
+                    padding: "10px 20px",
+                }
+            });
+            signIn("credentials", {
+                number: values.number,
+                password: values.password,
+                redirect: false,
+            }).then(() => {
+                toast.dismiss();
+                toast.success("লগইন সম্পন্ন হয়েছে", {
+                    style: {
+                        background: "#22C55E", // Green background
+                        border: "2px solid #16A34A", // Darker green border
+                        color: "white",
+                        fontWeight: "600",
+                        fontSize: "16px",
+                        padding: "10px 20px",
+                    },
+                    position: "top-center",
+                    icon: "✅"
+                });
+                setIsLoading(false);
+                router.push("/store");
+            })
         } catch (error) {
             setIsLoading(false);
             toast.error("Invalid Credentials");

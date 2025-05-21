@@ -38,7 +38,7 @@ const Navbar
                                 </SheetTrigger>
                                 <SheetContent className='bg-orange-600 p-6'>
                                     <SheetTitle>
-                                        <div className="flex flex-col items-center mb-8">
+                                        <div className="flex flex-col items-center mb-8 border-b">
                                             <Image
                                                 src="/assets/logo.webp"
                                                 alt="Your Logo"

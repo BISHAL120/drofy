@@ -54,7 +54,7 @@ export async function POST(request: Request) {
                 password: hashedPassword,
                 email: email || "",
                 address: address || "",
-                role: isAdmin ? "ADMIN" : "USER",
+                role: isAdmin ? ["ADMIN"] : ["USER"],
                 referralCode: userCount + 1,
             }
         });

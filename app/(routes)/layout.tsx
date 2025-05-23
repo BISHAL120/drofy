@@ -14,16 +14,11 @@ export const metadata: Metadata = {
     description: "ফ্রি রিসেলিং প্ল্যাটফর্ম, এখনই বিক্রি শুরু করুন",
 };
 
-export default function RootLayout({
-    children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
     return (
         <div
             className={`${banglaFonts.className} antialiased`}
         >
-            {/* Navigation Bar */}
             <Navbar />
             {children}
             <Footer />

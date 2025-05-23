@@ -31,7 +31,7 @@ model User {
   email         String?       @unique
   address       String?
   profileImage  String?
-  role          Role          @default(USER)
+  role          Role[]        @default([USER])
   verified      Boolean       @default(false)
   isActive      Boolean       @default(false)
   wallet        Float         @default(0)
@@ -49,18 +49,21 @@ model User {
 }
 
 model Product {
-  id          String           @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String?
-  price       Float // Original platform base price
-  images      String[]
-  category    String
-  tags        String[]
-  variants    ProductVariant[]
-  inStock     Boolean          @default(true)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  Order       Order[]
+  id           String           @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  description  String?
+  price        Float
+  SellingPrice Float
+  totalSales   String
+  stock        String
+  images       String[]
+  category     String
+  tags         String[]
+  variants     ProductVariant[]
+  inStock      Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  Order        Order[]
 }
 
 model ProductVariant {

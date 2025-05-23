@@ -37,7 +37,6 @@ export default function LoginPage() {
 
     async function onSubmit(values: z.infer<typeof loginSchema>) {
         try {
-            setIsLoading(true);
             toast.loading("প্রসেসিং...", {
                 style: {
                     background: "#FFA500",
@@ -48,11 +47,27 @@ export default function LoginPage() {
                     padding: "10px 20px",
                 }
             });
-            signIn("credentials", {
-                number: values.number,
-                password: values.password,
+            setIsLoading(true);
+            const result = await signIn("credentials", {
+                ...values,
                 redirect: false,
-            }).then(() => {
+            });
+            if (result?.error) {
+                // Handle login error
+                toast.dismiss();
+                toast.error("নাম্বার বা পাসওয়ার্ডটি সঠিক নয়!", {
+                    style: {
+                        background: "red", // Red background
+                        border: "2px solid #DC2626", // Darker red border
+                        color: "white",
+                        fontWeight: "600",
+                        fontSize: "16px",
+                        padding: "10px 20px",
+                    },
+                    position: "top-center",
+                    icon: "❌"
+                });
+            } else {
                 toast.dismiss();
                 toast.success("লগইন সম্পন্ন হয়েছে", {
                     style: {
@@ -66,15 +81,68 @@ export default function LoginPage() {
                     position: "top-center",
                     icon: "✅"
                 });
-                setIsLoading(false);
-                router.push("/store");
-            })
+                router.push(`/store`);
+                router.refresh();
+            }
+            setIsLoading(false);
         } catch (error) {
             setIsLoading(false);
-            toast.error("Invalid Credentials");
+            toast.error("নাম্বার বা পাসওয়ার্ডটি সঠিক নয়!", {
+                style: {
+                    background: "red", // Red background
+                    border: "2px solid #DC2626", // Darker red border
+                    color: "white",
+                    fontWeight: "600",
+                    fontSize: "16px",
+                    padding: "10px 20px",
+                },
+                position: "top-center",
+                icon: "❌"
+            });
             console.log("Error :", error);
         }
     }
+
+    /*  async function onSubmit(values: z.infer<typeof loginSchema>) {
+         try {
+             setIsLoading(true);
+             toast.loading("প্রসেসিং...", {
+                 style: {
+                     background: "#FFA500",
+                     border: "2px solid #FF8C00",
+                     color: "white",
+                     fontWeight: "600",
+                     fontSize: "16px",
+                     padding: "10px 20px",
+                 }
+             });
+             signIn("credentials", {
+                 number: values.number,
+                 password: values.password,
+                 redirect: false,
+             }).then(() => {
+                 toast.dismiss();
+                 toast.success("লগইন সম্পন্ন হয়েছে", {
+                     style: {
+                         background: "#22C55E", // Green background
+                         border: "2px solid #16A34A", // Darker green border
+                         color: "white",
+                         fontWeight: "600",
+                         fontSize: "16px",
+                         padding: "10px 20px",
+                     },
+                     position: "top-center",
+                     icon: "✅"
+                 });
+                 setIsLoading(false);
+                 router.push("/store");
+             })
+         } catch (error) {
+             setIsLoading(false);
+             toast.error("নাম্বার বা পাসওয়ার্ডটি সঠিক নয়!");
+             console.log("Error :", error);
+         }
+     } */
 
     return (
         <div className="flex flex-col min-h-[calc(100vh-72px)] bg-gray-50 border">

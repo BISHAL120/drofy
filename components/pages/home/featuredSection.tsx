@@ -1,13 +1,16 @@
 "use client"
 
-import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Image from "next/image";
-import { toast } from "sonner";
+import { formatBengaliCurrency } from "@/hooks/convertNum";
+
 import { Download, Heart } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
 
 
 type Product = {
@@ -17,7 +20,7 @@ type Product = {
     originalPrice: number;
     image: string;
     category: 'men' | 'women' | 'shoes' | 'accessories';
-    isNew: boolean;
+    status: 'normal' | 'sale' | 'hot' | 'comingSoon';
 }
 
 /* interface ProductCardProps {
@@ -32,7 +35,7 @@ const featuredProducts: Product[] = [
         originalPrice: 49.99,
         image: "/placeholder.svg",
         category: "men",
-        isNew: true,
+        status: "comingSoon",
     },
     {
         id: 2,
@@ -41,7 +44,7 @@ const featuredProducts: Product[] = [
         originalPrice: 59.99,
         image: "/placeholder.svg",
         category: "women",
-        isNew: true,
+        status: "hot",
     },
     {
         id: 3,
@@ -50,7 +53,7 @@ const featuredProducts: Product[] = [
         originalPrice: 89.99,
         image: "/placeholder.svg",
         category: "shoes",
-        isNew: false,
+        status: "normal",
     },
     {
         id: 4,
@@ -59,7 +62,7 @@ const featuredProducts: Product[] = [
         originalPrice: 69.99,
         image: "/placeholder.svg",
         category: "men",
-        isNew: false,
+        status: "sale",
     },
     {
         id: 5,
@@ -68,7 +71,7 @@ const featuredProducts: Product[] = [
         originalPrice: 49.99,
         image: "/placeholder.svg",
         category: "men",
-        isNew: true,
+        status: "sale",
     },
     {
         id: 6,
@@ -77,7 +80,7 @@ const featuredProducts: Product[] = [
         originalPrice: 59.99,
         image: "/placeholder.svg",
         category: "women",
-        isNew: true,
+        status: "hot",
     },
     {
         id: 7,
@@ -86,7 +89,7 @@ const featuredProducts: Product[] = [
         originalPrice: 89.99,
         image: "/placeholder.svg",
         category: "shoes",
-        isNew: false,
+        status: "normal",
     },
     {
         id: 8,
@@ -95,7 +98,7 @@ const featuredProducts: Product[] = [
         originalPrice: 69.99,
         image: "/placeholder.svg",
         category: "men",
-        isNew: false,
+        status: "comingSoon",
     },
     {
         id: 9,
@@ -104,7 +107,7 @@ const featuredProducts: Product[] = [
         originalPrice: 49.99,
         image: "/placeholder.svg",
         category: "men",
-        isNew: true,
+        status: "comingSoon",
     },
     {
         id: 10,
@@ -113,7 +116,7 @@ const featuredProducts: Product[] = [
         originalPrice: 59.99,
         image: "/placeholder.svg",
         category: "women",
-        isNew: true,
+        status: "sale",
     },
     {
         id: 11,
@@ -122,7 +125,7 @@ const featuredProducts: Product[] = [
         originalPrice: 89.99,
         image: "/placeholder.svg",
         category: "shoes",
-        isNew: false,
+        status: "hot",
     },
     {
         id: 12,
@@ -131,7 +134,7 @@ const featuredProducts: Product[] = [
         originalPrice: 69.99,
         image: "/placeholder.svg",
         category: "men",
-        isNew: false,
+        status: "normal",
     },
     {
         id: 13,
@@ -140,7 +143,7 @@ const featuredProducts: Product[] = [
         originalPrice: 49.99,
         image: "/placeholder.svg",
         category: "men",
-        isNew: true,
+        status: "hot",
     },
     {
         id: 14,
@@ -149,7 +152,7 @@ const featuredProducts: Product[] = [
         originalPrice: 59.99,
         image: "/placeholder.svg",
         category: "women",
-        isNew: true,
+        status: "comingSoon",
     },
     {
         id: 15,
@@ -158,7 +161,7 @@ const featuredProducts: Product[] = [
         originalPrice: 89.99,
         image: "/placeholder.svg",
         category: "shoes",
-        isNew: false,
+        status: "sale",
     },
     {
         id: 16,
@@ -167,7 +170,7 @@ const featuredProducts: Product[] = [
         originalPrice: 69.99,
         image: "/placeholder.svg",
         category: "men",
-        isNew: false,
+        status: "hot",
     },
 ];
 
@@ -198,35 +201,75 @@ const ProductCard = ({ product, user }: { product: Product, user: boolean }) => 
             document.body.appendChild(link);
             link.click();
 
+
+
             // Cleanup
             document.body.removeChild(link);
             window.URL.revokeObjectURL(blobUrl);
 
-            toast.success("Image download started");
+            toast.success('ডাউনলোড সম্পূর্ণ হয়েছে', {
+                style: { background: '#dcfce7', border: '1px solid #bbf7d0', fontSize: '16px', fontWeight: "700" },
+                icon: '⬇️',
+            });
         } catch (error) {
             console.error("Download failed:", error);
-            toast.error("Failed to download image");
+            toast.error("ডাউনলোড ব্যর্থ হয়েছে", {
+                style: { background: 'red', color: "white", border: '1px solid orange', fontSize: '16px', fontWeight: "700" },
+                icon: '❌',
+            });
         }
     };
 
     const toggleWishlist = () => {
         setIsWishlisted(prev => !prev);
-        toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
+        if (isWishlisted) {
+            toast.success('উইশলিস্টে যুক্ত হয়েছে', {
+                style: { background: '#fee2e2', border: '1px solid #fecaca', fontSize: '16px', fontWeight: "700" },
+                icon: '💔',
+            });
+        } else {
+            toast.success('রিমুভ হয়ে গিয়েছে!', {
+                style: { background: '#dcfce7', border: '1px solid #bbf7d0', fontSize: '16px', fontWeight: "700" },
+                icon: '❤️',
+            });
+        }
+    };
+
+    const handlePreOrder = () => {
+        toast.success('প্রি-অর্ডার সম্পূর্ণ হয়েছে', {
+            style: { background: '#dcfce7', border: '1px solid #bbf7d0', fontSize: '16px', fontWeight: "700" },
+            icon: '⬇️',
+        });
     };
 
     return (
         <div>
             <Card className="overflow-hidden p-0 transition-all duration-300 border-none hover:shadow-xl hover:shadow-orange-300 group">
                 <div className="relative">
-                    <Image
-                        src={product.image}
-                        alt={product.name}
-                        width={210}
-                        height={210}
-                        className="w-full h-[210px] object-cover"
-                    />
-                    {product.isNew && (
-                        <Badge className="absolute top-2 left-2 bg-green-500 hover:bg-green-600">New</Badge>
+                    <Link
+                        href={"/store/products/product"}
+                    >
+                        <Image
+                            src={product.image}
+                            alt={product.name}
+                            width={210}
+                            height={210}
+                            className="w-full h-[210px] object-cover"
+                        />
+                    </Link>
+                    {/* (product.status !== 'normal') && */ (
+                        <Badge
+                            className={`absolute top-2 left-2 ${
+                                // Assuming new products would have 'new' status and checking against current date
+                                product.status === 'normal' ? 'bg-slate-600 hover:bg-black' :
+                                    product.status === 'hot' ? 'bg-red-500 hover:bg-red-600' :
+                                        product.status === 'sale' ? 'bg-blue-500 hover:bg-blue-600' :
+                                            product.status === 'comingSoon' ? 'bg-rose-500 hover:bg-rose-600' :
+                                                'bg-gray-500 hover:bg-gray-600'
+                                }`}
+                        >
+                            {product.status.charAt(0).toUpperCase() + product.status.slice(1)}
+                        </Badge>
                     )}
                     <div className="absolute top-2 right-2 flex space-x-2">
                         {user && (
@@ -246,18 +289,27 @@ const ProductCard = ({ product, user }: { product: Product, user: boolean }) => 
                     </div>
                 </div>
                 <CardContent className="p-3">
-                    <h3 className="font-medium text-sm line-clamp-2 mb-1">{product.name}</h3>
+
+                    <h3 className="font-medium text-sm line-clamp-2 mb-1 hover:underline ">
+                        <Link
+                            href={"/store/products/product"}
+                            className="w-fit"
+                        >
+                            {product.name}
+                        </Link>
+                    </h3>
+
                     {user && <div className="flex items-center justify-between">
                         <div className="w-full flex items-center justify-between gap-2">
-                            <span className="text-red-500 font-bold">৳{product.price}</span>
+                            <span className="text-red-500 font-bold">{formatBengaliCurrency(product.price)}</span>
                             {product.originalPrice > product.price && (
-                                <span className="text-gray-400 line-through text-xs">৳{product.originalPrice}</span>
+                                <span className="text-gray-400 line-through text-xs">৳{formatBengaliCurrency(product.originalPrice)}</span>
                             )}
                         </div>
                     </div>}
                     <div>
 
-                        {user && <div className="flex justify-between items-center mt-3 gap-2">
+                        {user && product.status !== "comingSoon" && <div className="flex justify-between items-center mt-3 gap-2">
                             <Button
                                 variant="outline"
                                 className="flex-1 h-9 hover:border-orange-500 hover:bg-orange-100 transition-colors duration-300"
@@ -278,11 +330,19 @@ const ProductCard = ({ product, user }: { product: Product, user: boolean }) => 
 
                             </Button>
                         </div>}
-
+                        {user && product.status === "comingSoon" && (
+                            <Button
+                                variant="outline"
+                                onClick={handlePreOrder}
+                                className="w-full h-9 mt-3 border-orange-500 text-orange-600 hover:bg-orange-100 transition-colors duration-300"
+                            >
+                                প্রি-অর্ডার করুন
+                            </Button>
+                        )}
                     </div>
                 </CardContent>
-            </Card>
-        </div>
+            </Card >
+        </div >
     );
 };
 
@@ -302,7 +362,7 @@ const FeaturedSection = ({ user }: { user: boolean }) => {
                     </div>
                 </div>
 
-                <Tabs defaultValue="all" className="w-full">
+                <Tabs defaultValue="men" className="w-full">
                     <TabsList className="mb-8 bg-gray-100 p-1 rounded-lg w-full flex flex-wrap overflow-x-auto">
                         <TabsTrigger value="all" className="flex-grow">All</TabsTrigger>
                         <TabsTrigger value="men" className="flex-grow">Men</TabsTrigger>

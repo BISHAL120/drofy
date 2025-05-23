@@ -23,9 +23,9 @@ const CategoryGrid = () => {
         <section className="py-12 bg-gray-50">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-10">
-                    <h2 className="text-2xl md:text-3xl font-bold mb-4">Shop by Category</h2>
-                    <p className="text-gray-600 max-w-2xl mx-auto">
-                        Explore our wide range of product categories and find exactly what you&apos;re looking for.
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4">সকল প্রোডাক্ট ক্যাটাগরি</h2>
+                    <p className="text-gray-600 text-base max-w-2xl mx-auto">
+                        আমাদের সকল ক্যাটাগরির বিভাগগুলি ঘুরে দেখুন এবং আপনার পছন্দের পণ্যটি খুঁজে বের করুন।
                     </p>
                 </div>
 
@@ -33,7 +33,7 @@ const CategoryGrid = () => {
                     {categoryItems.map((category, index) => (
                         <Card
                             key={index}
-                            className="overflow-hidden hover:shadow-lg transition-all duration-300 group bg-white border-none"
+                            className="p-0 overflow-hidden hover:shadow-lg hover:shadow-orange-300 transition-all duration-300 group bg-white border-none"
                         >
                             <a href={category.link} className="block p-1">
                                 <div className="aspect-square relative overflow-hidden rounded-md mb-2">
@@ -82,13 +82,13 @@ const CategoryGrid = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="md:w-1/2 p-4 flex items-center justify-center">
+                        <div className="md:w-1/2 p-2 flex items-center justify-end">
                             <Image
                                 src="/placeholder.svg"
                                 alt="Mobile App"
-                                width={240}
+                                width={480}
                                 height={240}
-                                className="max-w-xs max-h-60 object-contain"
+                                className="w-2/3 max-h-60 object-cover rounded-md shadow-md overflow-hidden"
                             />
                         </div>
                     </div>

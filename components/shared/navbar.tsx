@@ -6,7 +6,7 @@ import { MenuIcon } from 'lucide-react'
 const Navbar
     = () => {
         return (
-            <div>
+            <div className='border-b'>
                 <nav className="bg-orange-500 text-white p-4">
                     <div className="container mx-auto flex justify-between items-center">
                         <div className="flex items-center space-x-2">

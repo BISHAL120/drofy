@@ -28,7 +28,7 @@ export default function RegistrationSuccess() {
                             </p>
                             <div className="grid gap-4 md:grid-cols-2">
                                 <Link
-                                    href="https://facebook.com/restockbd"
+                                    href="https://www.facebook.com/profile.php?id=61566541403235"
                                     target="_blank"
                                     className="no-underline transform hover:scale-105 transition-transform duration-200"
                                 >
@@ -54,7 +54,7 @@ export default function RegistrationSuccess() {
                             <p className="text-muted-foreground italic">
                                 সাহায্য প্রয়োজন? আমাদের সাপোর্ট টিম ২৪/৭ আপনাকে সহায়তা করার জন্য প্রস্তুত রয়েছে।
                             </p>
-                            <Link href="/dashboard">
+                            <Link href="/store">
                                 <Button variant="outline" className="hover:bg-primary/10 transition-colors duration-200">
                                     ড্যাশবোর্ডে যান
                                 </Button>

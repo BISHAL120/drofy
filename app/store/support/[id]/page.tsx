@@ -1,10 +1,10 @@
-import FavoriteProducts from '@/components/store/favourite/favouriteProducts'
+import TicketDetails from '@/components/store/ticket/ticketDetails'
 import React from 'react'
 
 const Page = () => {
     return (
         <div>
-            <FavoriteProducts />
+            <TicketDetails />
         </div>
     )
 }

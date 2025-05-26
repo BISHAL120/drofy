@@ -5,12 +5,14 @@ declare module "next-auth" {
     interface User extends DefaultUser {
         role?: string[]; // Add role property
         phone: string;
+        isActive?: string;
     }
 
     interface Session {
         user: {
             role?: string[]; // Add role property
             phone: string;
+            isActive?: string;
         } & DefaultSession["user"];
     }
 }
@@ -19,5 +21,6 @@ declare module "next-auth/jwt" {
     interface JWT {
         role?: string[]; // Add role property
         phone: string;
+        isActive?: string;
     }
 }

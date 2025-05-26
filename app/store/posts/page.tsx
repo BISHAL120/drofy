@@ -1,8 +1,18 @@
-import React from 'react'
+import PostsPage from "@/components/store/posts/posts-page"
+import { Suspense } from "react"
 
-const Page = () => {
+
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+
+const Page = async (props: {
+    searchParams: SearchParams
+}) => {
+    const searchParams = await props.searchParams
+    // console.log(searchParams)
     return (
-        <div>Posts</div>
+        <Suspense fallback={<div>Loading...</div>}>
+            <PostsPage searchParams={searchParams} />
+        </Suspense>
     )
 }
 

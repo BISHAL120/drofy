@@ -28,7 +28,7 @@ model User {
   name          String
   phone         String        @unique
   password      String
-  email         String?       @unique
+  email         String?
   address       String?
   profileImage  String?
   role          Role[]        @default([USER])
@@ -49,30 +49,59 @@ model User {
 }
 
 model Product {
-  id           String           @id @default(auto()) @map("_id") @db.ObjectId
-  name         String
-  description  String?
-  price        Float
-  SellingPrice Float
-  totalSales   String
-  stock        String
-  images       String[]
-  category     String
-  tags         String[]
-  variants     ProductVariant[]
-  inStock      Boolean          @default(true)
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-  Order        Order[]
+  id            String           @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  description   String?
+  price         Float
+  SellingPrice  Float
+  totalSales    String
+  stock         String
+  images        String[]
+  subCategory   String
+  tags          String[]
+  variants      ProductVariant[]
+  inStock       Boolean          @default(true)
+  SubCategory   SubCategory?     @relation(fields: [subCategoryId], references: [id])
+  subCategoryId String?          @db.ObjectId
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  Order Order[]
 }
 
 model ProductVariant {
-  id             String  @id @default(auto()) @map("_id") @db.ObjectId
-  product        Product @relation(fields: [productId], references: [id])
-  productId      String  @db.ObjectId
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  product        Product  @relation(fields: [productId], references: [id])
+  productId      String   @db.ObjectId
   name           String // e.g., "Red - Large"
-  additionalCost Float   @default(0)
-  inStock        Boolean @default(true)
+  additionalCost Float    @default(0)
+  inStock        Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model SubCategory {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  imageUrl     String?
+  description  String?
+  category     String
+  productCount Int       @default(0)
+  products     Product[]
+  Category     Category? @relation(fields: [categoryId], references: [id])
+  categoryId   String?   @db.ObjectId
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Category {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  description  String?
+  productCount Int           @default(0)
+  subCategory  SubCategory[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model Order {
@@ -96,9 +125,9 @@ model Order {
   status         OrderStatus @default(PENDING)
 
   profit      Float // calculated on complete
+  completedAt DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  completedAt DateTime?
 }
 
 model WithdrawalRequest {
@@ -107,8 +136,9 @@ model WithdrawalRequest {
   resellerId  String           @db.ObjectId
   amount      Float
   status      WithdrawalStatus @default(PENDING)
-  createdAt   DateTime         @default(now())
   processedAt DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 }
 
 model WalletTransaction {
@@ -120,6 +150,7 @@ model WalletTransaction {
   reference   String? // optional order/withdrawal ID
   description String?
   createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
 }
 
 model SupportTicket {
@@ -154,6 +185,7 @@ model PlatformSetting {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   key       String   @unique
   value     Json
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 

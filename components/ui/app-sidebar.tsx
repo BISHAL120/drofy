@@ -30,6 +30,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { usePathname } from 'next/navigation'
+import { DialogTitle } from "./dialog"
 
 const menuItems = [
     { icon: Home, label: "হোম", href: "/store" },
@@ -42,7 +43,7 @@ const menuItems = [
     { icon: List, label: "অর্ডার লিস্ট", href: "/store/orders" },
     { icon: List, label: "অ্যাক্টিভ অর্ডার", href: "/store/active-orders" },
     { icon: ShoppingCart, label: "কার্ট লিস্ট", href: "/store/cart" },
-    { icon: BarChart2, label: "সেলস & প্রফিট", href: "/store/sales-Profit" },
+    { icon: BarChart2, label: "সেলস & প্রফিট", href: "/store/sales-profit" },
     { icon: FileCheck, label: "ব্যালেন্স স্টেটমেন্ট", href: "/store/balance" },
     { icon: CreditCard, label: "অ্যাড একাউন্ট", href: "/store/paymentMethod" },
     { icon: CreditCard, label: "টাকা উত্তোলন", href: "/store/withdraw" },
@@ -58,9 +59,9 @@ export function AppSidebar() {
                 <SidebarGroup className="p-0">
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            <div className="h-16 bg-orange-500 text-white text-3xl font-bold flex justify-center items-center mb-3  border-b border-black/70">
-                                স্টোরএক্স বিডি
-                            </div>
+                            <Link href="/store" className="h-16 bg-orange-500 text-white text-3xl font-bold flex justify-start pl-3 items-center mb-3  border-b border-black/70">
+                                রিস্টক বিডি
+                            </Link>
                             <div className="space-y-5">
                                 {menuItems.map((item, index) => (
                                     <SidebarMenuItem
@@ -98,12 +99,13 @@ export function MobileSidebar() {
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
+                <Button variant="ghost" size="icon" className="md:hidden border bg-slate-700 text-white cursor-pointer">
                     <Menu className="h-5 w-5" />
                     <span className="sr-only">Toggle menu</span>
                 </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-[250px]">
+                <DialogTitle />
                 <div className="h-full bg-background">
                     <SidebarContent>
                         <SidebarGroup>

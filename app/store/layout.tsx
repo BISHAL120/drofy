@@ -14,12 +14,12 @@ export default async function StoreLayout({ children, }: { children: React.React
                 <SidebarInset className="flex flex-col">
                     <header className="flex h-16 items-center gap-4  px-6 bg-orange-500 border-b border-black">
                         <div className="flex items-center gap-2 h-full">
-                            <SidebarTrigger className="hidden md:flex border bg-slate-700 text-white" />
+                            <SidebarTrigger className="hidden md:flex border bg-slate-700 text-white cursor-pointer" />
                             <MobileSidebar />
                         </div>
                         <h1 className="text-xl font-semibold">Welcome, {user?.name || "Guest"}! 👋</h1>
                     </header>
-                    <main className="flex-1 p-6">
+                    <main className="flex-1 lg:p-6">
                         {children}
                     </main>
                 </SidebarInset>

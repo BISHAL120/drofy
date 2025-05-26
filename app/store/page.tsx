@@ -1,4 +1,5 @@
 // import { auth } from '@/auth'
+import { DashboardMenu } from '@/components/store/dashboardMenu'
 import React from 'react'
 
 const HomePage = async () => {
@@ -8,7 +9,9 @@ const HomePage = async () => {
         console.log(user) */
 
     return (
-        <div>HomePage</div>
+        <div>
+            <DashboardMenu />
+        </div>
     )
 }
 

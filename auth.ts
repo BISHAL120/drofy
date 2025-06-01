@@ -19,16 +19,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     where: { phone: number },
                     select: {
                         id: true,
-                        password: true,
                         name: true,
                         phone: true,
+                        password: true,
                         role: true,
-                    },
+                        isActive: true,
+                    }
                 });
+
+
 
                 if (!user || !user.password) {
                     return null;
                 }
+
 
                 const passwordMatch = await bcrypt.compare(password, user?.password);
 
@@ -79,7 +83,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 session.user.name = token.name as string;
                 session.user.phone = token.phone as string;
                 session.user.role = token.role as string[];
-                session.user.isActive = token.isActive as string;
+                session.user.isActive = token.isActive as boolean;
             }
             return session;
         },

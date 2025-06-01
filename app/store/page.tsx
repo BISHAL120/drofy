@@ -9,7 +9,7 @@ const HomePage = async () => {
         console.log(user) */
 
     return (
-        <div>
+        <div className='h-full'>
             <DashboardMenu />
         </div>
     )

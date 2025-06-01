@@ -10,7 +10,7 @@ const HeroSection
                     <div className="flex flex-col lg:flex-row items-center justify-between">
                         <div className="mb-8 lg:w-2/5">
                             <h2 className="text-2xl text-center md:text-start md:text-3xl font-bold mb-4">
-                                ড্রপশিপিং ও রিসেলিং সেবা, ব্যবসার সহজ সমাধান |
+                                ড্রপশিপিং ও রিসেলিং সেবা, ব্যবসার সহজ সমাধান
                             </h2>
                             <p className="text-white/90 text-justify md:text-start mb-6 px-1 md:text-lg">
                                 রিস্টক বিডি বাংলাদেশের সর্ববৃহৎ একটি ড্রপশিপিং এবং রিসেলিং প্লাটফর্ম। কোন প্রকার পূঁজি বা ইনভেস্টমেন্ট ছারাই ঘরে বসে অসংখ্য ক্যাটেগরির প্রায় দশ হাজারেরও বেশি প্রোডাক্ট নিয়ে বিজনেস করতে পারবেন |

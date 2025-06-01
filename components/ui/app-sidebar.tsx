@@ -31,6 +31,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { usePathname } from 'next/navigation'
 import { DialogTitle } from "./dialog"
+import Image from "next/image"
 
 const menuItems = [
     { icon: Home, label: "হোম", href: "/store" },
@@ -59,8 +60,15 @@ export function AppSidebar() {
                 <SidebarGroup className="p-0">
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            <Link href="/store" className="h-16 bg-orange-500 text-white text-3xl font-bold flex justify-start pl-3 items-center mb-3  border-b border-black/70">
-                                রিস্টক বিডি
+                            <Link href="/store" className="h-16 overflow-hidden border border-b">
+                                <Image
+                                    src="/assets/logo.webp"
+                                    alt="Logo"
+                                    width={100}
+                                    height={100}
+                                    quality={100}
+                                    className="w-full object-cover"
+                                />
                             </Link>
                             <div className="space-y-5">
                                 {menuItems.map((item, index) => (
@@ -72,7 +80,7 @@ export function AppSidebar() {
                                         <Link
                                             href={item.href}
                                             className={`flex items-center gap-3 pl-4 py-4
-                                                ${pathname === item.href ? 'text-orange-500 font-bold border border-black/40 border-r-0 border-l-0' : ''}`}
+                                                ${pathname === item.href ? 'text-orange-500 font-bold border-b border-black/40 border-r-0 border-l-0' : ''}`}
                                         >
                                             <item.icon
                                                 size={24}

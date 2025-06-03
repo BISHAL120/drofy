@@ -1,165 +1,17 @@
 "use client"
 
-import ProductCard, { Product } from "@/components/store/products/productCard";
+import ProductCard from "@/components/store/products/productCard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-
-
+import { DemoData } from "@/constants/demoData";
 
 
 /* interface ProductCardProps {
     product: Product;
 } */
 
-const featuredProducts: Product[] = [
-    {
-        id: 1,
-        name: "Men's Casual Shirt",
-        price: 29.99,
-        originalPrice: 49.99,
-        image: "/placeholder.svg",
-        category: "men",
-        status: "comingSoon",
-    },
-    {
-        id: 2,
-        name: "Women's Summer Dress",
-        price: 39.99,
-        originalPrice: 59.99,
-        image: "/placeholder.svg",
-        category: "women",
-        status: "hot",
-    },
-    {
-        id: 3,
-        name: "Sports Shoes",
-        price: 59.99,
-        originalPrice: 89.99,
-        image: "/placeholder.svg",
-        category: "shoes",
-        status: "normal",
-    },
-    {
-        id: 4,
-        name: "Denim Jeans",
-        price: 45.99,
-        originalPrice: 69.99,
-        image: "/placeholder.svg",
-        category: "men",
-        status: "sale",
-    },
-    {
-        id: 5,
-        name: "Men's Casual Shirt",
-        price: 29.99,
-        originalPrice: 49.99,
-        image: "/placeholder.svg",
-        category: "men",
-        status: "sale",
-    },
-    {
-        id: 6,
-        name: "Women's Summer Dress",
-        price: 39.99,
-        originalPrice: 59.99,
-        image: "/placeholder.svg",
-        category: "women",
-        status: "hot",
-    },
-    {
-        id: 7,
-        name: "Sports Shoes",
-        price: 59.99,
-        originalPrice: 89.99,
-        image: "/placeholder.svg",
-        category: "shoes",
-        status: "normal",
-    },
-    {
-        id: 8,
-        name: "Denim Jeans",
-        price: 45.99,
-        originalPrice: 69.99,
-        image: "/placeholder.svg",
-        category: "men",
-        status: "comingSoon",
-    },
-    {
-        id: 9,
-        name: "Men's Casual Shirt",
-        price: 29.99,
-        originalPrice: 49.99,
-        image: "/placeholder.svg",
-        category: "men",
-        status: "comingSoon",
-    },
-    {
-        id: 10,
-        name: "Women's Summer Dress",
-        price: 39.99,
-        originalPrice: 59.99,
-        image: "/placeholder.svg",
-        category: "women",
-        status: "sale",
-    },
-    {
-        id: 11,
-        name: "Sports Shoes",
-        price: 59.99,
-        originalPrice: 89.99,
-        image: "/placeholder.svg",
-        category: "shoes",
-        status: "hot",
-    },
-    {
-        id: 12,
-        name: "Denim Jeans",
-        price: 45.99,
-        originalPrice: 69.99,
-        image: "/placeholder.svg",
-        category: "men",
-        status: "normal",
-    },
-    {
-        id: 13,
-        name: "Men's Casual Shirt",
-        price: 29.99,
-        originalPrice: 49.99,
-        image: "/placeholder.svg",
-        category: "men",
-        status: "hot",
-    },
-    {
-        id: 14,
-        name: "Women's Summer Dress",
-        price: 39.99,
-        originalPrice: 59.99,
-        image: "/placeholder.svg",
-        category: "women",
-        status: "comingSoon",
-    },
-    {
-        id: 15,
-        name: "Sports Shoes",
-        price: 59.99,
-        originalPrice: 89.99,
-        image: "/placeholder.svg",
-        category: "shoes",
-        status: "sale",
-    },
-    {
-        id: 16,
-        name: "Denim Jeans",
-        price: 45.99,
-        originalPrice: 69.99,
-        image: "/placeholder.svg",
-        category: "men",
-        status: "hot",
-    },
-];
 
-const FeaturedSection = ({ user }: { user: boolean }) => {
+const FeaturedSection = () => {
 
     return (
         <section className="py-12 bg-white">
@@ -184,41 +36,41 @@ const FeaturedSection = ({ user }: { user: boolean }) => {
 
                     <TabsContent value="all" className="mt-0">
                         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                            {featuredProducts.map((product) => (
-                                <ProductCard user={user} key={product.id} product={product} />
+                            {DemoData.map((product) => (
+                                <ProductCard key={product.id} product={product} />
                             ))}
                         </div>
                     </TabsContent>
 
-                    <TabsContent value="men" className="mt-0">
+                    {/*  <TabsContent value="men" className="mt-0">
                         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                            {featuredProducts
+                            {DemoData
                                 .filter((p) => p.category === "men")
                                 .map((product) => (
                                     <ProductCard user={user} key={product.id} product={product} />
                                 ))}
                         </div>
-                    </TabsContent>
+                    </TabsContent> */}
 
-                    <TabsContent value="women" className="mt-0">
+                    {/*  <TabsContent value="women" className="mt-0">
                         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                            {featuredProducts
+                            {DemoData
                                 .filter((p) => p.category === "women")
                                 .map((product) => (
                                     <ProductCard user={user} key={product.id} product={product} />
                                 ))}
                         </div>
-                    </TabsContent>
+                    </TabsContent> */}
 
-                    <TabsContent value="shoes" className="mt-0">
+                    {/* <TabsContent value="shoes" className="mt-0">
                         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                            {featuredProducts
+                            {DemoData
                                 .filter((p) => p.category === "shoes")
                                 .map((product) => (
                                     <ProductCard user={user} key={product.id} product={product} />
                                 ))}
                         </div>
-                    </TabsContent>
+                    </TabsContent> */}
 
                     <TabsContent value="accessories" className="mt-0">
                         <p className="text-center py-10 text-gray-500">কোন প্রোডাক্ট পাওয়া যায়নি</p>

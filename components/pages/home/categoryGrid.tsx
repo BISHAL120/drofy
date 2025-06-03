@@ -57,7 +57,7 @@ const CategoryGrid = () => {
                     ))}
                 </div>
 
-                <div className="mt-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg overflow-hidden">
+                <div className="mt-12 bg-gradient-to-r from-slate-600 to-[#64827e]  text-white rounded-lg overflow-hidden">
                     <div className="flex flex-col md:flex-row">
                         <div className="md:w-1/2 p-6 md:p-10 text-white">
                             <div className="max-w-md">

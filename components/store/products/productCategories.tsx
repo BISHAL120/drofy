@@ -1,5 +1,4 @@
-import Image from "next/image"
-import Link from "next/link"
+import CategoryCard from "./categoryCard"
 
 export default function ProductCategories() {
     // Sample category data - you can replace with your actual data
@@ -54,17 +53,7 @@ export default function ProductCategories() {
                 <h2 className="text-center text-pink-500 font-medium text-lg mb-4">Men&apos;s Fashion (1763)</h2>
                 <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-5">
                     {categories.categories.map((category) => (
-                        <Link
-                            href="#"
-                            key={category.id}
-                            className="w-[200px] h-[200px] bg-white aspect-square rounded-md p-2 flex flex-col items-center shadow-sm hover:shadow-md transition-shadow"
-                        >
-                            <div className="relative w-full h-3/4 mb-2">
-                                <Image src={category.image || "/placeholder.svg"} alt={category.name} fill className="object-contain" />
-                            </div>
-                            <span className="text-xs text-center font-medium">{category.name}</span>
-                            <span className="text-xs text-gray-500">{category.quantity}</span>
-                        </Link>
+                        <CategoryCard key={category.id} category={category} />
                     ))}
                 </div>
             </div>
@@ -74,17 +63,7 @@ export default function ProductCategories() {
                 <h2 className="text-center text-pink-500 font-medium text-lg mb-4">Women&apos;s Fashion (2176)</h2>
                 <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
                     {womenCategories.categories.map((category) => (
-                        <Link
-                            href="#"
-                            key={category.id}
-                            className="bg-white rounded-md p-2 flex flex-col items-center shadow-sm hover:shadow-md transition-shadow"
-                        >
-                            <div className="relative w-16 h-16 mb-2">
-                                <Image src={category.image || "/placeholder.svg"} alt={category.name} fill className="object-cover" />
-                            </div>
-                            <span className="text-xs text-center font-medium">{category.name}</span>
-                            <span className="text-xs text-gray-500">{category.quantity}</span>
-                        </Link>
+                        <CategoryCard key={category.id} category={category} />
                     ))}
                 </div>
             </div>
@@ -94,17 +73,7 @@ export default function ProductCategories() {
                 <h2 className="text-center text-pink-500 font-medium text-lg mb-4">Accessories (600)</h2>
                 <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
                     {accessoriesCategories.categories.map((category) => (
-                        <Link
-                            href="#"
-                            key={category.id}
-                            className="bg-white rounded-md p-2 flex flex-col items-center shadow-sm hover:shadow-md transition-shadow"
-                        >
-                            <div className="relative w-16 h-16 mb-2">
-                                <Image src={category.image || "/placeholder.svg"} alt={category.name} fill className="object-contain" />
-                            </div>
-                            <span className="text-xs text-center font-medium">{category.name}</span>
-                            <span className="text-xs text-gray-500">{category.quantity}</span>
-                        </Link>
+                        <CategoryCard key={category.id} category={category} />
                     ))}
                 </div>
             </div>

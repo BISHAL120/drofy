@@ -17,7 +17,7 @@ import { Bell, User } from "lucide-react"
 export function DashboardHeader() {
   return (
     <header className="w-full h-16 flex items-center justify-between gap-4 border-b bg-background px-6">
-      <SidebarTrigger />
+      <SidebarTrigger className="hidden md:flex border bg-slate-700 text-white cursor-pointer" />
       <div className="flex items-center gap-6">
         <div className="flex items-center space-x-4">
           <Button

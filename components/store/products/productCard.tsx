@@ -1,9 +1,9 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { convertToBengaliNumber } from "@/hooks/convertNum";
+import { Product } from "@prisma/client";
 import { Download, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,17 +11,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 
-export type Product = {
-    id: number;
-    name: string;
-    price: number;
-    originalPrice: number;
-    image: string;
-    category: 'men' | 'women' | 'shoes' | 'accessories';
-    status: 'normal' | 'sale' | 'hot' | 'comingSoon';
-}
 
-const ProductCard = ({ product, user }: { product: Product, user: boolean }) => {
+const ProductCard = ({ product }: { product: Product }) => {
     // const [isLoggedIn, setisLoggedIn] = useState(false);
     const [isWishlisted, setIsWishlisted] = useState(false);
 
@@ -69,24 +60,24 @@ const ProductCard = ({ product, user }: { product: Product, user: boolean }) => 
     const toggleWishlist = () => {
         setIsWishlisted(prev => !prev);
         if (isWishlisted) {
-            toast.success('উইশলিস্টে যুক্ত হয়েছে', {
+            toast.success('রিমুভ হয়ে গিয়েছে!', {
                 style: { background: '#fee2e2', border: '1px solid #fecaca', fontSize: '16px', fontWeight: "700" },
                 icon: '💔',
             });
         } else {
-            toast.success('রিমুভ হয়ে গিয়েছে!', {
+            toast.success('উইশলিস্টে যুক্ত হয়েছে', {
                 style: { background: '#dcfce7', border: '1px solid #bbf7d0', fontSize: '16px', fontWeight: "700" },
                 icon: '❤️',
             });
         }
     };
 
-    const handlePreOrder = () => {
-        toast.success('প্রি-অর্ডার সম্পূর্ণ হয়েছে', {
-            style: { background: '#dcfce7', border: '1px solid #bbf7d0', fontSize: '16px', fontWeight: "700" },
-            icon: '⬇️',
-        });
-    };
+    /*     const handlePreOrder = () => {
+            toast.success('প্রি-অর্ডার সম্পূর্ণ হয়েছে', {
+                style: { background: '#dcfce7', border: '1px solid #bbf7d0', fontSize: '16px', fontWeight: "700" },
+                icon: '⬇️',
+            });
+        }; */
 
     return (
         <div>
@@ -96,14 +87,14 @@ const ProductCard = ({ product, user }: { product: Product, user: boolean }) => 
                         href={"/store/products/product"}
                     >
                         <Image
-                            src={product.image}
+                            src={product.images[0]}
                             alt={product.name}
                             width={210}
                             height={210}
                             className="w-full h-[210px] object-cover"
                         />
                     </Link>
-                    {/* (product.status !== 'normal') && */ (
+                    {/* (product.status !== 'normal') && */ /* (
                         <Badge
                             className={`absolute top-2 left-2 ${
                                 // Assuming new products would have 'new' status and checking against current date
@@ -116,9 +107,9 @@ const ProductCard = ({ product, user }: { product: Product, user: boolean }) => 
                         >
                             {product.status.charAt(0).toUpperCase() + product.status.slice(1)}
                         </Badge>
-                    )}
+                    ) */}
                     <div className="absolute top-2 right-2 flex space-x-2">
-                        {user && (
+                        {(
                             <button
                                 onClick={toggleWishlist}
                                 className="bg-white rounded-full p-1.5 shadow-md hover:bg-gray-100 transition-colors"
@@ -126,7 +117,7 @@ const ProductCard = ({ product, user }: { product: Product, user: boolean }) => 
                                 <Heart size={18} className={isWishlisted ? "text-red-500 fill-red-500" : "text-gray-600"} />
                             </button>
                         )}
-                        {user && <button
+                        {<button
                             onClick={handleDownload}
                             className="bg-white rounded-full p-1.5 shadow-md hover:bg-gray-100 transition-colors"
                         >
@@ -145,17 +136,17 @@ const ProductCard = ({ product, user }: { product: Product, user: boolean }) => 
                         </Link>
                     </h3>
 
-                    {user && <div className="flex items-center justify-between">
+                    {<div className="flex items-center justify-between">
                         <div className="w-full flex items-center justify-between gap-2">
                             <span className="text-red-500 font-bold">{convertToBengaliNumber(product.price)}</span>
-                            {product.originalPrice > product.price && (
-                                <span className="text-gray-400 line-through text-xs">৳{convertToBengaliNumber(product.originalPrice)}</span>
+                            {product.price > product.SellingPrice && (
+                                <span className="text-gray-400 line-through text-xs">৳{convertToBengaliNumber(product.price)}</span>
                             )}
                         </div>
                     </div>}
                     <div>
 
-                        {user && product.status !== "comingSoon" && <div className="flex justify-between items-center mt-3 gap-2">
+                        <div className="flex justify-between items-center mt-3 gap-2">
                             <Button
                                 variant="outline"
                                 className="flex-1 h-9 hover:border-orange-500 hover:bg-orange-100 transition-colors duration-300"
@@ -175,8 +166,8 @@ const ProductCard = ({ product, user }: { product: Product, user: boolean }) => 
                                 <Heart size={16} className={`mr-1 ${isWishlisted ? 'fill-orange-500 text-orange-500' : ''}`} />
 
                             </Button>
-                        </div>}
-                        {user && product.status === "comingSoon" && (
+                        </div>
+                        {/*  {product.status === "comingSoon" && (
                             <Button
                                 variant="outline"
                                 onClick={handlePreOrder}
@@ -184,7 +175,7 @@ const ProductCard = ({ product, user }: { product: Product, user: boolean }) => 
                             >
                                 প্রি-অর্ডার করুন
                             </Button>
-                        )}
+                        )} */}
                     </div>
                 </CardContent>
             </Card >

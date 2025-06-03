@@ -1,8 +1,11 @@
+import WithdrawPage from '@/components/store/withdraw/withdrawPage'
 import React from 'react'
 
 const Page = () => {
     return (
-        <div>withdraw</div>
+        <div>
+            <WithdrawPage />
+        </div>
     )
 }
 

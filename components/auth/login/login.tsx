@@ -183,6 +183,13 @@ export default function LoginPage() {
                                                     autoCorrect="off"
                                                     disabled={isLoading}
                                                     className="mt-1"
+                                                    maxLength={11}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value;
+                                                        if (value.length <= 11) {
+                                                            field.onChange(value);
+                                                        }
+                                                    }}
                                                 />
                                             </div>
                                         </FormControl>

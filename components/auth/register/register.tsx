@@ -71,11 +71,6 @@ export default function RegisterPage() {
             axios.post("/api/register", values).then((res) => {
                 console.log("Response :", res.data);
                 // toast.success("OTP sent to your mobile number");
-                signIn("credentials", {
-                    number: values.number,
-                    password: values.password,
-                    redirect: false,
-                })
                 toast.dismiss();
                 toast.success("রেজিস্ট্রেশন সম্পন্ন হয়েছে", {
                     style: {
@@ -89,6 +84,11 @@ export default function RegisterPage() {
                     position: "top-center",
                     icon: "✅"
                 });
+                signIn("credentials", {
+                    number: values.number,
+                    password: values.password,
+                    redirect: false,
+                })
                 router.push("/register/success");
             }).catch((err) => {
                 console.log("Error :", err);
@@ -176,6 +176,13 @@ export default function RegisterPage() {
                                                     autoCorrect="off"
                                                     disabled={isLoading}
                                                     className="mt-1"
+                                                    maxLength={11}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value;
+                                                        if (value.length <= 11) {
+                                                            field.onChange(value);
+                                                        }
+                                                    }}
                                                 />
                                             </div>
                                         </FormControl>

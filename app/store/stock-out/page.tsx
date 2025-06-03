@@ -1,8 +1,10 @@
-import React from 'react'
+import StockOutProducts from "@/components/store/stock-out/stockOutProducts"
 
 const Page = () => {
     return (
-        <div>Stock out</div>
+        <div>
+            <StockOutProducts />
+        </div>
     )
 }
 

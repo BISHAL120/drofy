@@ -1,21 +1,21 @@
 "use client"
 import {
-    Home,
-    User,
-    FileText,
-    Folder,
-    Video,
-    Heart,
-    Clock,
-    List,
-    ShoppingCart,
     BarChart2,
-    FileCheck,
+    Clock,
     CreditCard,
+    FileCheck,
+    Folder,
+    Heart,
     HelpCircle,
+    Home,
+    List,
     Menu,
+    ShoppingCart,
+    User
 } from "lucide-react"
 
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import {
     Sidebar,
     SidebarContent,
@@ -26,19 +26,17 @@ import {
     SidebarMenuItem,
     SidebarRail,
 } from "@/components/ui/sidebar"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from 'next/navigation'
 import { DialogTitle } from "./dialog"
-import Image from "next/image"
 
 const menuItems = [
     { icon: Home, label: "হোম", href: "/store" },
     { icon: User, label: "প্রোফাইল", href: "/store/profile" },
-    { icon: FileText, label: "নতুন পোস্ট", href: "/store/posts" },
+    // { icon: FileText, label: "নতুন পোস্ট", href: "/store/posts" },
     { icon: Folder, label: "সকল প্রোডাক্ট", href: "/store/products" },
-    { icon: Video, label: "প্রোডাক্টের ভিডিও", href: "/store#" },
+    // { icon: Video, label: "প্রোডাক্টের ভিডিও", href: "/store#" },
     { icon: Heart, label: "ফেভরিট প্রোডাক্ট", href: "/store/favorites" },
     { icon: Clock, label: "স্টকআউট প্রোডাক্ট", href: "/store/stock-out" },
     { icon: List, label: "অর্ডার লিস্ট", href: "/store/orders" },
@@ -60,14 +58,13 @@ export function AppSidebar() {
                 <SidebarGroup className="p-0">
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            <Link href="/store" className="h-16 overflow-hidden border border-b">
+                            <Link href="/store" className="flex justify-center items-center h-16 overflow-hidden border-blue-500 bg-[#bbddd8] border-b ">
                                 <Image
                                     src="/assets/logo.webp"
-                                    alt="Logo"
-                                    width={100}
-                                    height={100}
-                                    quality={100}
-                                    className="w-full object-cover"
+                                    alt="Your Logo"
+                                    width={200}
+                                    height={50}
+                                    className="mr-2"
                                 />
                             </Link>
                             <div className="space-y-5">

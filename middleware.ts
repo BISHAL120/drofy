@@ -15,11 +15,11 @@ export async function middleware(request: NextRequest) {
     // Get the pathname from the URL
     const { pathname } = request.nextUrl;
 
-    if (pathname === '/register/success') {
-        if (!user) {
-            return NextResponse.redirect(new URL('/login', request.url));
-        }
-    }
+    /*     if (pathname === '/register/success') {
+            if (!user) {
+                return NextResponse.redirect(new URL('/login', request.url));
+            }
+        } */
     if (pathname === '/login') {
         if (user) {
             return NextResponse.redirect(new URL('/store', request.url));

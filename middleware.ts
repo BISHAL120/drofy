@@ -9,8 +9,6 @@ export async function middleware(request: NextRequest) {
     const session = await auth();
     const user = session?.user;
 
-    console.log(user)
-
 
     // Get the pathname from the URL
     const { pathname } = request.nextUrl;

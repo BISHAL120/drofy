@@ -8,7 +8,7 @@ const Page = async (props: {
     searchParams: SearchParams
 }) => {
     const searchParams = await props.searchParams
-    // console.log(searchParams)
+
     return (
         <Suspense fallback={<div>Loading...</div>}>
             <PostsPage searchParams={searchParams} />

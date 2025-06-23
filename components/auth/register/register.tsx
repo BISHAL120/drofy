@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { registerSchema } from "@/lib/zod/schema";
+import { registerSchema } from "@/lib/zod/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronsRight, Eye, EyeClosed, Loader2 } from "lucide-react";
 import Image from "next/image";

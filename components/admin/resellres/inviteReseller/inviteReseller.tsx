@@ -1,6 +1,5 @@
 "use client"
 
-import { DashboardHeader } from "@/components/admin/dashboard-header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -36,7 +35,6 @@ export default function InviteResellerPage() {
 
     return (
         <div className="flex flex-col">
-            <DashboardHeader />
             <div className="flex-1 space-y-6 p-6">
                 <div className="flex items-center space-x-4">
                     {/* <Link href="/resellers">
@@ -51,7 +49,7 @@ export default function InviteResellerPage() {
                     </div>
                 </div>
 
-                <Card className="max-w-2xl">
+                <Card className="max-w-4xl">
                     <CardHeader>
                         <CardTitle>Reseller Invitation</CardTitle>
                         <CardDescription>Enter the details to invite a new reseller to your platform</CardDescription>

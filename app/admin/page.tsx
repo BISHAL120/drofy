@@ -1,24 +1,45 @@
-"use client"
+"use client";
 
-import { DashboardHeader } from "../../components/admin/dashboard-header"
-import { MetricCard } from "../../components/admin/metric-card"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DollarSign, ShoppingCart, Users, Plus, UserPlus, FileText, TrendingUp, Package } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
-  LineChart,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DollarSign,
+  FileText,
+  Package,
+  Plus,
+  ShoppingCart,
+  TrendingUp,
+  UserPlus,
+  Users,
+} from "lucide-react";
+import {
+  CartesianGrid,
+  Legend,
   Line,
+  LineChart,
+  RadialBar,
+  RadialBarChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  RadialBarChart,
-  RadialBar,
-  Legend,
-} from "recharts"
+} from "recharts";
+import { MetricCard } from "../../components/admin/components/metric-card";
 
 const salesData = [
   { name: "Mon", sales: 4000 },
@@ -28,14 +49,14 @@ const salesData = [
   { name: "Fri", sales: 1890 },
   { name: "Sat", sales: 2390 },
   { name: "Sun", sales: 3490 },
-]
+];
 
 const categoryData = [
   { name: "Electronics", value: 400, fill: "#0088FE" },
   { name: "Clothing", value: 300, fill: "#00C49F" },
   { name: "Home & Garden", value: 200, fill: "#FFBB28" },
   { name: "Sports", value: 100, fill: "#FF8042" },
-]
+];
 
 const recentOrders = [
   {
@@ -70,7 +91,7 @@ const recentOrders = [
     amount: "$249.00",
     date: "2024-01-14",
   },
-]
+];
 
 const topResellers = [
   {
@@ -101,40 +122,39 @@ const topResellers = [
     sales: "$25,680",
     level: "BRONZE",
   },
-]
+];
 
 const getStatusColor = (status: string) => {
   switch (status) {
     case "completed":
-      return "bg-green-100 text-green-800"
+      return "bg-green-100 text-green-800";
     case "processing":
-      return "bg-blue-100 text-blue-800"
+      return "bg-blue-100 text-blue-800";
     case "pending":
-      return "bg-yellow-100 text-yellow-800"
+      return "bg-yellow-100 text-yellow-800";
     case "delivered":
-      return "bg-purple-100 text-purple-800"
+      return "bg-purple-100 text-purple-800";
     default:
-      return "bg-gray-100 text-gray-800"
+      return "bg-gray-100 text-gray-800";
   }
-}
+};
 
 const getLevelColor = (level: string) => {
   switch (level) {
     case "GOLD":
-      return "bg-yellow-100 text-yellow-800"
+      return "bg-yellow-100 text-yellow-800";
     case "SILVER":
-      return "bg-gray-100 text-gray-800"
+      return "bg-gray-100 text-gray-800";
     case "BRONZE":
-      return "bg-orange-100 text-orange-800"
+      return "bg-orange-100 text-orange-800";
     default:
-      return "bg-blue-100 text-blue-800"
+      return "bg-blue-100 text-blue-800";
   }
-}
+};
 
 export default function Dashboard() {
   return (
     <div className="flex flex-col">
-      <DashboardHeader />
       <div className="flex-1 space-y-6 p-6">
         {/* Metrics Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -145,9 +165,27 @@ export default function Dashboard() {
             changeType="positive"
             icon={DollarSign}
           />
-          <MetricCard title="Total Orders" value="2,350" change="+15.3%" changeType="positive" icon={ShoppingCart} />
-          <MetricCard title="Active Resellers" value="573" change="+8.2%" changeType="positive" icon={Users} />
-          <MetricCard title="Total Products" value="1,234" change="+5.7%" changeType="positive" icon={Package} />
+          <MetricCard
+            title="Total Orders"
+            value="2,350"
+            change="+15.3%"
+            changeType="positive"
+            icon={ShoppingCart}
+          />
+          <MetricCard
+            title="Active Resellers"
+            value="573"
+            change="+8.2%"
+            changeType="positive"
+            icon={Users}
+          />
+          <MetricCard
+            title="Total Products"
+            value="1,234"
+            change="+5.7%"
+            changeType="positive"
+            icon={Package}
+          />
         </div>
 
         {/* Charts Section */}
@@ -164,7 +202,12 @@ export default function Dashboard() {
                   <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip />
-                  <Line type="monotone" dataKey="sales" stroke="#8884d8" strokeWidth={2} />
+                  <Line
+                    type="monotone"
+                    dataKey="sales"
+                    stroke="#8884d8"
+                    strokeWidth={2}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -176,13 +219,24 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={350}>
-                <RadialBarChart cx="50%" cy="50%" innerRadius="20%" outerRadius="90%" data={categoryData}>
+                <RadialBarChart
+                  cx="50%"
+                  cy="50%"
+                  innerRadius="20%"
+                  outerRadius="90%"
+                  data={categoryData}
+                >
                   <RadialBar
                     label={{ position: "insideStart", fill: "#fff" }}
                     background
                     dataKey="value"
                   />
-                  <Legend iconSize={10} layout="vertical" verticalAlign="middle" align="right" />
+                  <Legend
+                    iconSize={10}
+                    layout="vertical"
+                    verticalAlign="middle"
+                    align="right"
+                  />
                   <Tooltip />
                 </RadialBarChart>
               </ResponsiveContainer>
@@ -215,7 +269,9 @@ export default function Dashboard() {
                       <TableCell>{order.customer}</TableCell>
                       <TableCell>{order.product}</TableCell>
                       <TableCell>
-                        <Badge className={getStatusColor(order.status)}>{order.status}</Badge>
+                        <Badge className={getStatusColor(order.status)}>
+                          {order.status}
+                        </Badge>
                       </TableCell>
                       <TableCell>{order.amount}</TableCell>
                     </TableRow>
@@ -234,7 +290,9 @@ export default function Dashboard() {
                 {topResellers.map((reseller, index) => (
                   <div key={index} className="flex items-center space-x-4">
                     <Avatar>
-                      <AvatarImage src={reseller.avatar || "/placeholder.svg"} />
+                      <AvatarImage
+                        src={reseller.avatar || "/placeholder.svg"}
+                      />
                       <AvatarFallback>
                         {reseller.name
                           .split(" ")
@@ -243,12 +301,16 @@ export default function Dashboard() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium leading-none">{reseller.name}</p>
+                      <p className="text-sm font-medium leading-none">
+                        {reseller.name}
+                      </p>
                       <p className="text-sm text-muted-foreground">
                         {reseller.products} products • {reseller.sales}
                       </p>
                     </div>
-                    <Badge className={getLevelColor(reseller.level)}>{reseller.level}</Badge>
+                    <Badge className={getLevelColor(reseller.level)}>
+                      {reseller.level}
+                    </Badge>
                   </div>
                 ))}
               </div>
@@ -262,32 +324,40 @@ export default function Dashboard() {
             <CardContent className="flex flex-col items-center justify-center p-6">
               <Plus className="h-8 w-8 text-primary mb-2" />
               <h3 className="font-semibold">Add Product</h3>
-              <p className="text-sm text-muted-foreground text-center">Add new products to your catalog</p>
+              <p className="text-sm text-muted-foreground text-center">
+                Add new products to your catalog
+              </p>
             </CardContent>
           </Card>
           <Card className="cursor-pointer transition-colors hover:bg-muted/50">
             <CardContent className="flex flex-col items-center justify-center p-6">
               <UserPlus className="h-8 w-8 text-primary mb-2" />
               <h3 className="font-semibold">Invite Reseller</h3>
-              <p className="text-sm text-muted-foreground text-center">Invite new resellers to join</p>
+              <p className="text-sm text-muted-foreground text-center">
+                Invite new resellers to join
+              </p>
             </CardContent>
           </Card>
           <Card className="cursor-pointer transition-colors hover:bg-muted/50">
             <CardContent className="flex flex-col items-center justify-center p-6">
               <FileText className="h-8 w-8 text-primary mb-2" />
               <h3 className="font-semibold">Generate Report</h3>
-              <p className="text-sm text-muted-foreground text-center">Create sales and analytics reports</p>
+              <p className="text-sm text-muted-foreground text-center">
+                Create sales and analytics reports
+              </p>
             </CardContent>
           </Card>
           <Card className="cursor-pointer transition-colors hover:bg-muted/50">
             <CardContent className="flex flex-col items-center justify-center p-6">
               <TrendingUp className="h-8 w-8 text-primary mb-2" />
               <h3 className="font-semibold">View Analytics</h3>
-              <p className="text-sm text-muted-foreground text-center">Detailed performance analytics</p>
+              <p className="text-sm text-muted-foreground text-center">
+                Detailed performance analytics
+              </p>
             </CardContent>
           </Card>
         </div>
       </div>
     </div>
-  )
+  );
 }

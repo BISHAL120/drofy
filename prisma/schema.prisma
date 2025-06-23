@@ -23,18 +23,28 @@ enum ResellerLevel {
   LEGENDARY
 }
 
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+}
+
 model User {
   id            String        @id @default(auto()) @map("_id") @db.ObjectId
   name          String
   phone         String        @unique
   password      String
+  balance       Float         @default(0)
   email         String?
   address       String?
   profileImage  String?
   role          Role[]        @default([USER])
   verified      Boolean       @default(false)
   isActive      Boolean       @default(false)
+  status        UserStatus    @default(INACTIVE)
   wallet        Float         @default(0)
+  saleCount     Int?          @default(0)
+  totalSales    Float?        @default(0)
   companyName   String?
   resellerLevel ResellerLevel @default(BEGINNER)
   referralCode  Float         @unique
@@ -48,60 +58,82 @@ model User {
   walletHistory WalletTransaction[]
 }
 
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+  DRAFT
+}
+
 model Product {
-  id            String           @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  description   String?
-  price         Float
-  SellingPrice  Float
-  totalSales    String
-  stock         String
-  images        String[]
-  subCategory   String
-  tags          String[]
-  variants      ProductVariant[]
-  inStock       Boolean          @default(true)
-  SubCategory   SubCategory?     @relation(fields: [subCategoryId], references: [id])
-  subCategoryId String?          @db.ObjectId
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  id               String        @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  shortDescription String?
+  fullDescription  String
+  brand            String?
+  sku              String
+  isFeatured       Boolean
+  status           ProductStatus @default(ACTIVE)
+  cost             Float
+  sellingPrice     Float
+  discountPrice    Float?
+  stock            Int
+  trackInventory   Boolean       @default(false)
+  stockAlert       Int?          @default(5)
+  imageUrl         String
+  videoUrl         String?
+  saleCount        Int?          @default(0)
+  deliveryCharge   Int
+  weight           Float
+  dimensions       String?
+  metaTitle        String?
+  metaDescription  String?
+  inStock          Boolean       @default(true)
+  isDeleted        Boolean       @default(false)
+  category         Category      @relation(fields: [categoryId], references: [id])
+  categoryId       String        @db.ObjectId
+  SubCategory      SubCategory   @relation(fields: [subCategoryId], references: [id])
+  subCategoryId    String        @db.ObjectId
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
 
   Order Order[]
 }
 
-model ProductVariant {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  product        Product  @relation(fields: [productId], references: [id])
-  productId      String   @db.ObjectId
-  name           String // e.g., "Red - Large"
-  additionalCost Float    @default(0)
-  inStock        Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-}
-
 model SubCategory {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  name         String
-  imageUrl     String?
-  description  String?
-  category     String
-  productCount Int       @default(0)
-  products     Product[]
-  Category     Category? @relation(fields: [categoryId], references: [id])
-  categoryId   String?   @db.ObjectId
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  slug            String    @unique
+  isFeatured      Boolean
+  isActive        Boolean   @default(true)
+  sortOrder       Int?
+  imageUrl        String?
+  description     String?
+  metaTitle       String?
+  metaDescription String?
+  productCount    Int       @default(0)
+  products        Product[]
+  Category        Category  @relation(fields: [categoryId], references: [id])
+  categoryId      String    @db.ObjectId
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model Category {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
-  name         String
-  description  String?
-  productCount Int           @default(0)
-  subCategory  SubCategory[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  slug            String        @unique
+  isFeatured      Boolean
+  isActive        Boolean       @default(true)
+  sortOrder       Int?
+  imageUrl        String?
+  description     String?
+  metaTitle       String?
+  metaDescription String?
+  productCount    Int           @default(0)
+  Product         Product[]
+  subCategory     SubCategory[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
 model Order {

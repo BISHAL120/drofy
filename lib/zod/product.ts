@@ -1,0 +1,26 @@
+import { z } from "zod";
+
+export const productSchema = z.object({
+    name: z.string().min(2, { message: "Name is required" }),
+    fullDescription: z.string().min(2, { message: "Full description is required" }),
+    categoryId: z.string().min(2, { message: "Category is required" }),
+    subCategoryId: z.string().min(2, { message: "Sub Category is required" }),
+    status: z.enum(["ACTIVE", "INACTIVE", "DRAFT"]),
+    cost: z.string({ required_error: "Making cost is required" }).min(1, { message: "Cost is required" }),
+    sellingPrice: z.string({ required_error: "Selling price is required" }).min(1, { message: "Selling price is required" }),
+    stock: z.string({ required_error: "Stock quantity is required" }).min(1, { message: "Minimum stock is 1" }),
+    deliveryCharge: z.string().min(1, { message: "Delivery charge is required" }),
+    videoUrl: z.string().optional(),
+    brand: z.string().optional(),
+    sku: z.string().optional(),
+    metaTitle: z.string().optional(),
+    weight: z.string().min(1, { message: "Weight is required" }),
+    isFeatured: z.boolean().optional(),
+    metaDescription: z.string().optional(),
+    discountPrice: z.string().optional(),
+    trackInventory: z.boolean().optional(),
+    inStock: z.boolean().optional(),
+    stockAlert: z.string().optional(),
+    shortDescription: z.string().optional(),
+    dimensions: z.string().optional(),
+})

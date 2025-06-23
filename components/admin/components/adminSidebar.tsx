@@ -60,8 +60,12 @@ const productMenuItems = [
         url: "/admin/products",
       },
       {
+        title: "Deleted Products",
+        url: "/admin/products/deleted",
+      },
+      {
         title: "Add New Product",
-        url: "/admin/products/new",
+        url: "/admin/products/edit",
       },
     ],
   },
@@ -76,7 +80,7 @@ const productMenuItems = [
       },
       {
         title: "Add Category",
-        url: "/admin/categories/new",
+        url: "/admin/categories/action",
       },
       {
         title: "Add Subcategory",
@@ -95,6 +99,10 @@ const userMenuItems = [
       {
         title: "All Resellers",
         url: "/admin/resellers",
+      },
+      {
+        title: "New Resellers",
+        url: "/admin/resellers/new",
       },
       {
         title: "Invite Reseller",

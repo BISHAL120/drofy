@@ -1,95 +1,72 @@
-"use client"
+"use client";
 
-import { DashboardHeader } from "@/components/admin/dashboard-header"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search, Plus, Edit, Trash2, FolderTree } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { BadgeCheckIcon, Edit, FolderTree, Plus, Search, Trash2, X } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
-const categories = [
-    {
-        id: "CAT-001",
-        name: "Electronics",
-        description: "Electronic devices and gadgets",
-        productCount: 456,
-        image: "/placeholder.svg?height=50&width=50",
-        subCategories: [
-            { name: "Smartphones", count: 123 },
-            { name: "Laptops", count: 89 },
-            { name: "Audio", count: 67 },
-            { name: "Tablets", count: 45 },
-        ],
-    },
-    {
-        id: "CAT-002",
-        name: "Clothing",
-        description: "Fashion and apparel",
-        productCount: 234,
-        image: "/placeholder.svg?height=50&width=50",
-        subCategories: [
-            { name: "Men's Clothing", count: 98 },
-            { name: "Women's Clothing", count: 87 },
-            { name: "Accessories", count: 49 },
-        ],
-    },
-    {
-        id: "CAT-003",
-        name: "Home & Garden",
-        description: "Home improvement and garden supplies",
-        productCount: 189,
-        image: "/placeholder.svg?height=50&width=50",
-        subCategories: [
-            { name: "Furniture", count: 67 },
-            { name: "Kitchen", count: 54 },
-            { name: "Garden Tools", count: 68 },
-        ],
-    },
-    {
-        id: "CAT-004",
-        name: "Sports & Fitness",
-        description: "Sports equipment and fitness gear",
-        productCount: 156,
-        image: "/placeholder.svg?height=50&width=50",
-        subCategories: [
-            { name: "Gym Equipment", count: 45 },
-            { name: "Outdoor Sports", count: 67 },
-            { name: "Fitness Accessories", count: 44 },
-        ],
-    },
-]
+interface BaseCategory {
+    allCategories: ({
+        id: string;
+        description: string | null;
+        name: string;
+        imageUrl: string | null;
+        productCount: number;
+        isActive: boolean;
+        isFeatured: boolean;
 
-export default function CategoriesPage() {
+    } & {
+        subCategory: {
+            id: string;
+            name: string;
+            productCount: number;
+        }[];
+    })[];
+}
+
+export default function CategoriesPage({ allCategories }: BaseCategory) {
+
     return (
         <div className="flex flex-col">
-            <DashboardHeader />
             <div className="flex-1 space-y-6 p-6">
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="text-3xl font-bold tracking-tight">Categories</h2>
-                        <p className="text-muted-foreground">Manage product categories and subcategories</p>
+                        <p className="text-muted-foreground">
+                            Manage product categories and subcategories
+                        </p>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <Link href="/admin/categories/new-subcategory">
-                            <Button variant="outline">
+                        <Button asChild variant="outline">
+                            <Link href="/admin/categories/new-subcategory">
                                 <Plus className="mr-2 h-4 w-4" />
                                 Add Subcategory
-                            </Button>
-                        </Link>
-                        <Link href="/admin/categories/new">
-                            <Button>
+                            </Link>
+                        </Button>
+                        <Button asChild>
+                            <Link href="/admin/categories/action">
                                 <Plus className="mr-2 h-4 w-4" />
                                 Add Category
-                            </Button>
-                        </Link>
+                            </Link>
+                        </Button>
                     </div>
                 </div>
 
                 <Card>
                     <CardHeader>
                         <CardTitle>Category Management</CardTitle>
-                        <CardDescription>Organize your products with categories and subcategories</CardDescription>
+                        <CardDescription>
+                            Organize your products with categories and subcategories
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="flex items-center space-x-4 mb-6">
@@ -100,27 +77,68 @@ export default function CategoriesPage() {
                         </div>
 
                         <div className="space-y-6">
-                            {categories.map((category) => (
+                            {allCategories.map((category) => (
                                 <Card key={category.id}>
-                                    <CardContent className="p-6">
+                                    <CardContent className="px-6">
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex items-center space-x-4">
                                                 <Image
-                                                    src={category.image || "/placeholder.svg"}
+                                                    src={category.imageUrl || "/placeholder.svg"}
                                                     alt={category.name}
-                                                    width={60}
-                                                    height={60}
+                                                    width={120}
+                                                    height={120}
                                                     className="rounded-lg"
                                                 />
                                                 <div>
-                                                    <h3 className="text-lg font-semibold">{category.name}</h3>
-                                                    <p className="text-sm text-muted-foreground">{category.description}</p>
-                                                    <p className="text-sm text-muted-foreground mt-1">{category.productCount} products</p>
+                                                    <div className="flex items-center gap-2">
+                                                        <h3 className="text-lg font-semibold">
+                                                            {category.name}
+                                                        </h3>
+                                                        {category.isActive ?
+                                                            <Badge
+                                                                variant="secondary"
+                                                                className="bg-blue-500 text-white dark:bg-blue-600"
+                                                            >
+                                                                Active
+                                                                <BadgeCheckIcon />
+                                                            </Badge>
+                                                            :
+                                                            <Badge variant="destructive">Inactive <X className="w-4 h-4 font-semibold" /></Badge>
+                                                        }
+                                                        {category.isFeatured ?
+                                                            <Badge
+                                                                variant="secondary"
+                                                                className="bg-yellow-500 text-white dark:bg-yellow-600 flex items-center gap-1"
+                                                            >
+                                                                Featured
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2">
+                                                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                                                </svg>
+                                                            </Badge>
+                                                            : null
+                                                            // <Badge
+                                                            //     variant="outline"
+                                                            //     className="text-gray-500 border-gray-300"
+                                                            // >
+                                                            //     Not Featured
+                                                            // </Badge>
+                                                        }
+                                                    </div>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        {category.description}
+                                                    </p>
+                                                    <p className="text-sm text-muted-foreground mt-1">
+                                                        {category.productCount} products
+                                                    </p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center space-x-2">
-                                                <Button variant="ghost" size="sm">
-                                                    <Edit className="h-4 w-4" />
+                                                <Button asChild variant="ghost" size="sm">
+                                                    <Link
+                                                        href={`/admin/categories/action?type=edit&id=${category.id}`}
+                                                    >
+                                                        <Edit className="h-4 w-4" />
+                                                    </Link>
                                                 </Button>
                                                 <Button variant="ghost" size="sm">
                                                     <Trash2 className="h-4 w-4" />
@@ -129,21 +147,64 @@ export default function CategoriesPage() {
                                         </div>
 
                                         <div className="border-t pt-4">
-                                            <div className="flex items-center justify-between mb-3">
-                                                <h4 className="text-sm font-medium flex items-center">
-                                                    <FolderTree className="mr-2 h-4 w-4" />
-                                                    Subcategories
-                                                </h4>
-                                                <Button variant="outline" size="sm">
-                                                    <Plus className="mr-2 h-3 w-3" />
-                                                    Add Subcategory
-                                                </Button>
-                                            </div>
+                                            {category.subCategory.length !== 0 ? (
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <h4 className="text-sm font-medium flex items-center">
+                                                        <FolderTree className="mr-2 h-4 w-4" />
+                                                        Subcategories
+                                                    </h4>
+                                                    <Button asChild variant="outline" size="sm">
+                                                        <Link href={`/admin/categories/new-subcategory?catId=${category.id}`}>
+                                                            <Plus className="mr-2 h-4 w-4" />
+                                                            Add Subcategory
+                                                        </Link>
+                                                    </Button>
+                                                </div>
+                                            ) : (
+                                                <div className="flex flex-col items-center justify-center p-6 text-center bg-slate-200 rounded-xl border border-dashed border-slate-200">
+                                                    <div className="rounded-full bg-slate-100 p-3 mb-3">
+                                                        <FolderTree className="h-6 w-6 text-slate-400" />
+                                                    </div>
+                                                    <h3 className="text-lg font-medium text-slate-900 mb-2">
+                                                        No Subcategories Yet
+                                                    </h3>
+                                                    <p className="text-sm text-slate-500 mb-4">
+                                                        Create subcategories to better organize your products
+                                                    </p>
+                                                    <Button asChild variant="outline">
+                                                        <Link href={`/admin/categories/new-subcategory?catId=${category.id}`}>
+                                                            <Plus className="mr-2 h-4 w-4" />
+                                                            Add First Subcategory
+                                                        </Link>
+                                                    </Button>
+                                                </div>
+                                            )}
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                                                {category.subCategories.map((subCategory, index) => (
-                                                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                                                        <span className="text-sm font-medium">{subCategory.name}</span>
-                                                        <span className="text-sm text-muted-foreground">{subCategory.count} products</span>
+                                                {category.subCategory.map((subCategory, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="flex items-center justify-between p-3 border rounded-lg"
+                                                    >
+                                                        <div className="flex items-center space-x-2">
+                                                            <span className="text-sm font-medium">
+                                                                {subCategory.name}
+                                                            </span>
+                                                            <span className="text-sm text-muted-foreground">
+                                                                ({subCategory.productCount} products)
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex items-center space-x-2">
+                                                            <Button asChild variant="ghost" size="sm">
+                                                                <Link
+                                                                    href={`/admin/categories/new-subcategory?type=edit&catId=${subCategory.id}&subCatId=${subCategory.id}`}
+                                                                >
+                                                                    <Edit className="h-4 w-4" />
+                                                                </Link>
+                                                            </Button>
+                                                            <Button variant="ghost" size="sm">
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>
@@ -156,5 +217,5 @@ export default function CategoriesPage() {
                 </Card>
             </div>
         </div>
-    )
+    );
 }

@@ -4,10 +4,6 @@ import React from 'react'
 
 const HomePage = async () => {
 
-    /*     const session = await auth()
-        const user = session?.user
-        console.log(user) */
-
     return (
         <div className='h-full'>
             <DashboardMenu />

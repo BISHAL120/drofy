@@ -31,7 +31,6 @@ export async function POST(request: Request) {
                 phone: number,
             }
         });
-        console.log(existingUser)
 
         if (existingUser) {
             return NextResponse.json(

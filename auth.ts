@@ -53,8 +53,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                   });
                 } */
 
-                console.log(user)
-
                 return user;
             },
         }),

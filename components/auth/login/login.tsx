@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { loginSchema } from "@/lib/zod/schema";
+import { loginSchema } from "@/lib/zod/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRightCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import Image from "next/image";

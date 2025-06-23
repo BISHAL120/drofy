@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
+import Link from "next/link"
 
 
 export default function ProductDetails() {
@@ -22,7 +23,7 @@ export default function ProductDetails() {
     const handleDownload = async () => {
         try {
             const imageUrl =
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Telegram_2019_Logo.svg/1200px-Telegram_2019_Logo.svg.png"
+                "https://firebasestorage.googleapis.com/v0/b/restock-bd.firebasestorage.app/o/products%2F6fe52e8f-c6a9-414f-9489-9f29a4ddd142.webp?alt=media&token=80962dff-cc46-4783-8d3d-63c067c79988"
             const response = await fetch(imageUrl)
             const blob = await response.blob()
             const url = window.URL.createObjectURL(blob)
@@ -68,8 +69,10 @@ export default function ProductDetails() {
                         />
                     </div>
                     <div className="flex gap-2 mt-2">
-                        <Button variant="outline" className="flex items-center gap-2" onClick={handleDownload}>
-                            <Download className="h-4 w-4" /> ছবি ডাউনলোড
+                        <Button asChild variant="outline" className="flex items-center gap-2" onClick={handleDownload}>
+                            <Link href="https://firebasestorage.googleapis.com/v0/b/restock-bd.firebasestorage.app/o/products%2Ff546192c-50a2-40b4-abcb-d402133a878b.webp?alt=media&token=b736051d-a55f-4465-b199-e767fb162547">
+                                <Download className="h-4 w-4" /> ছবি ডাউনলোড
+                            </Link>
                         </Button>
                         <Button variant="outline" className="flex items-center gap-2">
                             <Check className="h-4 w-4" /> শেয়ারিং

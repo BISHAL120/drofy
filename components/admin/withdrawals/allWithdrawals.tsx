@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { DashboardHeader } from "@/components/admin/dashboard-header"
+import { DashboardHeader } from "@/components/admin/components/dashboard-header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

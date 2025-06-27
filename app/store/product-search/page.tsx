@@ -1,10 +1,10 @@
-import FavoriteProducts from "@/components/store/favourite/favouriteProducts";
+import ProductSearch from "@/components/store/product-search/product-search";
 import React from "react";
 
 const Page = () => {
   return (
     <div>
-      <FavoriteProducts />
+      <ProductSearch />
     </div>
   );
 };

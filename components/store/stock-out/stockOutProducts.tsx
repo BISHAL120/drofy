@@ -1,13 +1,15 @@
-import ProductGridWithTittle from '@/components/shared/productGridWithTittle'
-import { DemoData } from '@/constants/demoData'
-import React from 'react'
+import ComingSoon from "@/components/ui/comingSoon";
 
 const StockOutProducts = () => {
-    return (
-        <div>
-            <ProductGridWithTittle products={DemoData} title='স্টক আউট প্রোডাক্ট' />
-        </div>
-    )
-}
+  return (
+    <div>
+      <ComingSoon />
+    </div>
+  );
+};
 
-export default StockOutProducts
+export default StockOutProducts;
+
+{
+  /* <ProductGridWithTittle products={DemoData} title="স্টক আউট প্রোডাক্ট" /> */
+}

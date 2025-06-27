@@ -34,6 +34,7 @@ import {
   RotateCcw,
   Search,
   Trash2,
+  TriangleAlert,
   X,
 } from "lucide-react";
 import Image from "next/image";
@@ -129,9 +130,16 @@ export default function AllProductsPage({
         console.log(err);
         router.refresh();
         toast.error(err.response.data.message, {
-          description: "Something went wrong.",
-          descriptionClassName: "text-sm",
           duration: 5000,
+          icon: <TriangleAlert className="h-4 w-4" />,
+          style: {
+            borderRadius: "6px",
+            background: "red",
+            color: "white",
+            border: "1px solid #ff0000",
+            fontSize: "16px",
+            fontWeight: "bold",
+          },
         });
       });
   };
@@ -140,11 +148,42 @@ export default function AllProductsPage({
     <div className="flex flex-col">
       <div className="flex-1 space-y-6 p-6">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">Products</h2>
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <h2 className="text-3xl font-bold tracking-tight">Products</h2>
+              <div className="px-2.5 py-0.5 bg-primary/10 text-primary rounded-md text-sm font-medium">
+                {totalProductCount} items
+              </div>
+            </div>
             <p className="text-muted-foreground">
               Manage your product catalog and inventory
             </p>
+            <div className="flex flex-wrap gap-4 mt-2">
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-card rounded-lg border">
+                <span className="text-sm text-muted-foreground">Active:</span>
+                <span className="font-medium">
+                  {allProducts.filter((p) => p.status === "ACTIVE").length}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-card rounded-lg border">
+                <span className="text-sm text-muted-foreground">Inactive:</span>
+                <span className="font-medium">
+                  {allProducts.filter((p) => p.status === "INACTIVE").length}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-card rounded-lg border">
+                <span className="text-sm text-muted-foreground">Draft:</span>
+                <span className="font-medium">
+                  {allProducts.filter((p) => p.status === "DRAFT").length}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-card rounded-lg border">
+                <span className="text-sm text-muted-foreground">Deleted:</span>
+                <span className="font-medium">
+                  {allProducts.filter((p) => p.isDeleted === true).length}
+                </span>
+              </div>
+            </div>
           </div>
           <div className="flex items-center space-x-2">
             <Link href="/admin/products/edit">

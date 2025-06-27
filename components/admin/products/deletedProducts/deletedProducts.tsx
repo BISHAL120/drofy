@@ -28,7 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import axios from "axios";
-import { RotateCcw, Trash2 } from "lucide-react";
+import { RotateCcw, Trash2, TriangleAlert } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -108,9 +108,16 @@ const DeletedProducts = ({
         toast.dismiss();
         router.refresh();
         toast.error(err.response.data.message, {
-          description: "Something went wrong.",
-          descriptionClassName: "text-sm",
           duration: 5000,
+          icon: <TriangleAlert className="h-4 w-4" />,
+          style: {
+            borderRadius: "6px",
+            background: "red",
+            color: "white",
+            border: "1px solid #ff0000",
+            fontSize: "16px",
+            fontWeight: "bold",
+          },
         });
       });
   };
@@ -131,9 +138,16 @@ const DeletedProducts = ({
         console.log(err);
         router.refresh();
         toast.error(err.response.data.message, {
-          description: "Something went wrong.",
-          descriptionClassName: "text-sm",
           duration: 5000,
+          icon: <TriangleAlert className="h-4 w-4" />,
+          style: {
+            borderRadius: "6px",
+            background: "red",
+            color: "white",
+            border: "1px solid #ff0000",
+            fontSize: "16px",
+            fontWeight: "bold",
+          },
         });
       });
   };

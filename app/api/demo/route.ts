@@ -2,23 +2,17 @@ import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
     try {
-        // Get the request body
         const body = await request.json()
-        console.log(body)
-
-        // Process the request
-        // Add your business logic here
 
         // Return success response
         return NextResponse.json(
-            { message: 'Success' },
+            { message: 'Demo POST request successful', data: body },
             { status: 200 }
         )
-
     } catch (error) {
-        console.log(error)
+        // Return error response
         return NextResponse.json(
-            { message: 'Internal Server Error' },
+            { message: 'Error processing demo POST request', error: error },
             { status: 500 }
         )
     }

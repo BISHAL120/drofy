@@ -1,20 +1,22 @@
-// import { auth } from "@/auth"
-import CategoryGrid from "@/components/pages/home/categoryGrid"
-// import FeaturedSection from "@/components/pages/home/featuredSection"
-import HeroSection from "@/components/pages/home/heroSection"
+import CategoryGrid from "@/components/pages/home/categoryGrid";
+import FeaturedSection from "@/components/pages/home/featuredSection";
+import HeroSection from "@/components/pages/home/heroSection";
+import {
+  getFeaturedCategory,
+  getFeaturedContent,
+} from "@/lib/data layer/store/store-DL";
 
 const Page = async () => {
+  const featuredContent = await getFeaturedContent();
+  const featuredCategory = await getFeaturedCategory();
 
-    // const session = await auth()
-    // const user = session?.user;
+  return (
+    <div>
+      <HeroSection />
+      <FeaturedSection featuredContent={featuredContent} />
+      <CategoryGrid featuredCategory={featuredCategory} />
+    </div>
+  );
+};
 
-    return (
-        <div>
-            <HeroSection />
-            {/* <FeaturedSection user={user ? true : false} /> */}
-            <CategoryGrid />
-        </div>
-    )
-}
-
-export default Page
+export default Page;

@@ -1,6 +1,6 @@
 import db from "@/lib/db"
+import { deleteFirebaseImage } from "@/lib/firebase/deleteImage"
 import { uploadImageFirebase } from "@/lib/firebase/upload"
-import { deleteObject, getStorage, ref } from "firebase/storage"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function PATCH(
@@ -20,14 +20,7 @@ export async function PATCH(
             try {
 
                 if (body.imageUrl) {
-                    const oldImageUrl = new URL(body.imageUrl);
-                    const imagePath = decodeURIComponent(
-                        oldImageUrl.pathname.split("/o/")[1].split("?")[0]
-                    );
-
-                    const storage = getStorage();
-                    const imageRef = ref(storage, imagePath); // Use direct path
-                    await deleteObject(imageRef);
+                    await deleteFirebaseImage(body.imageUrl)
                 }
                 // Upload new image
                 const { url } = await uploadImageFirebase(image, "Products");
@@ -54,6 +47,7 @@ export async function PATCH(
                 sku: body.sku,
                 isFeatured: body.isFeatured,
                 status: body.status,
+                variant: body.variant,
                 cost: Number(body.cost),
                 sellingPrice: Number(body.sellingPrice),
                 discountPrice: Number(body.discountPrice),
@@ -108,6 +102,7 @@ export async function DELETE(
             where: { id },
             data: {
                 isDeleted: product.isDeleted ? false : true, // Toggle the isDeleted status
+                status: product.isDeleted ? "ACTIVE" : "INACTIVE", // Set status to ACTIVE or INACTIVE based on isDeleted
             }
         })
 

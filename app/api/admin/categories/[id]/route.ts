@@ -1,6 +1,6 @@
 import db from "@/lib/db";
+import { deleteFirebaseImage } from "@/lib/firebase/deleteImage";
 import { uploadImageFirebase } from "@/lib/firebase/upload";
-import { deleteObject, getStorage, ref } from "firebase/storage";
 import { NextRequest, NextResponse } from "next/server";
 
 /* export async function GET(
@@ -59,14 +59,7 @@ export async function PATCH(
             try {
                 // Delete old image if it exists
                 if (body.imageUrl) {
-                    const oldImageUrl = new URL(body.imageUrl);
-                    const imagePath = decodeURIComponent(
-                        oldImageUrl.pathname.split("/o/")[1].split("?")[0]
-                    );
-
-                    const storage = getStorage();
-                    const imageRef = ref(storage, imagePath); // Use direct path
-                    await deleteObject(imageRef);
+                    await deleteFirebaseImage(body.imageUrl)
                 }
 
                 // Upload new image

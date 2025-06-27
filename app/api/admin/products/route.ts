@@ -1,7 +1,8 @@
 import db from "@/lib/db";
+import { deleteFirebaseImage } from "@/lib/firebase/deleteImage";
 import { uploadImageFirebase } from "@/lib/firebase/upload";
-import { deleteObject, getStorage, ref } from "firebase/storage";
 import { NextResponse } from "next/server";
+import { v4 as uuIdV4 } from "uuid";
 
 
 
@@ -15,6 +16,7 @@ export async function POST(request: Request) {
             categoryId,
             subCategoryId,
             status,
+            variant,
             cost,
             sellingPrice,
             discountPrice,
@@ -36,7 +38,8 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "file is required" }, { status: 400 });
         }
 
-        const { url } = await uploadImageFirebase(file, "Products");
+        const customID = uuIdV4()
+        const { url } = await uploadImageFirebase(file, "Products", customID + "_");
 
         const productCount = await db.product.count();
         const productCode = `PROD-${productCount + 1}`;
@@ -56,7 +59,9 @@ export async function POST(request: Request) {
                 stock: Number(stock),
                 deliveryCharge: Number(deliveryCharge),
                 imageUrl: url,
+                imageID: customID,
                 videoUrl,
+                variant,
                 brand,
                 sku: productCode,
                 weight: Number(weight),
@@ -121,14 +126,7 @@ export async function DELETE(request: Request) {
 
         // Delete image from Firebase if exists
         if (product.imageUrl) {
-            const oldImageUrl = new URL(product.imageUrl);
-            const imagePath = decodeURIComponent(
-                oldImageUrl.pathname.split("/o/")[1].split("?")[0]
-            );
-
-            const storage = getStorage();
-            const imageRef = ref(storage, imagePath); // Use direct path
-            await deleteObject(imageRef);
+            await deleteFirebaseImage(product.imageUrl)
         }
 
         // Delete the product from database

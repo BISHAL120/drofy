@@ -36,6 +36,7 @@ model User {
   password      String
   balance       Float         @default(0)
   email         String?
+  district      String?
   address       String?
   profileImage  String?
   role          Role[]        @default([USER])
@@ -64,6 +65,20 @@ enum ProductStatus {
   DRAFT
 }
 
+type VideoType {
+  videoUrl String
+}
+
+enum VariantType {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
+  XXXL
+}
+
 model Product {
   id               String        @id @default(auto()) @map("_id") @db.ObjectId
   name             String
@@ -71,6 +86,7 @@ model Product {
   fullDescription  String
   brand            String?
   sku              String
+  note             String?
   isFeatured       Boolean
   status           ProductStatus @default(ACTIVE)
   cost             Float
@@ -80,15 +96,18 @@ model Product {
   trackInventory   Boolean       @default(false)
   stockAlert       Int?          @default(5)
   imageUrl         String
-  videoUrl         String?
+  imageID          String?
+  videoUrl         VideoType[]
   saleCount        Int?          @default(0)
   deliveryCharge   Int
   weight           Float
+  variant          VariantType[] @default([M, L, XL])
   dimensions       String?
   metaTitle        String?
   metaDescription  String?
   inStock          Boolean       @default(true)
   isDeleted        Boolean       @default(false)
+  isVerified       Boolean       @default(false)
   category         Category      @relation(fields: [categoryId], references: [id])
   categoryId       String        @db.ObjectId
   SubCategory      SubCategory   @relation(fields: [subCategoryId], references: [id])

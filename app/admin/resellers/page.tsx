@@ -23,8 +23,6 @@ const Page = async ({
 
   const totalResellerCount = await db.user.count();
 
-  console.log(totalResellerCount);
-
   return (
     <div>
       <AllResellersPage

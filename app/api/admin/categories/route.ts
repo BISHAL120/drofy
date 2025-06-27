@@ -1,5 +1,6 @@
 
 import db from "@/lib/db";
+import { deleteFirebaseImage } from "@/lib/firebase/deleteImage";
 import { uploadImageFirebase } from "@/lib/firebase/upload";
 import { NextResponse } from "next/server";
 // import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "@/firebase/storage";
@@ -86,6 +87,64 @@ export async function POST(request: Request) {
         console.log("Admin_Category_POST", error)
         return NextResponse.json(
             { message: "Failed to create category" },
+            { status: 500 }
+        );
+    }
+}
+
+
+export async function DELETE(request: Request) {
+    try {
+        const body = await request.json();
+
+        const { id } = body;
+
+        if (!id) {
+            return NextResponse.json({ message: "Category ID is required" }, { status: 400 });
+        }
+
+        // Check if any sub category exist on that category
+        const isSubCategoryExist = await db.subCategory.findFirst({
+            where: {
+                categoryId: id
+            }
+        });
+
+        // If subcategory exists, return the function
+        if (isSubCategoryExist) {
+            return NextResponse.json({ message: "Delete All Sub Category First" }, { status: 400 });
+        }
+
+
+        // Get the category details first
+        const category = await db.category.findUnique({
+            where: { id },
+            select: {
+                imageUrl: true
+            },
+        });
+
+        if (!category) {
+            return NextResponse.json({ message: "Category not found" }, { status: 404 });
+        }
+
+        if (category?.imageUrl) {
+            await deleteFirebaseImage(category.imageUrl)
+        }
+
+        // Delete the category from database
+        await db.category.delete({
+            where: { id }
+        });
+
+        return NextResponse.json(
+            { message: "Category deleted successfully" },
+            { status: 200 }
+        );
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json(
+            { message: "Error deleting category", error },
             { status: 500 }
         );
     }

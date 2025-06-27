@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   BarChart3,
@@ -14,9 +14,9 @@ import {
   FolderTree,
   Star,
   Headphones,
-} from "lucide-react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import {
   Sidebar,
@@ -32,9 +32,13 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarFooter,
-} from "@/components/ui/sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+} from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const mainMenuItems = [
   {
@@ -47,7 +51,7 @@ const mainMenuItems = [
     url: "/admin/orders",
     icon: ShoppingCart,
   },
-]
+];
 
 const productMenuItems = [
   {
@@ -88,7 +92,7 @@ const productMenuItems = [
       },
     ],
   },
-]
+];
 
 const userMenuItems = [
   {
@@ -115,7 +119,7 @@ const userMenuItems = [
     url: "/admin/customers",
     icon: Users,
   },
-]
+];
 
 const supportMenuItems = [
   {
@@ -138,7 +142,7 @@ const supportMenuItems = [
       },
     ],
   },
-]
+];
 
 const financeMenuItems = [
   {
@@ -151,7 +155,7 @@ const financeMenuItems = [
     url: "/admin/commissions",
     icon: Percent,
   },
-]
+];
 
 const analyticsMenuItems = [
   {
@@ -164,7 +168,7 @@ const analyticsMenuItems = [
     url: "/admin/reports",
     icon: FileText,
   },
-]
+];
 
 const settingsMenuItems = [
   {
@@ -172,26 +176,26 @@ const settingsMenuItems = [
     url: "/admin/settings",
     icon: Settings,
   },
-]
+];
 
 export function AdminSidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   const isActive = (url: string) => {
     if (url === "/") {
-      return pathname === "/"
+      return pathname === "/";
     }
-    return pathname.startsWith(url)
-  }
+    return pathname.startsWith(url);
+  };
 
   type TypeActiveSubitem = {
     title: string;
     url: string;
-  }
+  };
 
   const hasActiveSubItem = (subItems: TypeActiveSubitem[] | []) => {
-    return subItems?.some((item) => pathname.startsWith(item.url))
-  }
+    return subItems?.some((item) => pathname.startsWith(item.url));
+  };
 
   return (
     <Sidebar className="border-r">
@@ -202,7 +206,9 @@ export function AdminSidebar() {
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-semibold">Restock Admin</span>
-            <span className="text-xs text-muted-foreground">Product Reselling Platform</span>
+            <span className="text-xs text-muted-foreground">
+              Product Reselling Platform
+            </span>
           </div>
         </div>
       </SidebarHeader>
@@ -212,18 +218,28 @@ export function AdminSidebar() {
           <SidebarGroupLabel>Main</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {pathname !== "/admin" && <SidebarMenuItem>
-                <SidebarMenuButton className="w-full p-2">
-                  <Link href={"/admin"} className="w-full flex gap-2 items-center">
-                    <Home className="h-4 w-4" />
-                    <span>Dashboard</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>}
+              {pathname !== "/admin" && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton className="w-full p-2">
+                    <Link
+                      href={"/admin"}
+                      className="w-full flex gap-2 items-center"
+                    >
+                      <Home className="h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
               {mainMenuItems.map((item, index) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                    <Link href={item.url} className={`${index === 0 && pathname !== "/admin" ? "hidden" : ""}`}>
+                    <Link
+                      href={item.url}
+                      className={`${
+                        index === 0 && pathname !== "/admin" ? "hidden" : ""
+                      }`}
+                    >
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
                     </Link>
@@ -240,7 +256,10 @@ export function AdminSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {productMenuItems.map((item) => (
-                <Collapsible key={item.title} defaultOpen={hasActiveSubItem(item.subItems || [])}>
+                <Collapsible
+                  key={item.title}
+                  defaultOpen={hasActiveSubItem(item.subItems || [])}
+                >
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton isActive={isActive(item.url)}>
@@ -253,7 +272,10 @@ export function AdminSidebar() {
                         <SidebarMenuSub>
                           {item.subItems.map((subItem) => (
                             <SidebarMenuSubItem key={subItem.title}>
-                              <SidebarMenuSubButton asChild isActive={pathname === subItem.url}>
+                              <SidebarMenuSubButton
+                                asChild
+                                isActive={pathname === subItem.url}
+                              >
                                 <Link href={subItem.url}>
                                   <span>{subItem.title}</span>
                                 </Link>
@@ -276,7 +298,10 @@ export function AdminSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {userMenuItems.map((item) => (
-                <Collapsible key={item.title} defaultOpen={hasActiveSubItem(item.subItems || [])}>
+                <Collapsible
+                  key={item.title}
+                  defaultOpen={hasActiveSubItem(item.subItems || [])}
+                >
                   <SidebarMenuItem>
                     {item.subItems ? (
                       <>
@@ -290,7 +315,10 @@ export function AdminSidebar() {
                           <SidebarMenuSub>
                             {item.subItems.map((subItem) => (
                               <SidebarMenuSubItem key={subItem.title}>
-                                <SidebarMenuSubButton asChild isActive={pathname === subItem.url}>
+                                <SidebarMenuSubButton
+                                  asChild
+                                  isActive={pathname === subItem.url}
+                                >
                                   <Link href={subItem.url}>
                                     <span>{subItem.title}</span>
                                   </Link>
@@ -321,7 +349,10 @@ export function AdminSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {supportMenuItems.map((item) => (
-                <Collapsible key={item.title} defaultOpen={hasActiveSubItem(item.subItems || [])}>
+                <Collapsible
+                  key={item.title}
+                  defaultOpen={hasActiveSubItem(item.subItems || [])}
+                >
                   <SidebarMenuItem>
                     {item.subItems ? (
                       <>
@@ -335,7 +366,10 @@ export function AdminSidebar() {
                           <SidebarMenuSub>
                             {item.subItems.map((subItem) => (
                               <SidebarMenuSubItem key={subItem.title}>
-                                <SidebarMenuSubButton asChild isActive={pathname === subItem.url}>
+                                <SidebarMenuSubButton
+                                  asChild
+                                  isActive={pathname === subItem.url}
+                                >
                                   <Link href={subItem.url}>
                                     <span>{subItem.title}</span>
                                   </Link>
@@ -425,10 +459,12 @@ export function AdminSidebar() {
           </Avatar>
           <div className="flex flex-col">
             <span className="text-sm font-medium">Admin User</span>
-            <span className="text-xs text-muted-foreground">admin@example.com</span>
+            <span className="text-xs text-muted-foreground">
+              admin@example.com
+            </span>
           </div>
         </div>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

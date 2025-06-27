@@ -1,8 +1,12 @@
 "use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+//TODO: use this component for all products
+
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const Page = () => {
   const router = useRouter();
@@ -21,8 +25,6 @@ const Page = () => {
       router.push("/store/categories");
     }
   }, [seconds, router]);
-
-  // TODO: Add all products here newest one first
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-indigo-50">

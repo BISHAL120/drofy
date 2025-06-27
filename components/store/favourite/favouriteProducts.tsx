@@ -1,13 +1,18 @@
-import ProductGridWithTittle from '@/components/shared/productGridWithTittle';
-import { DemoData } from '@/constants/demoData';
+"use client";
 
+import ComingSoon from "@/components/ui/comingSoon";
+
+// TODO: Make the favorite section functional
 
 const FavoriteProducts = () => {
-    return (
-        <div>
-            <ProductGridWithTittle products={DemoData} title='আমার ফেভারিট প্রোডাক্ট' />
-        </div>
-    )
-}
+  return <ComingSoon />;
+};
 
-export default FavoriteProducts
+export default FavoriteProducts;
+
+/*  <div>
+   <ProductGridWithTittle
+     products={DemoData}
+     title="আমার ফেভারিট প্রোডাক্ট"
+   />
+ </div> */

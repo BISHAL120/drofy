@@ -93,9 +93,10 @@ export default function AddProductPage({
           weight: initialData.weight.toString(),
           shortDescription: initialData.shortDescription || "",
           brand: initialData.brand || "",
+          variant: initialData.variant || [],
           discountPrice: initialData.discountPrice?.toString() || "",
           stockAlert: initialData.stockAlert?.toString() || "",
-          videoUrl: initialData.videoUrl || "",
+          note: initialData.note || "",
           dimensions: initialData.dimensions || "",
           metaTitle: initialData.metaTitle || "",
           metaDescription: initialData.metaDescription || "",
@@ -107,7 +108,9 @@ export default function AddProductPage({
           subCategoryId: "",
           status: "ACTIVE",
           isFeatured: false,
+          isVerified: false,
           stockAlert: "",
+          // variant: [],
           weight: "",
           dimensions: "",
           cost: "",
@@ -205,9 +208,16 @@ export default function AddProductPage({
           toast.dismiss();
           setIsLoading(false);
           toast.error(error.response.data.message, {
-            description: "Something went wrong.",
-            descriptionClassName: "text-sm",
             duration: 5000,
+            icon: <TriangleAlert className="h-4 w-4" />,
+            style: {
+              borderRadius: "6px",
+              background: "red",
+              color: "white",
+              border: "1px solid #ff0000",
+              fontSize: "16px",
+              fontWeight: "bold",
+            },
           });
         });
     }
@@ -345,10 +355,12 @@ export default function AddProductPage({
                     </Link> */}
           <div>
             <h2 className="text-3xl font-bold tracking-tight">
-              Add New Product
+              {initialData ? "Edit Product" : "Add New Product"}
             </h2>
             <p className="text-muted-foreground">
-              Create a new product for your catalog
+              {initialData
+                ? "Update existing product details"
+                : "Create a new product for your catalog"}
             </p>
           </div>
           <div>
@@ -428,7 +440,7 @@ export default function AddProductPage({
                       name="shortDescription"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Short Description *</FormLabel>
+                          <FormLabel>Short Description</FormLabel>
                           <FormControl>
                             <Textarea
                               {...field}
@@ -454,6 +466,24 @@ export default function AddProductPage({
                               {...field}
                               disabled={isLoading}
                               placeholder="Detailed product description"
+                              rows={6}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="note"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Note</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              disabled={isLoading}
+                              placeholder="Additional note about the product"
                               rows={6}
                             />
                           </FormControl>
@@ -509,7 +539,7 @@ export default function AddProductPage({
                 {/* Product Images */}
                 <Card className="relative">
                   <CardHeader>
-                    <CardTitle>Product Media</CardTitle>
+                    <CardTitle>Product Media *</CardTitle>
                     <CardDescription>
                       Upload product images and video{" "}
                     </CardDescription>
@@ -621,51 +651,144 @@ export default function AddProductPage({
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-medium mb-2">
-                        Product Video
-                      </h3>
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-sm font-medium">Product Videos</h3>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          disabled={isLoading}
+                          onClick={() => {
+                            const currentVideos =
+                              form.getValues("videoUrl") || [];
+                            form.setValue("videoUrl", [
+                              ...currentVideos,
+                              { videoUrl: "" },
+                            ]);
+                          }}
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Video
+                        </Button>
+                      </div>
+
                       <FormField
                         control={form.control}
                         name="videoUrl"
                         render={({ field }) => (
                           <FormItem>
-                            <div className="flex gap-2">
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  disabled={isLoading}
-                                  placeholder="Enter YouTube video URL"
-                                  className="mb-2"
-                                />
-                              </FormControl>
-                              {field.value && (
-                                <Button
+                            <div className="space-y-4">
+                              {/* Initial input box */}
+                              <div className="flex gap-2">
+                                <FormControl>
+                                  <Input
+                                    value={
+                                      (field.value &&
+                                        field.value[0]?.videoUrl) ||
+                                      ""
+                                    }
+                                    onChange={(e) => {
+                                      const newVideos = [
+                                        ...(field.value || []),
+                                      ];
+                                      newVideos[0] = {
+                                        videoUrl: e.target.value,
+                                      };
+                                      field.onChange(newVideos);
+                                    }}
+                                    disabled={isLoading}
+                                    placeholder="Enter YouTube video URL"
+                                    className="mb-2"
+                                  />
+                                </FormControl>
+                                {/* <Button
                                   type="button"
-                                  variant="destructive"
+                                  variant="outline"
                                   disabled={isLoading}
-                                  size="icon"
-                                  className="mb-2"
-                                  onClick={() => field.onChange("")}
+                                  onClick={() => {
+                                    const newVideos = [
+                                      ...(field.value || []),
+                                      { videoUrl: "" },
+                                    ];
+                                    field.onChange(newVideos);
+                                  }}
                                 >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              )}
+                                  Add Video
+                                </Button> */}
+                              </div>
+
+                              {/* Additional input boxes */}
+                              {(field.value || [])
+                                .slice(1)
+                                .map(
+                                  (
+                                    video: { videoUrl: string },
+                                    index: number
+                                  ) => (
+                                    <div key={index + 1} className="flex gap-2">
+                                      <FormControl>
+                                        <Input
+                                          value={video.videoUrl}
+                                          onChange={(e) => {
+                                            const newVideos = [
+                                              ...(field.value || []),
+                                            ];
+                                            newVideos[index + 1] = {
+                                              videoUrl: e.target.value,
+                                            };
+                                            field.onChange(newVideos);
+                                          }}
+                                          disabled={isLoading}
+                                          placeholder="Enter YouTube video URL"
+                                          className="mb-2"
+                                        />
+                                      </FormControl>
+                                      <Button
+                                        type="button"
+                                        variant="destructive"
+                                        disabled={isLoading}
+                                        size="icon"
+                                        className="mb-2"
+                                        onClick={() => {
+                                          const newVideos = field.value?.filter(
+                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                            (_: any, i: number) =>
+                                              i !== index + 1
+                                          );
+                                          field.onChange(newVideos);
+                                        }}
+                                      >
+                                        <X className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  )
+                                )}
                             </div>
                             <FormDescription>
-                              Paste a YouTube video URL to showcase your product
+                              Paste YouTube video URLs to showcase your product
                             </FormDescription>
-                            {field.value && (
-                              <div className="mt-4 aspect-video w-full">
-                                <iframe
-                                  src={`https://www.youtube.com/embed/${
-                                    field.value.split("v=")[1]
-                                  }`}
-                                  title="Product video"
-                                  className="w-full h-full rounded-lg"
-                                  allowFullScreen
-                                />
-                              </div>
-                            )}
+
+                            {/* Video previews - 2 per row */}
+                            <div className="grid grid-cols-2 gap-4 mt-4">
+                              {field.value?.map(
+                                (video: { videoUrl: string }, index: number) =>
+                                  video.videoUrl && (
+                                    <div
+                                      key={index}
+                                      className="aspect-video w-full"
+                                    >
+                                      <iframe
+                                        src={`https://www.youtube.com/embed/${
+                                          video.videoUrl.split("v=")[1]
+                                        }`}
+                                        title={`Product video ${index + 1}`}
+                                        className="w-full h-full rounded-lg"
+                                        allowFullScreen
+                                      />
+                                    </div>
+                                  )
+                              )}
+                            </div>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -868,6 +991,111 @@ export default function AddProductPage({
                             </FormDescription>
                           </div>
                           <FormControl></FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="isVerified"
+                      render={({ field }) => (
+                        <FormItem>
+                          <div className="flex flex-col gap-4 space-x-2">
+                            <div className="flex items-center gap-2">
+                              <Switch
+                                id="isVerified"
+                                disabled={isLoading}
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                              <FormLabel htmlFor="isVerified">
+                                Product Verification
+                              </FormLabel>
+                            </div>
+                            <FormDescription>
+                              check if this product is Verified
+                            </FormDescription>
+                          </div>
+                          <FormControl></FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* Product Variants */}
+                <Card>
+                  <CardContent>
+                    <FormField
+                      control={form.control}
+                      name="variant"
+                      render={({ field }) => (
+                        <FormItem>
+                          <CardHeader className="pl-0 pb-5">
+                            <FormLabel>
+                              <CardTitle>Product Variants</CardTitle>
+                            </FormLabel>
+                            <FormDescription>
+                              <CardDescription>
+                                Select available size variants for this product
+                              </CardDescription>
+                            </FormDescription>
+                          </CardHeader>
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {["XS", "S", "M", "L", "XL", "XXL", "XXXL"].map(
+                              (size) => (
+                                <div
+                                  key={size}
+                                  className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-accent transition-colors cursor-pointer"
+                                  onClick={() => {
+                                    const isChecked = field.value?.includes(
+                                      size as
+                                        | "XS"
+                                        | "S"
+                                        | "M"
+                                        | "L"
+                                        | "XL"
+                                        | "XXL"
+                                        | "XXXL"
+                                    );
+                                    const updatedVariants = isChecked
+                                      ? field.value?.filter(
+                                          (v) => v !== size
+                                        ) || []
+                                      : [...(field.value || []), size];
+                                    field.onChange(updatedVariants);
+                                  }}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    id={size}
+                                    checked={field.value?.includes(
+                                      size as
+                                        | "XS"
+                                        | "S"
+                                        | "M"
+                                        | "L"
+                                        | "XL"
+                                        | "XXL"
+                                        | "XXXL"
+                                    )}
+                                    onChange={() => {}} // Handled by parent div onClick
+                                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                    disabled={isLoading}
+                                  />
+                                  <label
+                                    htmlFor={size}
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                  >
+                                    {size}
+                                  </label>
+                                </div>
+                              )
+                            )}
+                          </div>
+                          {/* <FormDescription className="mt-4">
+                            Check all sizes that are available for this product
+                          </FormDescription> */}
+                          <FormMessage className="mt-4" />
                         </FormItem>
                       )}
                     />
@@ -1074,7 +1302,7 @@ export default function AddProductPage({
                       name="deliveryCharge"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Delivery Charge</FormLabel>
+                          <FormLabel>Delivery Charge *</FormLabel>
                           <FormControl>
                             <Input
                               {...field}
@@ -1095,7 +1323,7 @@ export default function AddProductPage({
                       name="weight"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Wright (kg)</FormLabel>
+                          <FormLabel>Weight (kg) *</FormLabel>
                           <FormControl>
                             <Input
                               {...field}

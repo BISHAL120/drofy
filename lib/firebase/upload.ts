@@ -42,9 +42,11 @@ import { v4 as uuIdV4 } from "uuid";
 
 // Option 2: Simpler approach using uploadBytes (if you don't need progress tracking)
 
-type FolderType = "Products" | "Categories" | "SubCategories"
+type FolderType = "Products" | "Categories" | "SubCategories" | "Demo"
 
-export async function uploadImageFirebase(file: File, folder: FolderType) {
+export async function uploadImageFirebase(file: File, folder: FolderType, id?: string) {
+
+    const customID = id || uuIdV4()
 
     // Convert the file to a buffer
     const fileBuffer = Buffer.from(await file.arrayBuffer());
@@ -55,7 +57,7 @@ export async function uploadImageFirebase(file: File, folder: FolderType) {
         .toBuffer();
 
 
-    const fileRef = ref(storage, `${folder}/${uuIdV4()}.webp`);
+    const fileRef = ref(storage, `${folder}/${customID}.webp`);
 
     try {
         // Upload the file

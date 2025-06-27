@@ -75,21 +75,17 @@ export function AppSidebar() {
                 {menuItems.map((item, index) => (
                   <SidebarMenuItem
                     key={index}
-                    className={`transition-colors duration-200 hover:bg-orange-100 mb-0 
-                                            ${
-                                              pathname === item.href
-                                                ? "bg-orange-100"
-                                                : ""
-                                            }`}
+                    className={`transition-colors duration-200 hover:bg-orange-100 mb-0 ${
+                      pathname === item.href ? "bg-orange-100" : ""
+                    }`}
                   >
                     <Link
                       href={item.href}
-                      className={`flex items-center gap-3 pl-4 py-4
-                                                ${
-                                                  pathname === item.href
-                                                    ? "text-orange-500 font-bold border-b border-black/40 border-r-0 border-l-0"
-                                                    : ""
-                                                }`}
+                      className={`flex items-center gap-3 pl-4 py-4 ${
+                        pathname === item.href
+                          ? "text-orange-500 font-bold border-b border-black/40 border-r-0 border-l-0"
+                          : ""
+                      }`}
                     >
                       <item.icon
                         size={24}
@@ -137,7 +133,7 @@ export function MobileSidebar() {
       <SheetContent side="left" className="p-0 w-[250px]">
         <DialogTitle />
         <div className="h-full bg-background">
-          <SidebarContent>
+          <SidebarContent className="my-6">
             <SidebarGroup>
               <SidebarGroupContent>
                 <SidebarMenu>
@@ -149,12 +145,9 @@ export function MobileSidebar() {
                       <SidebarMenuButton asChild>
                         <Link
                           href={item.href}
-                          className={`flex items-center gap-3 pl-4 py-4 
-                                                        ${
-                                                          pathname === item.href
-                                                            ? " font-bold"
-                                                            : ""
-                                                        }`}
+                          className={`flex items-center gap-3 pl-4 py-4 ${
+                            pathname === item.href ? " font-bold" : ""
+                          }`}
                         >
                           <item.icon
                             className={`h-5 w-5 ${
@@ -169,6 +162,9 @@ export function MobileSidebar() {
                     </SidebarMenuItem>
                   ))}
                 </SidebarMenu>
+                <div className="pl-1.5 pr-3 mt-6">
+                  <LogoutButton className="w-full justify-start bg-transparent text-black hover:text-white transition-colors duration-300 border-2" />
+                </div>
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>

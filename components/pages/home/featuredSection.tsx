@@ -21,8 +21,6 @@ export interface FeaturedContentProps {
 }
 
 const FeaturedSection = ({ featuredContent }: FeaturedContentProps) => {
-  console.log(featuredContent);
-
   if (featuredContent.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-4">

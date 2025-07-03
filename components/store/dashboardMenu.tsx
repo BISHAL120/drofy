@@ -39,7 +39,7 @@ const services: ServiceItem[] = [
     title: "সকল প্রোডাক্ট",
     icon: <Folder className="w-8 h-8" />,
     color: "bg-emerald-500",
-    route: "/store/products",
+    route: "store/categories",
   },
   {
     id: "2",

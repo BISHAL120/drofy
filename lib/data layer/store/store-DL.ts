@@ -75,9 +75,11 @@ export const getProductDetails = async (id: string) => {
             shortDescription: true,
             sellingPrice: true,
             discountPrice: true,
+            variant: true,
+            note: true,
+            inStock: true,
             isVerified: true,
             sku: true,
-
             fullDescription: true,
             createdAt: true,
             SubCategory: {

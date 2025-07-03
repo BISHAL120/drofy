@@ -1,44 +1,52 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import { Check, ShoppingCart, Download, Copy, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { convertToBengaliNumber } from "@/hooks/convertNum";
+import { VariantType } from "@prisma/client";
+import { Check, Copy, Download, Heart, ShoppingCart } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
 
-export default function ProductDetails() {
-  const [selectedSize, setSelectedSize] = useState("XL");
+interface ProductDetailsProps {
+  product: {
+    name: string;
+    id: string;
+    createdAt: Date;
+    inStock: boolean;
+    imageUrl: string;
+    variant: VariantType[];
+    shortDescription: string | null;
+    note: string | null;
+    fullDescription: string;
+    sku: string;
+    sellingPrice: number;
+    discountPrice: number | null;
+    isVerified: boolean;
+    SubCategory: {
+      name: string;
+      id: string;
+      Category: {
+        name: string;
+        id: string;
+      };
+    };
+  } | null;
+}
+
+export default function ProductDetails({ product }: ProductDetailsProps) {
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+  const [selectedSize, setSelectedSize] = useState("M");
   const [quantity, setQuantity] = useState(1);
   const [price, setPrice] = useState(8);
   const [copied, setCopied] = useState(false);
 
-  const productDescription = `Embroidery Punjabi Fabrics: saton cortonSnap Button.AVAILABLE SIZE:M=40.L=42.XL= 44.XXL=46.`;
-
-  const handleDownload = async () => {
-    try {
-      const imageUrl =
-        "https://firebasestorage.googleapis.com/v0/b/restock-bd.firebasestorage.app/o/products%2F6fe52e8f-c6a9-414f-9489-9f29a4ddd142.webp?alt=media&token=80962dff-cc46-4783-8d3d-63c067c79988";
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "telegram-logo.png";
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-
-      toast.success("Image downloaded successfully");
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to download image");
-    }
-  };
+  const productDescription = `${product?.fullDescription}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(productDescription);
@@ -50,15 +58,45 @@ export default function ProductDetails() {
     }, 2000);
   };
 
+  const toggleWishlist = () => {
+    setIsWishlisted((prev) => !prev);
+    if (isWishlisted) {
+      toast.success("Coming Soon!", {
+        style: {
+          background: "#fee2e2",
+          border: "1px solid #fecaca",
+          fontSize: "16px",
+          fontWeight: "700",
+        },
+        icon: "💔",
+      });
+    } else {
+      toast.success("Coming Soon!", {
+        style: {
+          background: "#dcfce7",
+          border: "1px solid #bbf7d0",
+          fontSize: "16px",
+          fontWeight: "700",
+        },
+        icon: "❤️",
+      });
+    }
+  };
+
   return (
-    <div className="p-4 lg:p-6 max-w-7xl mx-auto">
+    <div className="p-4 my-20 lg:p-6 max-w-[1400px] mx-auto">
+      {product?.note && (
+        <div className="py-2 px-4 mb-3 rounded-xl font-semibold text-center bg-indigo-300">
+          This is a note
+        </div>
+      )}
       <div className="grid md:grid-cols-2 gap-8 bg-white rounded-xl shadow-sm overflow-hidden">
         {/* Left side - Product Image */}
         <div className="flex flex-col items-center p-4">
           <div className="relative w-full max-w-md aspect-[3/4] mb-4">
             <Image
-              src="/placeholder.svg?height=600&width=450"
-              alt="Embroidered Punjabi"
+              src={product?.imageUrl || ""}
+              alt={`${product?.name}`}
               fill
               className="object-cover rounded-md"
               priority
@@ -69,41 +107,60 @@ export default function ProductDetails() {
               asChild
               variant="outline"
               className="flex items-center gap-2"
-              onClick={handleDownload}
             >
-              <Link href="https://firebasestorage.googleapis.com/v0/b/restock-bd.firebasestorage.app/o/products%2Ff546192c-50a2-40b4-abcb-d402133a878b.webp?alt=media&token=b736051d-a55f-4465-b199-e767fb162547">
+              <Link href={product?.imageUrl || ""}>
                 <Download className="h-4 w-4" /> ছবি ডাউনলোড
               </Link>
             </Button>
-            <Button variant="outline" className="flex items-center gap-2">
-              <Check className="h-4 w-4" /> শেয়ারিং
+            <Button
+              onClick={() => toggleWishlist()}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <Heart
+                size={18}
+                className={
+                  isWishlisted ? "text-red-500 fill-red-500" : "text-gray-600"
+                }
+              />{" "}
+              ফেভারিট
             </Button>
           </div>
         </div>
 
         {/* Right side - Product Details */}
         <div className="p-4 lg:p-6">
-          <h1 className="text-2xl font-bold mb-4">এমব্রয়ডারি পাঞ্জাবি</h1>
-          <p className="text-gray-600 mb-6">
-            প্রিমিয়াম কটন ফ্যাব্রিক দিয়ে তৈরি এই পাঞ্জাবিটি সুন্দর এমব্রয়ডারি
-            ডিজাইন এবং উচ্চমানের ফিনিশিং এর জন্য বিশেষ। এটি আপনার ট্র্যাডিশনাল
-            লুকে একটি আলাদা মাত্রা যোগ করবে।
-          </p>
+          <h1 className="text-2xl font-bold mb-4">{product?.name}</h1>
+          <p className="text-gray-600 mb-6">{product?.shortDescription}</p>
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h2 className="text-lg font-medium">প্রাইস: ৳১,০৩০</h2>
+              <h2 className="text-lg font-medium">
+                প্রাইস:{" "}
+                {product?.discountPrice
+                  ? convertToBengaliNumber(product.discountPrice)
+                  : convertToBengaliNumber(product?.sellingPrice || 0)}{" "}
+                <span className="line-through text-gray-400 text-sm">
+                  {product?.discountPrice
+                    ? convertToBengaliNumber(product?.sellingPrice || 0)
+                    : null}
+                </span>
+              </h2>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-sm">স্টক:</span>
-                <span className="text-green-600 font-medium">আছে</span>
+                <span className="text-green-600 font-medium">
+                  {product?.inStock ? "আছে" : "নেই"}
+                </span>
               </div>
             </div>
-            <div className="flex items-center bg-green-50 text-green-600 px-3 py-1 rounded-full">
-              <Check className="h-4 w-4 mr-1" />
-              <span className="text-sm">ভেরিফাইড প্রোডাক্ট</span>
-            </div>
+            {product?.isVerified && (
+              <div className="flex items-center bg-green-50 text-green-600 px-3 py-1 rounded-full">
+                <Check className="h-4 w-4 mr-1" />
+                <span className="text-sm">ভেরিফাইড প্রোডাক্ট</span>
+              </div>
+            )}
           </div>
 
-          <div className="flex items-center mb-4">
+          {/* <div className="flex items-center mb-4">
             {[1, 2, 3, 4].map((star) => (
               <Star
                 key={star}
@@ -114,37 +171,29 @@ export default function ProductDetails() {
                 }`}
               />
             ))}
-          </div>
+          </div> */}
 
-          <div className="border-t border-b py-4 my-4">
-            <p className="text-sm text-gray-600 mb-2">
-              হোলসেইল সাপোর্টেড বিক্রয় মূল্য সর্বনিম্ন ৭,০০০ টাকা।
-            </p>
-            <p className="font-medium mb-4">SKU: 20019</p>
-
-            <div className="mb-4">
-              <p className="mb-2 font-medium">সাইজ:</p>
+          <div className="border-t border-b py-2 my-2 ">
+            <p className="font-medium mb-4">{product?.sku}</p>
+            <div className="mb-6">
+              <p className="mb-3 font-medium text-lg">সাইজ:</p>
               <RadioGroup
                 value={selectedSize}
                 onValueChange={setSelectedSize}
-                className="flex gap-3"
+                className="flex gap-4"
               >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="M" id="size-m" />
-                  <Label htmlFor="size-m">M</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="L" id="size-l" />
-                  <Label htmlFor="size-l">L</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="XL" id="size-xl" />
-                  <Label htmlFor="size-xl">XL</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="XXL" id="size-xxl" />
-                  <Label htmlFor="size-xxl">XXL</Label>
-                </div>
+                {product?.variant.map((size) => (
+                  <div className="flex items-center space-x-1.5" key={size}>
+                    <RadioGroupItem
+                      value={size}
+                      id={`size-${size}`}
+                      className="h-5 w-5"
+                    />
+                    <Label htmlFor={`size-${size}`} className="text-base">
+                      {size}
+                    </Label>
+                  </div>
+                ))}
               </RadioGroup>
             </div>
 
@@ -205,7 +254,34 @@ export default function ProductDetails() {
             {copied ? "Copied!" : "কপি করুন"}
           </Button>
         </div>
-        <div className="whitespace-pre-line">{productDescription}</div>
+        <div className="relative">
+          <div
+            className={`whitespace-pre-line mb-10 ${
+              productDescription.length > 500 && !showMore
+                ? "max-h-[200px] overflow-hidden"
+                : ""
+            }`}
+          >
+            {productDescription}
+          </div>
+          {productDescription.length > 500 && (
+            <div
+              className={`${
+                !showMore
+                  ? "absolute -bottom-15 right-0 w-full h-12 bg-gradient-to-t from-white to-transparent"
+                  : ""
+              }`}
+            >
+              <Button
+                variant="ghost"
+                onClick={() => setShowMore(!showMore)}
+                className="mt-2 w-full bg-slate-800 text-white"
+              >
+                {showMore ? "Show Less" : "Show More"}
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

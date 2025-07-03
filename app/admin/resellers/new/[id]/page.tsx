@@ -5,12 +5,8 @@ import {
 } from "@/lib/data layer/admin/admin-DL";
 import React from "react";
 
-const Page = async ({
-  params,
-}: {
-  params: Promise<{ [key: string]: string | undefined }>;
-}) => {
-  const id = await params.then((params) => params.id);
+const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   if (!id) {
     throw new Error("Reseller ID not found");
   }

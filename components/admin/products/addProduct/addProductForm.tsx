@@ -347,12 +347,6 @@ export default function AddProductPage({
       )}
       <div className="flex-1 space-y-6 p-6">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between space-x-4">
-          {/* <Link href="/admin/products">
-                        <Button variant="outline" size="sm">
-                            <ArrowLeft className="mr-2 h-4 w-4" />
-                            Back to Products
-                        </Button>
-                    </Link> */}
           <div>
             <h2 className="text-3xl font-bold tracking-tight">
               {initialData ? "Edit Product" : "Add New Product"}
@@ -1034,11 +1028,11 @@ export default function AddProductPage({
                             <FormLabel>
                               <CardTitle>Product Variants</CardTitle>
                             </FormLabel>
-                            <FormDescription>
-                              <CardDescription>
+                            <CardDescription>
+                              <FormDescription>
                                 Select available size variants for this product
-                              </CardDescription>
-                            </FormDescription>
+                              </FormDescription>
+                            </CardDescription>
                           </CardHeader>
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {["XS", "S", "M", "L", "XL", "XXL", "XXXL"].map(

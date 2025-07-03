@@ -13,6 +13,8 @@ export async function PATCH(
         const image = formData.get("imageUrl") as File | null
         const body = JSON.parse(formData.get("Details") as string)
 
+        console.log(body)
+
         let imageUrl = body.imageUrl // Initialize with existing URL
 
         // Check if image is provided and update imageUrl
@@ -37,30 +39,22 @@ export async function PATCH(
             }
         }
 
+        const { id: _, ...rest } = body
+
+        console.log(_)
+
         const updateProduct = await db.product.update({
             where: { id },
             data: {
-                name: body.name,
-                shortDescription: body.shortDescription,
-                fullDescription: body.fullDescription,
-                brand: body.brand,
-                sku: body.sku,
-                isFeatured: body.isFeatured,
-                status: body.status,
-                variant: body.variant,
+                ...rest,
                 cost: Number(body.cost),
                 sellingPrice: Number(body.sellingPrice),
                 discountPrice: Number(body.discountPrice),
                 trackInventory: body.trackInventory,
                 stockAlert: Number(body.stockAlert),
                 imageUrl: imageUrl, // Use existing or new URL
-                videoUrl: body.videoUrl,
                 deliveryCharge: Number(body.deliveryCharge),
                 weight: Number(body.weight),
-                dimensions: body.dimensions,
-                metaTitle: body.metaTitle,
-                metaDescription: body.metaDescription,
-                inStock: body.inStock,
                 stock: Number(body.stock),
 
             },

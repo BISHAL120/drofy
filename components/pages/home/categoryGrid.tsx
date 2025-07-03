@@ -117,7 +117,7 @@ const CategoryGrid = ({ featuredCategory }: FeaturedCategoryProps) => {
           {featuredCategory.map((category, index) => (
             <Card
               key={index}
-              className="p-0 overflow-hidden hover:shadow-lg hover:shadow-orange-300 transition-all duration-300 group bg-white border-none"
+              className="p-0 overflow-hidden hover:shadow-lg hover:shadow-indigo-300 transition-all duration-300 group bg-white border-none"
             >
               <Link href={`/store/categories`} className="block p-1">
                 <div className="aspect-square relative overflow-hidden rounded-md mb-2">

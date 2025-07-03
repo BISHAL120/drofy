@@ -36,15 +36,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
         },
         icon: "💔",
       });
-      /* toast.success("রিমুভ হয়ে গিয়েছে!", {
-        style: {
-          background: "#fee2e2",
-          border: "1px solid #fecaca",
-          fontSize: "16px",
-          fontWeight: "700",
-        },
-        icon: "💔",
-      }); */
     } else {
       toast.success("Coming Soon!", {
         style: {
@@ -55,21 +46,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
         },
         icon: "❤️",
       });
-      /* toast.success("উইশলিস্টে যুক্ত হয়েছে", {
-        style: {
-          background: "#dcfce7",
-          border: "1px solid #bbf7d0",
-          fontSize: "16px",
-          fontWeight: "700",
-        },
-        icon: "❤️",
-      }); */
     }
   };
 
   return (
     <div>
-      <Card className="overflow-hidden p-0 transition-all duration-300 border-none hover:shadow-xl hover:shadow-orange-300 group">
+      <Card className="overflow-hidden p-0 transition-all duration-300 border-none hover:shadow-xl hover:shadow-indigo-300 group">
         <div className="relative">
           <Link href={`/store/products/${product.id}`}>
             <Image
@@ -96,21 +78,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
             }
             return null;
           })()}
-          {/* <Badge
-            className={`absolute top-2 left-2 ${
-              product.status === "new"
-                ? "bg-emerald-500 hover:bg-emerald-600 text-white"
-                : product.status === "hot"
-                ? "bg-red-500 hover:bg-red-600 text-white"
-                : product.status === "sale"
-                ? "bg-blue-500 hover:bg-blue-600 text-white"
-                : product.status === "comingSoon"
-                ? "bg-purple-500 hover:bg-purple-600 text-white"
-                : "bg-gray-500 hover:bg-gray-600 text-white"
-            }`}
-          >
-            {product.status.charAt(0).toUpperCase() + product.status.slice(1)}
-          </Badge> */}
 
           <div className="absolute top-2 right-2 flex space-x-2">
             <button
@@ -148,11 +115,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
                   )}
                 </span>
                 {product.discountPrice &&
-                  product.sellingPrice > product.discountPrice && (
-                    <span className="text-gray-400 line-through text-xs">
-                      ৳{convertToBengaliNumber(product.sellingPrice)}
-                    </span>
-                  )}
+                product.sellingPrice > product.discountPrice ? (
+                  <span className="text-gray-400 line-through text-xs">
+                    ৳{convertToBengaliNumber(product.sellingPrice)}
+                  </span>
+                ) : null}
               </div>
             </div>
           }

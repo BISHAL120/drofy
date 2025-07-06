@@ -110,7 +110,7 @@ export default function LoginPage() {
           <div className="flex justify-center mb-6">
             <div className="p-2 bg-purple-100 rounded-lg">
               <Image
-                src="/assets/logo.webp"
+                src="/assets/logo.png"
                 alt="Logo"
                 width={350}
                 height={150}

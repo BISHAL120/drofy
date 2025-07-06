@@ -125,7 +125,7 @@ const ReportPage = () => {
           <CardHeader className="">
             <div className="flex justify-center items-center space-x-2">
               <Image
-                src="/assets/logo.webp"
+                src="/assets/logo.png"
                 alt="Drofy"
                 unoptimized
                 width={40}

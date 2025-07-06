@@ -64,7 +64,7 @@ export function AppSidebar() {
                 className="flex justify-center items-center h-16 overflow-hidden border-blue-500 bg-[#bbddd8] border-b "
               >
                 <Image
-                  src="/assets/logo.webp"
+                  src="/assets/logo.png"
                   alt="Your Logo"
                   width={200}
                   height={50}

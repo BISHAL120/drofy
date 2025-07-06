@@ -22,7 +22,7 @@ const Navbar = async () => {
           <div className="flex items-center space-x-2">
             <Link href="/" className="w-full">
               <Image
-                src="/assets/logo.webp"
+                src="/assets/logo.png"
                 alt="Your Logo"
                 width={200}
                 height={50}
@@ -68,7 +68,7 @@ const Navbar = async () => {
                 <SheetTitle className="border-b">
                   <div className="flex flex-col items-center py-6 bg-gradient-to-r from-teal-50 to-cyan-50">
                     <Image
-                      src="/assets/logo.webp"
+                      src="/assets/logo.png"
                       alt="Your Logo"
                       width={150}
                       height={40}

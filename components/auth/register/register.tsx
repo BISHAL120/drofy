@@ -2,11 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
 } from "@/components/ui/form";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
@@ -23,313 +23,343 @@ import { z } from "zod";
 import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
-    const router = useRouter();
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [showPassword, setShowPassword] = React.useState<boolean>(false);
+  const router = useRouter();
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
-    const form = useForm<z.infer<typeof registerSchema>>({
-        resolver: zodResolver(registerSchema),
-        defaultValues: {
-            name: "",
-            number: "",
-            password: "",
-            confirmPassword: "",
-            address: undefined,
-            email: undefined,
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      number: "",
+      password: "",
+      confirmPassword: "",
+      address: undefined,
+      email: undefined,
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof registerSchema>) {
+    try {
+      if (values.password !== values.confirmPassword) {
+        toast.dismiss(); // Dismiss any existing toast if there is one
+        toast.error("ভুল কনফার্ম পাসওয়ার্ড!", {
+          position: "top-center",
+          icon: "⚠️",
+          style: {
+            background: "red",
+            border: "2px solid #DC2626", // Adjusted to a darker red border
+            color: "white",
+            fontWeight: "600",
+            fontSize: "16px", // Adjusted font size
+            padding: "10px 20px", // Adjusted padding
+          },
+        });
+        return;
+      }
+      setIsLoading(true);
+      toast.loading("প্রসেসিং...", {
+        style: {
+          background: "#FFA500",
+          border: "2px solid #FF8C00",
+          color: "white",
+          fontWeight: "600",
+          fontSize: "16px",
+          padding: "10px 20px",
         },
-    });
-
-    async function onSubmit(values: z.infer<typeof registerSchema>) {
-        try {
-            if (values.password !== values.confirmPassword) {
-                toast.dismiss(); // Dismiss any existing toast if there is one
-                toast.error("ভুল কনফার্ম পাসওয়ার্ড!", {
-                    position: "top-center",
-                    icon: "⚠️",
-                    style: {
-                        background: "red",
-                        border: "2px solid #DC2626", // Adjusted to a darker red border
-                        color: "white",
-                        fontWeight: "600",
-                        fontSize: "16px", // Adjusted font size
-                        padding: "10px 20px", // Adjusted padding
-                    },
-                });
-                return;
-            }
-            setIsLoading(true);
-            toast.loading("প্রসেসিং...", {
-                style: {
-                    background: "#FFA500",
-                    border: "2px solid #FF8C00",
-                    color: "white",
-                    fontWeight: "600",
-                    fontSize: "16px",
-                    padding: "10px 20px",
-                }
-            });
-            axios.post("/api/register", values).then((res) => {
-                console.log("Response :", res.data);
-                // toast.success("OTP sent to your mobile number");
-                toast.dismiss();
-                toast.success("রেজিস্ট্রেশন সম্পন্ন হয়েছে", {
-                    style: {
-                        background: "#22C55E", // Green background
-                        border: "2px solid #16A34A", // Darker green border
-                        color: "white",
-                        fontWeight: "600",
-                        fontSize: "16px",
-                        padding: "10px 20px",
-                    },
-                    position: "top-center",
-                    icon: "✅"
-                });
-                signIn("credentials", {
-                    number: values.number,
-                    password: values.password,
-                    redirect: false,
-                })
-                router.push("/register/success");
-            }).catch((err) => {
-                console.log("Error :", err);
-                toast.dismiss();
-                toast.error(err.response.data.message, {
-                    position: "top-center",
-                    icon: "⚠️",
-                });
-            });
-            setIsLoading(false);
-            router.refresh();
-        } catch (error) {
-            setIsLoading(false);
-            toast.dismiss();
-            toast.error("Invalid Credentials");
-            console.log("Error :", error);
-        }
+      });
+      axios
+        .post("/api/register", values)
+        .then((res) => {
+          console.log("Response :", res.data);
+          // toast.success("OTP sent to your mobile number");
+          toast.dismiss();
+          toast.success("রেজিস্ট্রেশন সম্পন্ন হয়েছে", {
+            style: {
+              background: "#22C55E", // Green background
+              border: "2px solid #16A34A", // Darker green border
+              color: "white",
+              fontWeight: "600",
+              fontSize: "16px",
+              padding: "10px 20px",
+            },
+            position: "top-center",
+            icon: "✅",
+          });
+          signIn("credentials", {
+            number: values.number,
+            password: values.password,
+            redirect: false,
+          });
+          router.push("/register/success");
+        })
+        .catch((err) => {
+          console.log("Error :", err);
+          toast.dismiss();
+          toast.error(err.response.data.message, {
+            position: "top-center",
+            icon: "⚠️",
+          });
+        });
+      setIsLoading(false);
+      router.refresh();
+    } catch (error) {
+      setIsLoading(false);
+      toast.dismiss();
+      toast.error("Invalid Credentials");
+      console.log("Error :", error);
     }
+  }
 
-    return (
-        <div className="flex flex-col min-h-[calc(100vh-72px)]">
-            <div className="flex-grow flex items-center justify-center bg-gray-50 p-4">
-                <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-                    <div className="flex justify-center mb-6">
-                        <div className="p-2 bg-purple-100 rounded-lg">
-                            <Image
-                                src="/assets/logo.webp"
-                                alt="Logo"
-                                width={350}
-                                height={150}
-                            />
-                        </div>
-                    </div>
-
-                    <h1 className="text-3xl font-semibold text-center text-orange-600 mb-6">
-                        রিসেলার রেজিস্ট্রেশন
-                    </h1>
-                    <p className="text-sm text-gray-600 text-center mb-6">
-                        আপনার মোবাইলে একটি ওটিপি কোড পাঠানো হবে, কোড টি বসিয়ে রেজিস্ট্রেশন সম্পূর্ণ করুন।
-                    </p>
-
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-
-                            <FormField
-                                control={form.control}
-                                name="name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormControl>
-                                            <div>
-                                                <Label htmlFor="name" className="text-sm text-gray-600">নাম *</Label>
-                                                <Input
-                                                    {...field}
-                                                    id="name"
-                                                    placeholder="আপনার নাম"
-                                                    type="text"
-                                                    autoCapitalize="none"
-                                                    autoComplete="name"
-                                                    autoCorrect="off"
-                                                    disabled={isLoading}
-                                                    className="mt-1"
-                                                />
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="number"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormControl>
-                                            <div>
-                                                <Label htmlFor="mobile" className="text-sm text-gray-600">মোবাইল নং *</Label>
-                                                <Input
-                                                    {...field}
-                                                    id="mobile"
-                                                    placeholder="01700000000"
-                                                    autoCapitalize="none"
-                                                    autoComplete="mobile"
-                                                    autoCorrect="off"
-                                                    disabled={isLoading}
-                                                    className="mt-1"
-                                                    maxLength={11}
-                                                    onChange={(e) => {
-                                                        const value = e.target.value;
-                                                        if (value.length <= 11) {
-                                                            field.onChange(value);
-                                                        }
-                                                    }}
-                                                />
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormControl>
-                                            <div className="relative">
-                                                <Label htmlFor="password" className="text-sm text-gray-600">পাসওয়ার্ড *</Label>
-                                                <div className="relative">
-                                                    <Input
-                                                        {...field}
-                                                        id="password"
-                                                        placeholder="••••••••"
-                                                        type={showPassword ? "text" : "password"}
-                                                        autoCapitalize="none"
-                                                        autoComplete="new-password"
-                                                        autoCorrect="off"
-                                                        disabled={isLoading}
-                                                        className="mt-1"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setShowPassword(!showPassword)}
-                                                        className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                                                    >
-                                                        {showPassword ? (
-                                                            <Eye className="w-5 h-5 cursor-pointer" />
-                                                        ) : (
-                                                            <EyeClosed className="w-5 h-5 cursor-pointer" />
-                                                        )}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="confirmPassword"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormControl>
-                                            <div className="relative">
-                                                <Label htmlFor="confirmPassword" className="text-sm text-gray-600">কনফার্ম পাসওয়ার্ড *</Label>
-                                                <div className="relative">
-                                                    <Input
-                                                        {...field}
-                                                        id="confirmPassword"
-                                                        placeholder="••••••••"
-                                                        type={showPassword ? "text" : "password"}
-                                                        autoCapitalize="none"
-                                                        autoComplete="new-password"
-                                                        autoCorrect="off"
-                                                        disabled={isLoading}
-                                                        className="mt-1"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setShowPassword(!showPassword)}
-                                                        className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                                                    >
-                                                        {showPassword ? (
-                                                            <Eye className="w-5 h-5 cursor-pointer" />
-                                                        ) : (
-                                                            <EyeClosed className="w-5 h-5 cursor-pointer" />
-                                                        )}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormControl>
-                                            <div>
-                                                <Label htmlFor="email" className="text-sm text-gray-600">ইমেইল * (Optional)</Label>
-                                                <Input
-                                                    {...field}
-                                                    id="email"
-                                                    placeholder="example@email.com"
-                                                    type="email"
-                                                    autoCapitalize="none"
-                                                    autoComplete="email"
-                                                    autoCorrect="off"
-                                                    disabled={isLoading}
-                                                    className="mt-1"
-                                                />
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="address"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormControl>
-                                            <div>
-                                                <Label htmlFor="address" className="text-sm text-gray-600">ঠিকানা * (Optional)</Label>
-                                                <textarea
-                                                    {...field}
-                                                    id="address"
-                                                    placeholder="আপনার বর্তমান ঠিকানা"
-                                                    rows={3}
-                                                    autoCapitalize="none"
-                                                    autoCorrect="off"
-                                                    disabled={isLoading}
-                                                    className="mt-1 w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                                />
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <Button
-                                className="w-full bg-orange-500 hover:bg-orange-600 text-white cursor-pointer"
-                                disabled={isLoading}
-                            >
-                                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                ওটিপি পাঠান <ChevronsRight className="ml-2 h-4 w-4" />
-                            </Button>
-                        </form>
-                    </Form>
-                </div>
+  return (
+    <div className="flex flex-col min-h-[calc(100vh-72px)]">
+      <div className="flex-grow flex items-center justify-center bg-gray-50 p-4">
+        <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
+          <div className="flex justify-center mb-6">
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <Image
+                src="/assets/logo.png"
+                alt="Logo"
+                width={350}
+                height={150}
+              />
             </div>
+          </div>
+
+          <h1 className="text-3xl font-semibold text-center text-orange-600 mb-6">
+            রিসেলার রেজিস্ট্রেশন
+          </h1>
+          <p className="text-sm text-gray-600 text-center mb-6">
+            আপনার মোবাইলে একটি ওটিপি কোড পাঠানো হবে, কোড টি বসিয়ে রেজিস্ট্রেশন
+            সম্পূর্ণ করুন।
+          </p>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div>
+                        <Label htmlFor="name" className="text-sm text-gray-600">
+                          নাম *
+                        </Label>
+                        <Input
+                          {...field}
+                          id="name"
+                          placeholder="আপনার নাম"
+                          type="text"
+                          autoCapitalize="none"
+                          autoComplete="name"
+                          autoCorrect="off"
+                          disabled={isLoading}
+                          className="mt-1"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="number"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div>
+                        <Label
+                          htmlFor="mobile"
+                          className="text-sm text-gray-600"
+                        >
+                          মোবাইল নং *
+                        </Label>
+                        <Input
+                          {...field}
+                          id="mobile"
+                          placeholder="01700000000"
+                          autoCapitalize="none"
+                          autoComplete="mobile"
+                          autoCorrect="off"
+                          disabled={isLoading}
+                          className="mt-1"
+                          maxLength={11}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value.length <= 11) {
+                              field.onChange(value);
+                            }
+                          }}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="relative">
+                        <Label
+                          htmlFor="password"
+                          className="text-sm text-gray-600"
+                        >
+                          পাসওয়ার্ড *
+                        </Label>
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            id="password"
+                            placeholder="••••••••"
+                            type={showPassword ? "text" : "password"}
+                            autoCapitalize="none"
+                            autoComplete="new-password"
+                            autoCorrect="off"
+                            disabled={isLoading}
+                            className="mt-1"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                          >
+                            {showPassword ? (
+                              <Eye className="w-5 h-5 cursor-pointer" />
+                            ) : (
+                              <EyeClosed className="w-5 h-5 cursor-pointer" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="relative">
+                        <Label
+                          htmlFor="confirmPassword"
+                          className="text-sm text-gray-600"
+                        >
+                          কনফার্ম পাসওয়ার্ড *
+                        </Label>
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            id="confirmPassword"
+                            placeholder="••••••••"
+                            type={showPassword ? "text" : "password"}
+                            autoCapitalize="none"
+                            autoComplete="new-password"
+                            autoCorrect="off"
+                            disabled={isLoading}
+                            className="mt-1"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                          >
+                            {showPassword ? (
+                              <Eye className="w-5 h-5 cursor-pointer" />
+                            ) : (
+                              <EyeClosed className="w-5 h-5 cursor-pointer" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div>
+                        <Label
+                          htmlFor="email"
+                          className="text-sm text-gray-600"
+                        >
+                          ইমেইল * (Optional)
+                        </Label>
+                        <Input
+                          {...field}
+                          id="email"
+                          placeholder="example@email.com"
+                          type="email"
+                          autoCapitalize="none"
+                          autoComplete="email"
+                          autoCorrect="off"
+                          disabled={isLoading}
+                          className="mt-1"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div>
+                        <Label
+                          htmlFor="address"
+                          className="text-sm text-gray-600"
+                        >
+                          ঠিকানা * (Optional)
+                        </Label>
+                        <textarea
+                          {...field}
+                          id="address"
+                          placeholder="আপনার বর্তমান ঠিকানা"
+                          rows={3}
+                          autoCapitalize="none"
+                          autoCorrect="off"
+                          disabled={isLoading}
+                          className="mt-1 w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white cursor-pointer"
+                disabled={isLoading}
+              >
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                ওটিপি পাঠান <ChevronsRight className="ml-2 h-4 w-4" />
+              </Button>
+            </form>
+          </Form>
         </div>
-    );
+      </div>
+    </div>
+  );
 }

@@ -205,7 +205,7 @@ export function AdminSidebar() {
             <Store className="h-4 w-4" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">Restock Admin</span>
+            <span className="text-sm font-semibold">Drofy Admin</span>
             <span className="text-xs text-muted-foreground">
               Product Reselling Platform
             </span>

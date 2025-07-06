@@ -126,7 +126,7 @@ const ReportPage = () => {
             <div className="flex justify-center items-center space-x-2">
               <Image
                 src="/assets/logo.webp"
-                alt="Restock BD"
+                alt="Drofy"
                 unoptimized
                 width={40}
                 height={40}

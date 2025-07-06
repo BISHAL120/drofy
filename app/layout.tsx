@@ -9,7 +9,7 @@ const banglaFonts = Noto_Sans_Bengali({
 });
 
 export const metadata: Metadata = {
-  title: "Restock BD",
+  title: "Drofy",
   description: "ফ্রি রিসেলিং প্ল্যাটফর্ম, এখনই বিক্রি শুরু করুন",
 };
 
@@ -20,9 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="bn">
-      <body
-        className={`${banglaFonts.className} antialiased`}
-      >
+      <body className={`${banglaFonts.className} antialiased`}>
         {children}
         <Toaster position="top-center" />
       </body>

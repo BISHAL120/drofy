@@ -7,6 +7,7 @@ interface ProductCategoriesProps {
     subCategory: {
       id: string;
       name: string;
+      imageUrl: string | null;
       productCount: number;
     }[];
     productCount: number;

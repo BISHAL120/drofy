@@ -115,7 +115,7 @@ model Product {
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
-  Order Order[]
+  CartItem CartItem[]
 }
 
 model SubCategory {
@@ -155,27 +155,59 @@ model Category {
   updatedAt       DateTime      @updatedAt
 }
 
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  DELIVERED
+  COMPLETED
+  CANCELLED
+}
+
+enum DeliveryChargeStatus {
+  PREPAID
+  COD
+}
+
+model CartItem {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @db.ObjectId
+  Order     Order?  @relation(fields: [orderId], references: [id])
+  orderId   String? @db.ObjectId
+
+  productName        String
+  productPrice       String
+  sellingPrice       String
+  profit             String
+  productImage       String
+  productQuantity    String
+  productSize        String
+  productSubcategory String
+}
+
 model Order {
-  id         String  @id @default(auto()) @map("_id") @db.ObjectId
-  reseller   User    @relation(fields: [resellerId], references: [id])
-  resellerId String  @db.ObjectId
-  product    Product @relation(fields: [productId], references: [id])
-  productId  String  @db.ObjectId
-  variantId  String? // optional for variant
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  reseller   User   @relation(fields: [resellerId], references: [id])
+  resellerId String @db.ObjectId
 
-  customerName    String
-  customerPhone   String
-  customerAddress String
-  paymentMethod   PaymentMethod
+  customerPhone       String
+  customerName        String
+  customerDivision    String
+  customerDistrict    String
+  customerUpazila     String
+  customerUnion       String
+  customerAddress     String
+  deliveryCharge      String
+  advanceCharge       Boolean
+  resellerOrderNumber String
+  totalPrice          String
+  comments            String
+  cartItems           CartItem[]
+  orderId             String
+  status              OrderStatus          @default(PENDING)
+  chargeStatus        DeliveryChargeStatus
+  totalProfit         Float // calculated on complete
 
-  originalPrice  Float
-  resellPrice    Float
-  deliveryCharge Float
-  advancePaid    Float
-  cod            Boolean
-  status         OrderStatus @default(PENDING)
-
-  profit      Float // calculated on complete
   completedAt DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -242,14 +274,6 @@ model PlatformSetting {
 
 // Enums Start
 
-enum OrderStatus {
-  PENDING
-  PROCESSING
-  DELIVERED
-  COMPLETED
-  CANCELLED
-}
-
 enum TicketStatus {
   OPEN
   IN_PROGRESS
@@ -260,11 +284,6 @@ enum WithdrawalStatus {
   PENDING
   APPROVED
   REJECTED
-}
-
-enum PaymentMethod {
-  COD
-  PREPAID
 }
 
 enum WalletTransactionType {

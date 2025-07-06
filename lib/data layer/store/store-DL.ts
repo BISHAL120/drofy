@@ -29,6 +29,7 @@ export const getCategoriesForStore = async () => {
                 select: {
                     id: true,
                     name: true,
+                    imageUrl: true,
                     productCount: true
                 }
             }

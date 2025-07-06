@@ -4,7 +4,7 @@ import Link from "next/link";
 type CategoryCardProps = {
   id: string;
   name: string;
-  image?: string;
+  imageUrl: string | null;
   productCount: number;
 };
 
@@ -23,7 +23,7 @@ const SubCategoryCard = ({
       >
         <div className="relative w-full h-3/4 mb-2">
           <Image
-            src={subCategory.image || "/placeholder.svg"}
+            src={subCategory.imageUrl || "/placeholder.svg"}
             alt={subCategory.name}
             fill
             className="object-contain"

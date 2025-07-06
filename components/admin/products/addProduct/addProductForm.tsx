@@ -67,7 +67,7 @@ export default function AddProductPage({
   initialData: Product | undefined;
   categories: ProductCategories[];
 }) {
-  const [productImages, setProductImages] = useState<File | null>();
+  const [productImages, setProductImages] = useState<File[] | null>();
   const [initialImage, setInitialImage] = useState<string>(
     initialData?.imageUrl || ""
   );
@@ -147,7 +147,7 @@ export default function AddProductPage({
     setIsLoading(true);
 
     const formdata = new FormData();
-    formdata.append("imageUrl", productImages || "");
+    // formdata.append("imageUrl", productImages[0] || "");
     if (initialData) {
       formdata.append(
         "Details",
@@ -230,12 +230,19 @@ export default function AddProductPage({
   const watchedSellingPrice = watch("sellingPrice");
 
   const handleImageSize = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
+    const files = event.target.files;
+    if (!files) return;
+
+    const selectedFiles: File[] = [];
+
+    // Validate each file
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
       // Check file size (7MB limit)
       const maxSize = 7 * 1024 * 1024; // 7MB in bytes
       if (file.size > maxSize) {
-        toast.error("Image size must be less than 7MB", {
+        toast.error(`Image ${file.name} must be less than 7MB`, {
           duration: 5000,
           icon: <TriangleAlert className="h-4 w-4" />,
           style: {
@@ -257,9 +264,10 @@ export default function AddProductPage({
         "image/webp",
         "image/avif",
       ];
+
       if (!allowedTypes.includes(file.type)) {
         toast.error(
-          "Please upload a valid image file (JPEG, JPG, PNG, HEIC, WEBP, AVIF)",
+          `File ${file.name} must be a valid image type (JPEG, JPG, PNG, HEIC, WEBP, AVIF)`,
           {
             duration: 5000,
             icon: <TriangleAlert className="h-4 w-4" />,
@@ -274,7 +282,15 @@ export default function AddProductPage({
         return;
       }
 
-      setProductImages(file);
+      selectedFiles.push(file);
+    }
+
+    // Update state with valid files, appending to existing images
+    if (selectedFiles.length > 0) {
+      setProductImages((prevImages) => {
+        if (!prevImages) return selectedFiles;
+        return [...prevImages, ...selectedFiles];
+      });
     }
   };
 
@@ -555,16 +571,6 @@ export default function AddProductPage({
                                 className=" max-w-[400px] max-h-[400px] object-contain rounded-lg border bg-gray-50"
                               />
                             </div>
-                            {/* <Button
-                                                                type="button"
-                                                                variant="destructive"
-                                                                size="sm"
-                                                                className="absolute top-2 right-2"
-                                                                onClick={removeImage}
-                                                            >
-                                                                <X className="h-4 w-4" />
-                                                            </Button> */}
-
                             <ImageDeleteConfirmation
                               trigger={
                                 <Button
@@ -587,33 +593,59 @@ export default function AddProductPage({
                           <div>
                             {productImages ? (
                               <div className="relative group w-full">
-                                <div className="w-full flex justify-center">
-                                  <Image
-                                    src={
-                                      URL.createObjectURL(productImages) ||
-                                      "/placeholder.svg"
-                                    }
-                                    alt="Product"
-                                    width={400}
-                                    height={400}
-                                    className="w-fit max-w-[400px] max-h-[400px] object-contain rounded-lg border bg-gray-50"
+                                <div className="w-full grid grid-cols-2 md:grid-cols-3 gap-4">
+                                  {productImages.map((image, index) => (
+                                    <div key={index} className="relative">
+                                      <Image
+                                        src={URL.createObjectURL(image)}
+                                        alt={`Product ${index + 1}`}
+                                        width={400}
+                                        height={400}
+                                        className="w-full aspect-square object-contain rounded-lg border bg-gray-50"
+                                      />
+                                      <Button
+                                        type="button"
+                                        variant="destructive"
+                                        disabled={isLoading}
+                                        size="sm"
+                                        className="absolute top-2 right-2"
+                                        onClick={() => {
+                                          const newImages =
+                                            productImages.filter(
+                                              (_, i) => i !== index
+                                            );
+                                          setProductImages(
+                                            newImages.length ? newImages : null
+                                          );
+                                        }}
+                                      >
+                                        <X className="h-4 w-4" />
+                                      </Button>
+                                      {index === 0 && (
+                                        <div className="absolute bottom-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-md font-medium">
+                                          Main Image
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                                <div className="mt-4 flex justify-center">
+                                  <label htmlFor="add-more-images">
+                                    <div className="cursor-pointer border rounded-md px-4 py-2 shadow-sm flex items-center justify-center">
+                                      <Plus className="h-4 w-4 mr-2" />
+                                      Add More Images
+                                    </div>
+                                  </label>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    disabled={isLoading}
+                                    onChange={handleImageSize}
+                                    className="hidden"
+                                    multiple
+                                    id="add-more-images"
                                   />
                                 </div>
-                                <Button
-                                  type="button"
-                                  variant="destructive"
-                                  disabled={isLoading}
-                                  size="sm"
-                                  className="absolute top-4 right-4"
-                                  onClick={() => removeImage()}
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                                {productImages && (
-                                  <div className="absolute bottom-4 left-4 bg-primary text-primary-foreground text-sm px-3 py-1 rounded-md font-medium">
-                                    Main Product Image
-                                  </div>
-                                )}
                               </div>
                             ) : (
                               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
@@ -623,6 +655,7 @@ export default function AddProductPage({
                                   disabled={isLoading}
                                   onChange={handleImageSize}
                                   className="hidden"
+                                  multiple
                                   id="image-upload"
                                 />
                                 <label
@@ -695,20 +728,6 @@ export default function AddProductPage({
                                     className="mb-2"
                                   />
                                 </FormControl>
-                                {/* <Button
-                                  type="button"
-                                  variant="outline"
-                                  disabled={isLoading}
-                                  onClick={() => {
-                                    const newVideos = [
-                                      ...(field.value || []),
-                                      { videoUrl: "" },
-                                    ];
-                                    field.onChange(newVideos);
-                                  }}
-                                >
-                                  Add Video
-                                </Button> */}
                               </div>
 
                               {/* Additional input boxes */}
@@ -1086,9 +1105,6 @@ export default function AddProductPage({
                               )
                             )}
                           </div>
-                          {/* <FormDescription className="mt-4">
-                            Check all sizes that are available for this product
-                          </FormDescription> */}
                           <FormMessage className="mt-4" />
                         </FormItem>
                       )}
@@ -1137,6 +1153,18 @@ export default function AddProductPage({
                               step={0.01}
                               min={0}
                               placeholder="0.00"
+                              onChange={(e) => {
+                                field.onChange(e);
+                                // Reset discount price if it becomes greater than selling price
+                                const discountPrice =
+                                  form.getValues("discountPrice");
+                                if (
+                                  discountPrice &&
+                                  Number(discountPrice) > Number(e.target.value)
+                                ) {
+                                  form.setValue("discountPrice", "");
+                                }
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -1157,10 +1185,31 @@ export default function AddProductPage({
                               type="number"
                               step={0.01}
                               min={0}
+                              max={form.getValues("sellingPrice") || undefined}
                               placeholder="0.00"
+                              onChange={(e) => {
+                                const sellingPrice =
+                                  form.getValues("sellingPrice");
+                                if (
+                                  !sellingPrice ||
+                                  Number(e.target.value) <= Number(sellingPrice)
+                                ) {
+                                  field.onChange(e);
+                                } else {
+                                  e.target.value = field.value || "";
+                                }
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
+                          {field.value &&
+                            Number(field.value) >
+                              Number(form.getValues("sellingPrice")) && (
+                              <p className="text-sm text-red-500">
+                                Discount price cannot be greater than selling
+                                price
+                              </p>
+                            )}
                         </FormItem>
                       )}
                     />

@@ -5,10 +5,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { convertToBengaliNumber } from "@/hooks/convertNum";
+import useCart from "@/lib/zustand/store";
 import { VariantType } from "@prisma/client";
-import { Check, Copy, Download, Heart, ShoppingCart } from "lucide-react";
+import {
+  Check,
+  Copy,
+  Download,
+  Heart,
+  ShoppingCart,
+  TriangleAlert,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -41,11 +50,14 @@ interface ProductDetailsProps {
 export default function ProductDetails({ product }: ProductDetailsProps) {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showMore, setShowMore] = useState(false);
-  const [selectedSize, setSelectedSize] = useState("M");
+  const [selectedSize, setSelectedSize] = useState<string>();
   const [quantity, setQuantity] = useState(1);
-  const [price, setPrice] = useState(8);
+  const [price, setPrice] = useState(0);
   const [copied, setCopied] = useState(false);
+  const cart = useCart();
+  const router = useRouter();
 
+  if (!product) return null;
   const productDescription = `${product?.fullDescription}`;
 
   const copyToClipboard = () => {
@@ -83,8 +95,87 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     }
   };
 
+  const handleCart = () => {
+    const actualPrice = product.discountPrice || product.sellingPrice;
+
+    if (!selectedSize) {
+      return toast.error("সাইজ সিলেক্ট করুন", {
+        duration: 5000,
+        icon: <TriangleAlert className="h-4 w-4" />,
+        style: {
+          borderRadius: "6px",
+          background: "red",
+          color: "white",
+          border: "1px solid #ff0000",
+          fontSize: "16px",
+          fontWeight: "bold",
+        },
+      });
+    }
+
+    if (price === 0) {
+      return toast.error("মূল্য সিলেক্ট করুন", {
+        duration: 5000,
+        icon: <TriangleAlert className="h-4 w-4" />,
+        style: {
+          borderRadius: "6px",
+          background: "red",
+          color: "white",
+          border: "1px solid #ff0000",
+          fontSize: "16px",
+          fontWeight: "bold",
+        },
+      });
+    }
+
+    if (actualPrice >= price) {
+      return toast.error(
+        `সর্বনিম্ন মূল্য ${convertToBengaliNumber(actualPrice)}`,
+        {
+          duration: 5000,
+          icon: <TriangleAlert className="h-4 w-4" />,
+          style: {
+            borderRadius: "6px",
+            background: "red",
+            color: "white",
+            border: "1px solid #ff0000",
+            fontSize: "16px",
+            fontWeight: "bold",
+          },
+        }
+      );
+    }
+
+    if (quantity < 1) {
+      return toast.error("Please select a quantity", {
+        duration: 5000,
+        icon: <TriangleAlert className="h-4 w-4" />,
+        style: {
+          borderRadius: "6px",
+          background: "red",
+          color: "white",
+          border: "1px solid #ff0000",
+          fontSize: "16px",
+          fontWeight: "bold",
+        },
+      });
+    }
+
+    cart.addToCart({
+      id: product.id,
+      name: product.name,
+      subCategory: product.SubCategory.name,
+      image: product.imageUrl,
+      quantity,
+      size: selectedSize,
+      price,
+    });
+
+    router.push("/store/cart");
+  };
+
   return (
-    <div className="p-4 my-20 lg:p-6 max-w-[1400px] mx-auto">
+    <div className="p-4 mb-20 lg:p-6 max-w-[1400px] mx-auto">
       {product?.note && (
         <div className="py-2 px-4 mb-3 rounded-xl font-semibold text-center bg-indigo-300">
           This is a note
@@ -160,26 +251,13 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             )}
           </div>
 
-          {/* <div className="flex items-center mb-4">
-            {[1, 2, 3, 4].map((star) => (
-              <Star
-                key={star}
-                className={`h-5 w-5 ${
-                  star <= 3
-                    ? "text-yellow-400 fill-yellow-400"
-                    : "text-gray-300"
-                }`}
-              />
-            ))}
-          </div> */}
-
           <div className="border-t border-b py-2 my-2 ">
             <p className="font-medium mb-4">{product?.sku}</p>
             <div className="mb-6">
               <p className="mb-3 font-medium text-lg">সাইজ:</p>
               <RadioGroup
                 value={selectedSize}
-                onValueChange={setSelectedSize}
+                onValueChange={(value) => setSelectedSize(value)}
                 className="flex gap-4"
               >
                 {product?.variant.map((size) => (
@@ -214,7 +292,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 <p className="mb-2 font-medium">বিক্রয়-মূল্য</p>
                 <Input
                   type="number"
-                  value={price}
                   onChange={(e) =>
                     setPrice(Number.parseInt(e.target.value) || 0)
                   }
@@ -228,8 +305,16 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               চার্জের অর্ডসন পরবর্তী পেইজে পাবেন।
             </p>
           </div>
-
-          <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
+          <div className="flex items-center justify-end gap-2 mb-4">
+            <ShoppingCart className="h-5 w-5" />
+            <span className="text-sm font-medium">
+              Cart Items: {cart.items.length}
+            </span>
+          </div>
+          <Button
+            onClick={() => handleCart()}
+            className="w-full bg-green-600 hover:bg-green-700 text-white"
+          >
             <ShoppingCart className="h-4 w-4 mr-2" />
             অর্ডার তালিকায় অ্যাড করুন
           </Button>

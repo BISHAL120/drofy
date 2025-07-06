@@ -1,10 +1,10 @@
-import CartPage from "@/components/store/cart/cartPage";
+import CheckoutForm from "@/components/store/cart/checkout/checkOut";
 import React from "react";
 
 const Page = () => {
   return (
     <div>
-      <CartPage />
+      <CheckoutForm />
     </div>
   );
 };

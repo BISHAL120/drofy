@@ -46,7 +46,7 @@ export const getStoreProducts = async (subCatId: string | undefined) => {
         },
         select: {
             id: true,
-            imageUrl: true,
+            images: true,
             name: true,
             sellingPrice: true,
             discountPrice: true,
@@ -71,7 +71,7 @@ export const getProductDetails = async (id: string) => {
         },
         select: {
             id: true,
-            imageUrl: true,
+            images: true,
             name: true,
             shortDescription: true,
             sellingPrice: true,
@@ -119,7 +119,7 @@ export const getFeaturedContent = async () => {
                 select: {
                     id: true,
                     name: true,
-                    imageUrl: true,
+                    images: true,
                     sellingPrice: true,
                     discountPrice: true,
                     createdAt: true,

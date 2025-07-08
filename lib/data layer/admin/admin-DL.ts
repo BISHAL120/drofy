@@ -136,7 +136,7 @@ export const getAllProducts = async ({
         where: whereClause,
         select: {
             id: true,
-            imageUrl: true,
+            images: true,
             name: true,
             sku: true,
             cost: true,
@@ -188,12 +188,13 @@ export const getDeletedProducts = async (currentPage: number) => {
         take: 10,
         select: {
             id: true,
-            imageUrl: true,
+            images: true,
             name: true,
             sku: true,
             cost: true,
             sellingPrice: true,
             discountPrice: true,
+            isDeleted: true,
             inStock: true,
             stock: true,
             saleCount: true,

@@ -79,6 +79,11 @@ enum VariantType {
   XXXL
 }
 
+type ImageObj {
+  imageUrl String
+  imageID  String
+}
+
 model Product {
   id               String        @id @default(auto()) @map("_id") @db.ObjectId
   name             String
@@ -95,8 +100,7 @@ model Product {
   stock            Int
   trackInventory   Boolean       @default(false)
   stockAlert       Int?          @default(5)
-  imageUrl         String
-  imageID          String?
+  images           ImageObj[]
   videoUrl         VideoType[]
   saleCount        Int?          @default(0)
   deliveryCharge   Int

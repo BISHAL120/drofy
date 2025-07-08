@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { convertToBengaliNumber } from "@/hooks/convertNum";
 import useCart from "@/lib/zustand/store";
-import { VariantType } from "@prisma/client";
+import { ImageObj, VariantType } from "@prisma/client";
 import {
   Check,
   Copy,
@@ -27,7 +27,7 @@ interface ProductDetailsProps {
     id: string;
     createdAt: Date;
     inStock: boolean;
-    imageUrl: string;
+    images: ImageObj[];
     variant: VariantType[];
     shortDescription: string | null;
     note: string | null;
@@ -165,7 +165,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
       id: product.id,
       name: product.name,
       subCategory: product.SubCategory.name,
-      image: product.imageUrl,
+      image: product.images[0].imageUrl,
       quantity,
       size: selectedSize,
       price,
@@ -186,7 +186,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
         <div className="flex flex-col items-center p-4">
           <div className="relative w-full max-w-md aspect-[3/4] mb-4">
             <Image
-              src={product?.imageUrl || ""}
+              src={product?.images[0].imageUrl || ""}
               alt={`${product?.name}`}
               fill
               className="object-cover rounded-md"
@@ -199,7 +199,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               variant="outline"
               className="flex items-center gap-2"
             >
-              <Link href={product?.imageUrl || ""}>
+              <Link href={product?.images[0].imageUrl || ""}>
                 <Download className="h-4 w-4" /> ছবি ডাউনলোড
               </Link>
             </Button>

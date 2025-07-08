@@ -1,6 +1,7 @@
 import db from "@/lib/db";
 import { deleteFirebaseImage } from "@/lib/firebase/deleteImage";
 import { uploadImageFirebase } from "@/lib/firebase/upload";
+import { ImageObj } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { v4 as uuIdV4 } from "uuid";
 
@@ -9,7 +10,7 @@ import { v4 as uuIdV4 } from "uuid";
 export async function POST(request: Request) {
     try {
         const formData = await request.formData();
-        const file = formData.get("imageUrl") as File;
+        const files = formData.getAll("imageUrl") as File[];
         const { name,
             shortDescription,
             fullDescription,
@@ -34,12 +35,20 @@ export async function POST(request: Request) {
             inStock
         } = JSON.parse(formData.get("Details") as string);
 
-        if (!file) {
-            return NextResponse.json({ error: "file is required" }, { status: 400 });
+        if (!files) {
+            return NextResponse.json({ error: "files is required" }, { status: 400 });
         }
+        const images: ImageObj[] = []
+        await Promise.all(files.map(async (file) => {
 
-        const customID = uuIdV4()
-        const { url } = await uploadImageFirebase(file, "Products", customID + "_");
+            const customID = uuIdV4()
+            const { url } = await uploadImageFirebase(file, "Products", customID + "_");
+            images.push({
+                imageUrl: url,
+                imageID: customID,
+            })
+        }))
+
 
         const productCount = await db.product.count();
         const productCode = `PROD-${productCount + 1}`;
@@ -58,8 +67,7 @@ export async function POST(request: Request) {
                 discountPrice: Number(discountPrice),
                 stock: Number(stock),
                 deliveryCharge: Number(deliveryCharge),
-                imageUrl: url,
-                imageID: customID,
+                images: images,
                 videoUrl,
                 variant,
                 brand,
@@ -88,9 +96,6 @@ export async function POST(request: Request) {
             });
         }
 
-
-
-
         return NextResponse.json(
             { message: "Product Created successful", data: product },
             { status: 201 }
@@ -117,7 +122,7 @@ export async function DELETE(request: Request) {
         // Get the product details first
         const product = await db.product.findUnique({
             where: { id },
-            select: { imageUrl: true, categoryId: true, subCategoryId: true },
+            select: { images: true, categoryId: true, subCategoryId: true },
         });
 
         if (!product) {
@@ -125,8 +130,10 @@ export async function DELETE(request: Request) {
         }
 
         // Delete image from Firebase if exists
-        if (product.imageUrl) {
-            await deleteFirebaseImage(product.imageUrl)
+        if (product.images) {
+            await Promise.all(product.images.map(async (image) => {
+                await deleteFirebaseImage(image.imageUrl)
+            }))
         }
 
         // Delete the product from database

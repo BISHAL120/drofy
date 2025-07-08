@@ -10,16 +10,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   Table,
   TableBody,
   TableCell,
@@ -27,12 +17,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ImageObj } from "@prisma/client";
 import axios from "axios";
 import { RotateCcw, Trash2, TriangleAlert } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import ConfirmationDialog from "../../components/confirmationDialog";
 
 interface DeletedProductsPageProps {
   deletedProducts: {
@@ -50,8 +42,9 @@ interface DeletedProductsPageProps {
     sellingPrice: number;
     discountPrice: number | null;
     stock: number;
-    imageUrl: string;
+    images: ImageObj[];
     inStock: boolean;
+    isDeleted: boolean;
   }[];
   deletedProductsCount: number;
 }
@@ -195,7 +188,9 @@ const DeletedProducts = ({
                         <div className="flex items-center space-x-3">
                           <div className="relative group">
                             <Image
-                              src={product.imageUrl || "/placeholder.svg"}
+                              src={
+                                product.images[0].imageUrl || "/placeholder.svg"
+                              }
                               alt={product.name}
                               width={100}
                               height={100}
@@ -246,8 +241,8 @@ const DeletedProducts = ({
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2 items-center">
-                          <Dialog>
-                            <DialogTrigger asChild>
+                          <ConfirmationDialog
+                            trigger={
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -255,32 +250,15 @@ const DeletedProducts = ({
                               >
                                 <RotateCcw className="h-4 w-4" />
                               </Button>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px]">
-                              <DialogHeader>
-                                <DialogTitle>Restore Product</DialogTitle>
-                                <DialogDescription>
-                                  Are you sure you want to restore this product?
-                                </DialogDescription>
-                              </DialogHeader>
-                              <DialogFooter>
-                                <DialogClose asChild>
-                                  <Button variant="outline">Cancel</Button>
-                                </DialogClose>
-                                <DialogClose asChild>
-                                  <Button
-                                    onClick={() => handleRestore(product.id)}
-                                    className="bg-indigo-500 hover:bg-indigo-600 transition-colors duration-300 text-white"
-                                    variant="default"
-                                  >
-                                    Confirm
-                                  </Button>
-                                </DialogClose>
-                              </DialogFooter>
-                            </DialogContent>
-                          </Dialog>
-                          <Dialog>
-                            <DialogTrigger asChild>
+                            }
+                            title="Restore Product"
+                            description="Are you sure you want to restore this product?"
+                            onConfirm={() => handleRestore(product.id)}
+                            currentState={product.isDeleted}
+                          />
+
+                          <ConfirmationDialog
+                            trigger={
                               <div className="flex items-center space-x-2">
                                 <Button
                                   variant="ghost"
@@ -290,29 +268,12 @@ const DeletedProducts = ({
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px]">
-                              <DialogHeader>
-                                <DialogTitle>Delete Product</DialogTitle>
-                                <DialogDescription>
-                                  are you sure you want to delete this product?
-                                </DialogDescription>
-                              </DialogHeader>
-                              <DialogFooter>
-                                <DialogClose asChild>
-                                  <Button variant="outline">Cancel</Button>
-                                </DialogClose>
-                                <DialogClose asChild>
-                                  <Button
-                                    onClick={() => handleDelete(product.id)}
-                                    variant={"destructive"}
-                                  >
-                                    Confirm
-                                  </Button>
-                                </DialogClose>
-                              </DialogFooter>
-                            </DialogContent>
-                          </Dialog>
+                            }
+                            title="Delete Permanently"
+                            description="Are you sure you want to permanently delete this product?"
+                            onConfirm={() => handleDelete(product.id)}
+                            currentState={!product.isDeleted}
+                          />
                         </div>
                       </TableCell>
                     </TableRow>

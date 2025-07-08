@@ -1,3 +1,4 @@
+import { ImageObj } from "@prisma/client";
 import ProductCard from "../store/products/productCard";
 
 interface ProductGridProps {
@@ -8,7 +9,7 @@ interface ProductGridProps {
     sellingPrice: number;
     discountPrice: number | null;
     createdAt: Date;
-    imageUrl: string;
+    images: ImageObj[];
     SubCategory: {
       name: string;
     };

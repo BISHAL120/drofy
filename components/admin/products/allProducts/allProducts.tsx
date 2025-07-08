@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ProductStatus } from "@prisma/client";
+import { ImageObj, ProductStatus } from "@prisma/client";
 import axios from "axios";
 import {
   BadgeCheckIcon,
@@ -48,7 +48,7 @@ interface AllProductsPageProps {
   allProducts: {
     id: string;
     name: string;
-    imageUrl: string;
+    images: ImageObj[];
     sku: string;
     isFeatured: boolean;
     cost: number;
@@ -262,12 +262,16 @@ export default function AllProductsPage({
                         <div className="flex items-center space-x-3">
                           <div className="relative group">
                             <Image
-                              src={product.imageUrl || "/placeholder.svg"}
+                              src={
+                                product.images[0].imageUrl || "/placeholder.svg"
+                              }
                               alt={product.name}
                               width={100}
                               height={100}
                               className="rounded-md h-[75px] w-[75px] object-cover cursor-pointer"
-                              onClick={() => setPreviewImage(product.imageUrl)}
+                              onClick={() =>
+                                setPreviewImage(product.images[0]?.imageUrl)
+                              }
                             />
                             {/* Preview overlay */}
                             {previewImage && (

@@ -1,7 +1,10 @@
-import db from "@/lib/db"
-import { deleteFirebaseImage } from "@/lib/firebase/deleteImage"
-import { uploadImageFirebase } from "@/lib/firebase/upload"
-import { NextRequest, NextResponse } from "next/server"
+import db from "@/lib/db";
+import { storage } from "@/lib/firebase/firebase";
+import { uploadImageFirebase } from "@/lib/firebase/upload";
+import { deleteObject, ref } from "firebase/storage";
+import { NextRequest, NextResponse } from "next/server";
+import { v4 as uuIdV4 } from "uuid";
+
 
 export async function PATCH(
     req: NextRequest,
@@ -10,23 +13,38 @@ export async function PATCH(
     try {
         const { id } = await params
         const formData = await req.formData()
-        const image = formData.get("imageUrl") as File | null
+        const images = formData.getAll("imageUrl") as File[] | null
         const body = JSON.parse(formData.get("Details") as string)
 
-        console.log(body)
+        interface imageProps {
+            imageUrl: string
+            imageID: string
+        }
 
-        let imageUrl = body.imageUrl // Initialize with existing URL
+        const existingImages = body.images // Initialize with existing URL
 
-        // Check if image is provided and update imageUrl
-        if (image && image.size > 0) {
+        if (body.deletedImages) {
+            body.deletedImages.forEach(async (image: imageProps) => {
+                await deleteObject(ref(storage, image.imageUrl))
+            })
+        }
+
+
+        // Check if new image is added and update image Object
+        if (images && images.length > 0) {
             try {
 
-                if (body.imageUrl) {
-                    await deleteFirebaseImage(body.imageUrl)
-                }
-                // Upload new image
-                const { url } = await uploadImageFirebase(image, "Products");
-                imageUrl = url;
+                await Promise.all(images.map(async (image) => {
+
+                    // Upload new images
+                    const customID = uuIdV4()
+                    const { url } = await uploadImageFirebase(image, "Products", customID + "_");
+                    existingImages.push({
+                        imageUrl: url,
+                        imageID: customID,
+                    })
+                }))
+
 
             } catch (error) {
                 console.log("Product Image processing error:", error)
@@ -39,9 +57,9 @@ export async function PATCH(
             }
         }
 
-        const { id: _, ...rest } = body
+        const { id: _, deletedImages: __, ...rest } = body
 
-        console.log(_)
+        console.log(_, __)
 
         const updateProduct = await db.product.update({
             where: { id },
@@ -52,7 +70,7 @@ export async function PATCH(
                 discountPrice: Number(body.discountPrice),
                 trackInventory: body.trackInventory,
                 stockAlert: Number(body.stockAlert),
-                imageUrl: imageUrl, // Use existing or new URL
+                images: existingImages, // Use existing and new images
                 deliveryCharge: Number(body.deliveryCharge),
                 weight: Number(body.weight),
                 stock: Number(body.stock),

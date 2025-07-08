@@ -31,7 +31,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { productSchema } from "@/lib/zod/product";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Product } from "@prisma/client";
+import { ImageObj, Product } from "@prisma/client";
 import axios from "axios";
 import {
   ArrowBigUpDash,
@@ -49,7 +49,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import ImageDeleteConfirmation from "../../components/imageDeleteConfirmation";
 
 interface ProductCategories {
   id: string;
@@ -67,10 +66,11 @@ export default function AddProductPage({
   initialData: Product | undefined;
   categories: ProductCategories[];
 }) {
-  const [productImages, setProductImages] = useState<File[] | null>();
-  const [initialImage, setInitialImage] = useState<string>(
-    initialData?.imageUrl || ""
+  const [productImages, setProductImages] = useState<File[] | null>(null);
+  const [initialImages, setInitialImages] = useState<ImageObj[]>(
+    initialData?.images || []
   );
+  const [deletedImages, setDeletedImages] = useState<ImageObj[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const router = useRouter();
@@ -127,7 +127,7 @@ export default function AddProductPage({
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof productSchema>) {
-    if (!initialImage && !productImages) {
+    if (!initialImages.length && !productImages?.length) {
       toast.error("দয়া করে ছবি নির্বাচন করুন", {
         duration: 5000,
         icon: <TriangleAlert className="h-4 w-4" />,
@@ -147,13 +147,19 @@ export default function AddProductPage({
     setIsLoading(true);
 
     const formdata = new FormData();
-    // formdata.append("imageUrl", productImages[0] || "");
+
+    productImages?.forEach((image) => {
+      formdata.append("imageUrl", image);
+    });
+
     if (initialData) {
       formdata.append(
         "Details",
         JSON.stringify({
+          deletedImages: deletedImages,
           ...initialData,
           ...values,
+          images: initialImages,
         })
       );
     } else {
@@ -201,7 +207,7 @@ export default function AddProductPage({
             descriptionClassName: "text-sm",
             duration: 5000,
           });
-          //   router.push("/admin/products");
+          router.push("/admin/products");
         })
         .catch((error) => {
           console.log(error);
@@ -255,7 +261,7 @@ export default function AddProductPage({
         return;
       }
 
-      // Check file type
+      // Allowed file type
       const allowedTypes = [
         "image/jpeg",
         "image/jpg",
@@ -265,6 +271,7 @@ export default function AddProductPage({
         "image/avif",
       ];
 
+      // Check File Type
       if (!allowedTypes.includes(file.type)) {
         toast.error(
           `File ${file.name} must be a valid image type (JPEG, JPG, PNG, HEIC, WEBP, AVIF)`,
@@ -294,8 +301,22 @@ export default function AddProductPage({
     }
   };
 
-  const removeImage = () => {
-    setProductImages(null);
+  const handleImageDelete = (idx: string) => {
+    const removedImage = initialImages?.filter(
+      (image) => image.imageID !== idx
+    );
+    setInitialImages(removedImage);
+    const findImageObj = initialImages.find((image) => image.imageID === idx);
+    if (findImageObj) {
+      setDeletedImages((prev) => [...prev, findImageObj]);
+    }
+  };
+
+  const handleNewImageDelete = (idx: number) => {
+    setProductImages((prevImages) => {
+      if (!prevImages) return [];
+      return prevImages.filter((_, i) => i !== idx);
+    });
   };
 
   const selectedCategoryData = categories.find(
@@ -560,34 +581,88 @@ export default function AddProductPage({
                         Product Image
                       </h3>
                       <div className="w-full">
-                        {initialImage ? (
-                          <div className="relative group w-full">
-                            <div className="w-full flex justify-center">
-                              <Image
-                                src={initialImage}
-                                alt="Product"
-                                width={400}
-                                height={400}
-                                className=" max-w-[400px] max-h-[400px] object-contain rounded-lg border bg-gray-50"
+                        {initialImages?.length ? (
+                          <div className=" group w-full">
+                            <div className="w-full grid grid-cols-2 md:grid-cols-3 gap-4">
+                              {initialImages.map((imageObj, index) => (
+                                <div key={index}>
+                                  <div key={index} className="relative">
+                                    <Image
+                                      src={imageObj.imageUrl}
+                                      alt={`Product ${index + 1}`}
+                                      width={400}
+                                      height={400}
+                                      className="w-full aspect-square object-contain rounded-lg border bg-gray-50 shadow"
+                                    />
+                                    <Button
+                                      type="button"
+                                      variant="destructive"
+                                      disabled={isLoading}
+                                      size="sm"
+                                      onClick={() =>
+                                        handleImageDelete(imageObj.imageID)
+                                      }
+                                      className="absolute top-2 right-2"
+                                    >
+                                      <X className="h-4 w-4" />
+                                    </Button>
+                                    {index === 0 && (
+                                      <div className="absolute bottom-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-md font-medium">
+                                        Main Image
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                              {productImages
+                                ? productImages.map((image, index) => (
+                                    <div key={index}>
+                                      <div key={index} className="relative">
+                                        <Image
+                                          src={URL.createObjectURL(image)}
+                                          alt={`Product ${index + 1}`}
+                                          width={400}
+                                          height={400}
+                                          className="w-full aspect-square object-contain rounded-lg border bg-gray-50 shadow"
+                                        />
+                                        <Button
+                                          type="button"
+                                          variant="destructive"
+                                          disabled={isLoading}
+                                          size="sm"
+                                          onClick={() =>
+                                            handleNewImageDelete(index)
+                                          }
+                                          className="absolute top-2 right-2"
+                                        >
+                                          <X className="h-4 w-4" />
+                                        </Button>
+
+                                        <div className="absolute bottom-2 left-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs px-3 py-1.5 rounded-full font-semibold shadow-md border border-white/20 backdrop-blur-sm">
+                                          New Image
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                            <div className="mt-4 flex justify-center">
+                              <label htmlFor="add-more-images">
+                                <div className="cursor-pointer bg-indigo-400 text-white border rounded-md px-4 py-2 shadow-sm flex items-center justify-center">
+                                  <Plus className="h-4 w-4 mr-2" />
+                                  Add Images
+                                </div>
+                              </label>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                disabled={isLoading}
+                                onChange={handleImageSize}
+                                className="hidden"
+                                multiple
+                                id="add-more-images"
                               />
                             </div>
-                            <ImageDeleteConfirmation
-                              trigger={
-                                <Button
-                                  type="button"
-                                  variant="destructive"
-                                  disabled={isLoading}
-                                  size="sm"
-                                  className="absolute top-2 right-2"
-                                  onClick={removeImage}
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              }
-                              title="Remove Image"
-                              description="Are you sure you want to remove this image?"
-                              setInitialImage={setInitialImage}
-                            />
                           </div>
                         ) : (
                           <div>
@@ -601,7 +676,7 @@ export default function AddProductPage({
                                         alt={`Product ${index + 1}`}
                                         width={400}
                                         height={400}
-                                        className="w-full aspect-square object-contain rounded-lg border bg-gray-50"
+                                        className="w-full aspect-square object-contain rounded-lg border bg-gray-50 shadow"
                                       />
                                       <Button
                                         type="button"
@@ -631,9 +706,9 @@ export default function AddProductPage({
                                 </div>
                                 <div className="mt-4 flex justify-center">
                                   <label htmlFor="add-more-images">
-                                    <div className="cursor-pointer border rounded-md px-4 py-2 shadow-sm flex items-center justify-center">
+                                    <div className="cursor-pointer bg-indigo-400 text-white  border rounded-md px-4 py-2 shadow-sm flex items-center justify-center">
                                       <Plus className="h-4 w-4 mr-2" />
-                                      Add More Images
+                                      Add Images
                                     </div>
                                   </label>
                                   <input
@@ -693,6 +768,7 @@ export default function AddProductPage({
                               { videoUrl: "" },
                             ]);
                           }}
+                          className="bg-indigo-400 text-white "
                         >
                           <Plus className="h-4 w-4 mr-2" />
                           Add Video

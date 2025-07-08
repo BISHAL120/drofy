@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { convertToBengaliNumber } from "@/hooks/convertNum";
+import { ImageObj } from "@prisma/client";
 import { Download, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,7 +14,7 @@ import { toast } from "sonner";
 interface ProductCardProps {
   product: {
     name: string;
-    imageUrl: string;
+    images: ImageObj[];
     id: string;
     sellingPrice: number;
     discountPrice: number | null;
@@ -55,7 +56,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <div className="relative">
           <Link href={`/store/products/${product.id}`}>
             <Image
-              src={product.imageUrl}
+              src={product.images[0].imageUrl}
               alt={product.name}
               width={210}
               height={210}
@@ -93,7 +94,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             </button>
 
             <div className="bg-white rounded-full p-1.5 shadow-md hover:bg-gray-100 transition-colors">
-              <Link href={product.imageUrl}>
+              <Link href={product.images[0].imageUrl}>
                 <Download size={18} className="text-gray-600" />
               </Link>
             </div>
@@ -130,7 +131,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 variant="outline"
                 className="flex-1 h-9 hover:border-orange-500 hover:bg-orange-100 transition-colors duration-300"
               >
-                <Link href={product.imageUrl}>
+                <Link href={product.images[0].imageUrl}>
                   <Download size={16} className="mr-1" />
                 </Link>
               </Button>

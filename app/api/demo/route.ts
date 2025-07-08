@@ -2,7 +2,12 @@ import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
     try {
-        const body = await request.json()
+        const body = await request.formData()
+
+        const allImage = body.getAll("imageUrl")
+        allImage.forEach(image => {
+            console.log(image)
+        })
 
         // Return success response
         return NextResponse.json(

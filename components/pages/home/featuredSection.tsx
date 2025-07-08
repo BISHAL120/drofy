@@ -4,6 +4,7 @@ import ProductCard from "@/components/store/products/productCard";
 // import ProductCard from "@/components/store/products/productCard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ImageObj } from "@prisma/client";
 
 export interface FeaturedContentProps {
   featuredContent: {
@@ -11,7 +12,7 @@ export interface FeaturedContentProps {
     id: string;
     products: {
       name: string;
-      imageUrl: string;
+      images: ImageObj[];
       id: string;
       sellingPrice: number;
       discountPrice: number | null;

@@ -54,6 +54,9 @@ export async function POST(request: Request) {
                 email: email || "",
                 address: address || "",
                 role: isAdmin ? ["ADMIN"] : ["USER"],
+                isActive: isAdmin ? true : false,
+                verified: isAdmin ? true : false,
+                resellerLevel: isAdmin ? "LEGENDARY" : "BEGINNER",
                 referralCode: userCount + 1,
             }
         });

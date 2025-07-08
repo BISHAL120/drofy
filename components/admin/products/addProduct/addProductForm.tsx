@@ -110,7 +110,6 @@ export default function AddProductPage({
           isFeatured: false,
           isVerified: false,
           stockAlert: "",
-          // variant: [],
           weight: "",
           dimensions: "",
           cost: "",
@@ -207,7 +206,7 @@ export default function AddProductPage({
             descriptionClassName: "text-sm",
             duration: 5000,
           });
-          router.push("/admin/products");
+          // router.push("/admin/products");
         })
         .catch((error) => {
           console.log(error);
@@ -638,7 +637,7 @@ export default function AddProductPage({
                                           <X className="h-4 w-4" />
                                         </Button>
 
-                                        <div className="absolute bottom-2 left-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs px-3 py-1.5 rounded-full font-semibold shadow-md border border-white/20 backdrop-blur-sm">
+                                        <div className="absolute bottom-2 left-2 bg-gradient-to-r from-green-500 to-teal-500 text-gray-100 text-xs px-3 py-1.5 rounded-full font-semibold shadow-md border border-white/20 backdrop-blur-sm">
                                           New Image
                                         </div>
                                       </div>

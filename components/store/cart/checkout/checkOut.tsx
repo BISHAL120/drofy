@@ -29,88 +29,39 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import location from "@/constants/location.json";
+import locationData from "@/constants/location.json"; // <- your JSON
 import { FormSchema } from "@/lib/zod/checkOut";
 import useCart from "@/lib/zustand/store";
-import axios from "axios";
 import { useState } from "react";
+import axios from "axios";
 
-type districtType = {
-  name: string;
-  value: string;
+/* ------------------------------------------------------------------ */
+/* Types helpers                                                      */
+/* ------------------------------------------------------------------ */
+type Format = { name: string; value: string };
+
+type District = {
+  name: Format;
+  upazila: Array<{
+    name: Format;
+    union: Format[];
+  }>;
 };
 
-type upazilaType = {
-  name: string;
-  value: string;
-};
-
+/* ------------------------------------------------------------------ */
+/* Component                                                          */
+/* ------------------------------------------------------------------ */
 export default function CheckoutPage() {
-  const [districts, setDistricts] = useState<districtType[]>([]);
-  const [upazilas, setUpazilas] = useState<upazilaType[]>([]);
-  const [union, setUnion] = useState<string[]>([]);
+  /* ---------------- cart state ------------------------------------ */
   const cart = useCart();
   const cartItems = cart.items;
 
-  const handleDivisionChange = (value: string) => {
-    const district = location.find(
-      (division) => division.name === value
-    )?.district;
+  /* ---------------- location state -------------------------------- */
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [upazilas, setUpazilas] = useState<District["upazila"][number][]>([]);
+  const [unions, setUnions] = useState<Format[]>([]);
 
-    const array = [];
-
-    if (district) {
-      for (const item of district) {
-        const obj = {
-          name: item.name,
-          value: item.name,
-        };
-        array.push(obj);
-      }
-    }
-
-    setDistricts(array);
-  };
-
-  const handleDistrictChange = (value: string) => {
-    const upazila = location
-      .find((division) => division.district?.find((d) => d.name === value))
-      ?.district?.find((d) => d.name === value)?.upazila;
-
-    const array = [];
-
-    if (upazila) {
-      for (const item of upazila) {
-        const obj = {
-          name: item.name,
-          value: item.name,
-        };
-        array.push(obj);
-      }
-    }
-
-    setUpazilas(array);
-  };
-
-  const handleUpazilaChange = (value: string) => {
-    const result = location
-      .find((division) =>
-        division.district?.find((d) => d.upazila?.find((u) => u.name === value))
-      )
-      ?.district?.find((d) => d.upazila?.find((u) => u.name === value))
-      ?.upazila.find((i) => i.name === value);
-
-    const array = [];
-
-    if (result && "union" in result && result.union) {
-      for (const item of result.union) {
-        array.push(item);
-      }
-    }
-
-    setUnion(array);
-  };
-
+  /* ---------------- react-hook-form ------------------------------- */
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -127,28 +78,61 @@ export default function CheckoutPage() {
     },
   });
 
-  const removeItem = (id: string, size: string) => {
-    cart.removeItem(id, size);
-  };
-
+  /* ---------------- totals ---------------------------------------- */
   const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + item.sellPrice * item.quantity,
     0
   );
-  const deliveryCharge = Number.parseInt(form.watch("deliveryCharge") || "0");
+  const deliveryCharge = Number(form.watch("deliveryCharge") || 0);
   const total = subtotal + deliveryCharge;
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function onSubmit(values: z.infer<typeof FormSchema>) {
     axios
-      .post("/api/store/order", data)
+      .post("/api/store/order", {
+        values,
+        cartItems,
+        subtotal,
+      })
       .then((res) => {
         console.log(res);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
       });
   }
 
+  /* ---------------- handlers -------------------------------------- */
+  const removeItem = (id: string, size: string) => cart.removeItem(id, size);
+
+  const handleDivisionChange = (divisionValue: string) => {
+    const divisionObj = locationData.find(
+      (d) => d.name.value === divisionValue
+    );
+    setDistricts((divisionObj?.district as District[]) ?? []);
+    form.setValue("district", "");
+    form.setValue("upazila", "");
+    form.setValue("union", "");
+    setUpazilas([]);
+    setUnions([]);
+  };
+
+  const handleDistrictChange = (districtValue: string) => {
+    const districtObj = districts.find((d) => d.name.value === districtValue);
+    setUpazilas(districtObj?.upazila ?? []);
+    form.setValue("upazila", "");
+    form.setValue("union", "");
+    setUnions([]);
+  };
+
+  const handleUpazilaChange = (upazilaValue: string) => {
+    const upazilaObj = upazilas.find((u) => u.name.value === upazilaValue);
+    setUnions(upazilaObj?.union ?? []);
+    form.setValue("union", "");
+  };
+
+  /* ---------------------------------------------------------------- */
+  /* Render                                                           */
+  /* ---------------------------------------------------------------- */
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
@@ -160,7 +144,7 @@ export default function CheckoutPage() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Cart Items Section */}
+          {/* -------------------- Cart -------------------- */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -188,7 +172,7 @@ export default function CheckoutPage() {
                       </h3>
                       <p className="text-sm text-gray-500">Size: {item.size}</p>
                       <p className="text-lg font-semibold text-gray-900">
-                        ৳{item.price.toLocaleString()} x {item.quantity}
+                        ৳{item.sellPrice.toLocaleString()} x {item.quantity}
                       </p>
                     </div>
                     <Button
@@ -202,7 +186,6 @@ export default function CheckoutPage() {
                   </div>
                 ))}
                 <Separator />
-
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Subtotal:</span>
@@ -222,7 +205,7 @@ export default function CheckoutPage() {
             </Card>
           </div>
 
-          {/* Customer Details Form */}
+          {/* -------------------- Form -------------------- */}
           <div>
             <Card>
               <CardHeader>
@@ -247,14 +230,11 @@ export default function CheckoutPage() {
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <div className="flex">
-                              <Input
-                                placeholder="01639393834"
-                                className=""
-                                max={11}
-                                {...field}
-                              />
-                            </div>
+                            <Input
+                              placeholder="01639393834"
+                              maxLength={11}
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -281,20 +261,20 @@ export default function CheckoutPage() {
                       )}
                     />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2">
-                      {/* Division Field */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Division */}
                       <FormField
                         control={form.control}
                         name="division"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-base font-medium">
+                            <FormLabel>
                               Division <span className="text-red-500">*</span>
                             </FormLabel>
                             <Select
-                              onValueChange={(value) => {
-                                field.onChange(value);
-                                handleDivisionChange(value);
+                              onValueChange={(v) => {
+                                field.onChange(v);
+                                handleDivisionChange(v);
                               }}
                               defaultValue={field.value}
                             >
@@ -304,9 +284,12 @@ export default function CheckoutPage() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {location.map((division, idx) => (
-                                  <SelectItem key={idx} value={division.name}>
-                                    {division.name}
+                                {locationData.map((d) => (
+                                  <SelectItem
+                                    key={d.name.value}
+                                    value={d.name.value}
+                                  >
+                                    {d.name.name}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -316,19 +299,19 @@ export default function CheckoutPage() {
                         )}
                       />
 
-                      {/* District Field */}
+                      {/* District */}
                       <FormField
                         control={form.control}
                         name="district"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-base font-medium">
+                            <FormLabel>
                               District <span className="text-red-500">*</span>
                             </FormLabel>
                             <Select
-                              onValueChange={(value) => {
-                                field.onChange(value);
-                                handleDistrictChange(value);
+                              onValueChange={(v) => {
+                                field.onChange(v);
+                                handleDistrictChange(v);
                               }}
                               defaultValue={field.value}
                               disabled={!form.watch("division")}
@@ -345,12 +328,12 @@ export default function CheckoutPage() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {districts.map((district) => (
+                                {districts.map((d) => (
                                   <SelectItem
-                                    key={district.value}
-                                    value={district.value}
+                                    key={d.name.value}
+                                    value={d.name.value}
                                   >
-                                    {district.name}
+                                    {d.name.name}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -360,19 +343,19 @@ export default function CheckoutPage() {
                         )}
                       />
 
-                      {/* Upazila Field */}
+                      {/* Upazila */}
                       <FormField
                         control={form.control}
                         name="upazila"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-base font-medium">
+                            <FormLabel>
                               Upazila <span className="text-red-500">*</span>
                             </FormLabel>
                             <Select
-                              onValueChange={(value) => {
-                                field.onChange(value);
-                                handleUpazilaChange(value);
+                              onValueChange={(v) => {
+                                field.onChange(v);
+                                handleUpazilaChange(v);
                               }}
                               defaultValue={field.value}
                               disabled={!form.watch("district")}
@@ -389,12 +372,12 @@ export default function CheckoutPage() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {upazilas.map((upazila) => (
+                                {upazilas.map((u) => (
                                   <SelectItem
-                                    key={upazila.value}
-                                    value={upazila.value}
+                                    key={u.name.value}
+                                    value={u.name.value}
                                   >
-                                    {upazila.name}
+                                    {u.name.name}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -404,15 +387,13 @@ export default function CheckoutPage() {
                         )}
                       />
 
-                      {/* Union Field (Optional) */}
+                      {/* Union */}
                       <FormField
                         control={form.control}
                         name="union"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-base font-medium">
-                              Union (Optional)
-                            </FormLabel>
+                            <FormLabel>Union (Optional)</FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               defaultValue={field.value}
@@ -430,9 +411,9 @@ export default function CheckoutPage() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {union.map((union, idx) => (
-                                  <SelectItem key={idx} value={union}>
-                                    {union}
+                                {unions.map((u, idx) => (
+                                  <SelectItem key={idx} value={u.value}>
+                                    {u.name}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -443,12 +424,13 @@ export default function CheckoutPage() {
                       />
                     </div>
 
+                    {/* Address */}
                     <FormField
                       control={form.control}
                       name="address"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base font-medium">
+                          <FormLabel>
                             Delivery Address{" "}
                             <span className="text-red-500">*</span>
                           </FormLabel>
@@ -469,6 +451,7 @@ export default function CheckoutPage() {
                       )}
                     />
 
+                    {/* Advance charge */}
                     <FormField
                       control={form.control}
                       name="advanceCharge"
@@ -507,17 +490,18 @@ export default function CheckoutPage() {
                       )}
                     />
 
+                    {/* Delivery charge */}
                     <FormField
                       control={form.control}
                       name="deliveryCharge"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base font-medium">
+                          <FormLabel>
                             Delivery Charge{" "}
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="120" {...field} disabled />
+                            <Input {...field} disabled />
                           </FormControl>
                           <FormDescription className="text-red-500 text-xs">
                             Delivery charge varies based on location. Standard
@@ -528,14 +512,13 @@ export default function CheckoutPage() {
                       )}
                     />
 
+                    {/* Comments */}
                     <FormField
                       control={form.control}
                       name="comments"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base font-medium">
-                            Comments (Optional)
-                          </FormLabel>
+                          <FormLabel>Comments (Optional)</FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="Any special instructions or comments for your order"

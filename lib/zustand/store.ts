@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import { toast } from "sonner";
 
-interface AddCartProps {
+export interface AddCartProps {
     id: string;
     name: string;
     image: string;
@@ -11,11 +11,12 @@ interface AddCartProps {
     quantity: number;
     size: string;
     price: number;
+    sellPrice: number;
 }
 
 interface CartStore {
     items: AddCartProps[];
-    addToCart: ({ id, name, image, subCategory, quantity, size, price, }: AddCartProps) => void;
+    addToCart: ({ id, name, image, subCategory, quantity, size, price, sellPrice }: AddCartProps) => void;
     removeItem: (id: string, size: string) => void;
 
     removeAll: () => void;
@@ -25,7 +26,8 @@ const useCart = create(
     persist<CartStore>(
         (set, get) => ({
             items: [],
-            addToCart: ({ id, name, image, subCategory, quantity, size, price, }: AddCartProps) => {
+            addToCart: ({ id, name, image, subCategory, quantity, size, price, sellPrice }: AddCartProps) => {
+
 
                 const existingItem = get().items.find(item => item.id === id && item.size === size);
                 if (existingItem) {
@@ -40,7 +42,7 @@ const useCart = create(
                     return;
                 }
 
-                set({ items: [...get().items, { id, name, image, subCategory, quantity, size, price, }] });
+                set({ items: [...get().items, { id, name, image, subCategory, quantity, size, price, sellPrice }] });
                 toast.success("Item added to cart.");
             },
             removeItem: (id: string, size: string) => {

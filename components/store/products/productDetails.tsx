@@ -168,7 +168,8 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
       image: product.images[0].imageUrl,
       quantity,
       size: selectedSize,
-      price,
+      price: actualPrice,
+      sellPrice: price,
     });
 
     router.push("/store/cart");
@@ -304,12 +305,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               বিক্রয় মূল্যের জন্যগাহক শুধু প্রোডাক্ট এর প্রাইস দিবেন, কুরিয়ার
               চার্জের অর্ডসন পরবর্তী পেইজে পাবেন।
             </p>
-          </div>
-          <div className="flex items-center justify-end gap-2 mb-4">
-            <ShoppingCart className="h-5 w-5" />
-            <span className="text-sm font-medium">
-              Cart Items: {cart.items.length}
-            </span>
           </div>
           <Button
             onClick={() => handleCart()}

@@ -76,7 +76,7 @@ const CartPage = () => {
                       </p>
                       <p className="mt-1 text-sm text-gray-500">
                         পরিমান: {item.quantity} x ৳
-                        {convertToBengaliNumber(item.price)}
+                        {convertToBengaliNumber(item.sellPrice)}
                       </p>
                       <p className="mt-1 text-sm text-gray-500">
                         সাইজ: {item.size}
@@ -84,7 +84,8 @@ const CartPage = () => {
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-medium text-gray-900">
-                        ৳ {convertToBengaliNumber(item.quantity * item.price)}
+                        ৳{" "}
+                        {convertToBengaliNumber(item.quantity * item.sellPrice)}
                       </p>
                     </div>
                     <div
@@ -106,7 +107,7 @@ const CartPage = () => {
                   ৳{" "}
                   {convertToBengaliNumber(
                     cart.items.reduce(
-                      (acc, item) => acc + item.quantity * item.price,
+                      (acc, item) => acc + item.quantity * item.sellPrice,
                       0
                     )
                   )}
@@ -114,7 +115,7 @@ const CartPage = () => {
               </div>
             </div>
 
-            <div className="mt-6 space-y-3">
+            <div className="mt-6 flex flex-col space-y-3">
               <Link href="/store/categories">
                 <button className="w-full bg-gray-200 text-gray-800 py-3 px-4 rounded-md hover:bg-gray-300 transition-colors">
                   আরো সিলেক্ট করুন

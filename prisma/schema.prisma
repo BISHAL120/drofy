@@ -194,23 +194,22 @@ model Order {
   reseller   User   @relation(fields: [resellerId], references: [id])
   resellerId String @db.ObjectId
 
-  customerPhone       String
-  customerName        String
-  customerDivision    String
-  customerDistrict    String
-  customerUpazila     String
-  customerUnion       String
-  customerAddress     String
-  deliveryCharge      String
-  advanceCharge       Boolean
-  resellerOrderNumber String
-  totalPrice          String
-  comments            String
-  cartItems           CartItem[]
-  orderId             String
-  status              OrderStatus          @default(PENDING)
-  chargeStatus        DeliveryChargeStatus
-  totalProfit         Float // calculated on complete
+  orderCount       Int                  @unique
+  customerPhone    String
+  customerName     String
+  customerDivision String
+  customerDistrict String
+  customerUpazila  String
+  customerUnion    String
+  customerAddress  String
+  deliveryCharge   String
+  advanceCharge    Boolean
+  totalPrice       String
+  comments         String
+  cartItems        CartItem[]
+  status           OrderStatus          @default(PENDING)
+  chargeStatus     DeliveryChargeStatus
+  totalProfit      Float? // calculated on complete
 
   completedAt DateTime?
   createdAt   DateTime  @default(now())

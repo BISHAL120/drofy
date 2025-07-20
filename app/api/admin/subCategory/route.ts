@@ -1,24 +1,11 @@
 
 import db from "@/lib/db";
+import { deleteFirebaseImage } from "@/lib/firebase/deleteImage";
 import { uploadImageFirebase } from "@/lib/firebase/upload";
 import { NextResponse } from "next/server";
 // import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "@/firebase/storage";
 
 
-/* 
-export async function GET() {
-    try {
-        const categories = await db.subCategory.findMany();
-        return NextResponse.json({ data: categories, message: "Categories fetched successfully" }, { status: 200 });
-    } catch (error) {
-        console.log("Admin_Sub-Category_GET", error)
-        return NextResponse.json(
-            { error: "Failed to fetch categories" },
-            { status: 500 }
-        );
-    }
-}
- */
 export async function POST(request: Request) {
     try {
         const formData = await request.formData();
@@ -112,6 +99,63 @@ export async function POST(request: Request) {
         console.log("Admin_Category_POST", error)
         return NextResponse.json(
             { message: "Failed to create category" },
+            { status: 500 }
+        );
+    }
+}
+
+export async function DELETE(request: Request) {
+    try {
+        const body = await request.json();
+
+        const { id } = body;
+
+        if (!id) {
+            return NextResponse.json({ message: "Sub Category ID is required" }, { status: 400 });
+        }
+
+        // Check if any product exist on that sub category
+        const isProductExist = await db.product.findFirst({
+            where: {
+                subCategoryId: id
+            }
+        });
+
+        // If product exists, return the function
+        if (isProductExist) {
+            return NextResponse.json({ message: "Delete All Related Product First" }, { status: 400 });
+        }
+
+
+        // Get the sub category details first
+        const subCategory = await db.subCategory.findUnique({
+            where: { id },
+            select: {
+                imageUrl: true
+            },
+        });
+
+        if (!subCategory) {
+            return NextResponse.json({ message: "Sub Category not found" }, { status: 404 });
+        }
+
+        if (subCategory?.imageUrl) {
+            await deleteFirebaseImage(subCategory.imageUrl)
+        }
+
+        // Delete the Sub category from database
+        await db.subCategory.delete({
+            where: { id }
+        });
+
+        return NextResponse.json(
+            { message: "Sub Category deleted successfully" },
+            { status: 200 }
+        );
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json(
+            { message: "Error deleting Sub Category", error },
             { status: 500 }
         );
     }

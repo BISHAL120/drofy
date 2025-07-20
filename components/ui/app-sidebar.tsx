@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "@/components/ui/sheet";
 import {
   Sidebar,
   SidebarContent,
@@ -31,6 +31,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DialogTitle } from "./dialog";
 import LogoutButton from "../auth/logoutButton";
+import { Separator } from "./separator";
+import AdminButton from "../auth/adminButton";
 
 const menuItems = [
   { icon: Home, label: "হোম", href: "/store" },
@@ -75,26 +77,23 @@ export function AppSidebar() {
                 {menuItems.map((item, index) => (
                   <SidebarMenuItem
                     key={index}
-                    className={`transition-colors duration-200 hover:bg-orange-100 mb-0 ${
-                      pathname === item.href ? "bg-orange-100" : ""
-                    }`}
+                    className={`transition-colors duration-200 hover:bg-orange-100 mb-0 ${pathname === item.href ? "bg-orange-100" : ""
+                      }`}
                   >
                     <Link
                       href={item.href}
-                      className={`flex items-center gap-3 pl-4 py-4 ${
-                        pathname === item.href
+                      className={`flex items-center gap-3 pl-4 py-4 ${pathname === item.href
                           ? "text-orange-500 font-bold border-b border-black/40 border-r-0 border-l-0"
                           : ""
-                      }`}
+                        }`}
                     >
                       <item.icon
                         size={24}
                         stroke={pathname === item.href ? "#f97316" : "#DC2626"}
-                        className={`h-5 w-5 ${
-                          pathname === item.href
+                        className={`h-5 w-5 ${pathname === item.href
                             ? "text-orange-500"
                             : "text-primary"
-                        }`}
+                          }`}
                       />
                       <span className="font-semibold text-base">
                         {item.label}
@@ -130,10 +129,15 @@ export function MobileSidebar() {
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="p-0 w-[250px]">
-        <DialogTitle />
+      <SheetContent side="left" className="p-0 w-[250px] gap-0">
+        <SheetHeader>
+          <DialogTitle>
+            Re-StockBD
+          </DialogTitle>
+        </SheetHeader>
+          <Separator/>
         <div className="h-full bg-background">
-          <SidebarContent className="my-6">
+          <SidebarContent className="">
             <SidebarGroup>
               <SidebarGroupContent>
                 <SidebarMenu>
@@ -145,16 +149,14 @@ export function MobileSidebar() {
                       <SidebarMenuButton asChild>
                         <Link
                           href={item.href}
-                          className={`flex items-center gap-3 pl-4 py-4 ${
-                            pathname === item.href ? " font-bold" : ""
-                          }`}
+                          className={`flex items-center gap-3 pl-4 py-4 ${pathname === item.href ? " font-bold" : ""
+                            }`}
                         >
                           <item.icon
-                            className={`h-5 w-5 ${
-                              pathname === item.href
+                            className={`h-5 w-5 ${pathname === item.href
                                 ? "text-orange-500"
                                 : "text-primary"
-                            }`}
+                              }`}
                           />
                           <span>{item.label}</span>
                         </Link>
@@ -163,6 +165,9 @@ export function MobileSidebar() {
                   ))}
                 </SidebarMenu>
                 <div className="pl-1.5 pr-3 mt-6">
+                  <AdminButton className="w-full bg-[#bbddd8] justify-start px-4 py-2 bg-transparent text-black hover:text-white transition-colors duration-300 border-2" />
+                </div>
+                <div className="pl-1.5 pr-3 mt-3">
                   <LogoutButton className="w-full justify-start bg-transparent text-black hover:text-white transition-colors duration-300 border-2" />
                 </div>
               </SidebarGroupContent>

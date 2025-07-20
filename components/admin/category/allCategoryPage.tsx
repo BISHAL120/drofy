@@ -83,12 +83,12 @@ export default function CategoriesPage({ allCategories }: BaseCategory) {
   };
 
 
-  const handleDeleteSubCategory = async (categoryId: string) => {
+  const handleDeleteSubCategory = async (subCategoryId: string) => {
     toast.loading("Processing...");
     axios
-      .delete(`/api/admin/categories`, {
+      .delete(`/api/admin/subCategory`, {
         data: {
-          id: categoryId,
+          id: subCategoryId,
         },
       })
       .then((res) => {
@@ -296,8 +296,9 @@ export default function CategoriesPage({ allCategories }: BaseCategory) {
                             className="flex items-center justify-between p-3 border rounded-lg"
                           >
                             <div className="flex items-center space-x-2">
-                              <span className="text-sm font-medium">
-                                {subCategory.name}
+                              <span title={subCategory.name} className="text-sm font-medium">
+                                {subCategory.name.slice(0, 15)}
+                                {subCategory.name.length > 15 ? '...' : ''}
                               </span>
                               <span className="text-sm text-muted-foreground">
                                 ({subCategory.productCount} products)

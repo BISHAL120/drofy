@@ -27,121 +27,121 @@ interface ServiceItem {
 }
 
 const topBannerButtons = [
-  { title: "অফার ডিটেইলস ", route: "/order-details" },
-  { title: "টপ সেলিং প্রোডাক্ট", route: "/top-selling" },
-  { title: "অ্যাক্টিভ অর্ডারস ", route: "/update-order" },
-  { title: "কাস্টমাইজ প্রিন্ট", route: "/customize-print" },
+  { title: "Offer Details", route: "/order-details" },
+  { title: "Top Selling Products", route: "/top-selling" },
+  { title: "Active Orders", route: "/update-order" },
+  { title: "Customize Print", route: "/customize-print" },
 ];
 
 const services: ServiceItem[] = [
   {
     id: "1",
-    title: "সকল প্রোডাক্ট",
+    title: "All Products",
     icon: <Folder className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "store/categories",
   },
   {
     id: "2",
-    title: "ছবি দিয়ে সার্চ করুন",
+    title: "Search by Image",
     icon: <ImageIcon className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "/store/product-search",
   },
   /* {
         id: "2",
-        title: "প্রোডাক্টের নতুন পোস্ট",
+        title: "New Product Posts",
         icon: <Facebook className="w-8 h-8" />,
         color: "bg-blue-500",
         route: "/facebook-page",
     }, */
   {
     id: "3",
-    title: "ভেরিফাইড প্রোডাক্ট",
+    title: "Verified Products",
     icon: <Star className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "/store/favorites",
   },
   /*  {
          id: "4",
-         title: "বুস্টিং প্রোডাক্ট",
+         title: "Boosting Products",
          icon: <Megaphone className="w-8 h-8" />,
          color: "bg-orange-500",
          route: "/promotion",
      }, */
   {
     id: "5",
-    title: "সেলস গাইডলাইন",
+    title: "Sales Guidelines",
     icon: <Gift className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "/store/guide-line",
   },
   /* {
         id: "6",
-        title: "লার্নিং ভিডিও",
+        title: "Learning Videos",
         icon: <Video className="w-8 h-8" />,
         color: "bg-orange-500",
         route: "/live-video",
     },
     {
         id: "7",
-        title: "ডিজিটাল পেমেন্ট",
+        title: "Digital Payment",
         icon: <CreditCard className="w-8 h-8" />,
         color: "bg-blue-500",
         route: "/payment",
     },
     {
         id: "8",
-        title: "মোবাইল রিচার্জ",
+        title: "Mobile Recharge",
         icon: <Smartphone className="w-8 h-8" />,
         color: "bg-orange-500",
         route: "/mobile-recharge",
     },
     {
         id: "9",
-        title: "ই-কমার্স ওয়েবসাইট",
+        title: "E-commerce Website",
         icon: <Monitor className="w-8 h-8" />,
         color: "bg-blue-500",
         route: "/ecommerce",
     },
     {
         id: "10",
-        title: "সেবা ভ্যালুয়েশন",
+        title: "Service Valuation",
         icon: <Clock className="w-8 h-8" />,
         color: "bg-emerald-500",
         route: "/service-valuation",
     },
     {
         id: "11",
-        title: "ব্যবসায় পরিকল্পনা",
+        title: "Business Plan",
         icon: <FileText className="w-8 h-8" />,
         color: "bg-blue-500",
         route: "/business-plan",
     },
     {
         id: "12",
-        title: "সামাজিক দায়বদ্ধতা",
+        title: "Social Responsibility",
         icon: <Users className="w-8 h-8" />,
         color: "bg-emerald-500",
         route: "/social-responsibility",
     }, */
   {
     id: "13",
-    title: "ব্যালেন্স স্টেটমেন্ট",
+    title: "Balance Statement",
     icon: <HelpCircle className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "/store/balance",
   },
   {
     id: "14",
-    title: "টেলিগ্রাম সাপোর্ট গ্রুপ",
+    title: "Telegram Support Group",
     icon: <CheckCircle className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "#",
   },
   {
     id: "15",
-    title: "সাপোর্ট সেন্টার",
+    title: "Support Center",
     icon: <Headphones className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "/store/support",
@@ -177,16 +177,17 @@ export function DashboardMenu() {
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <h3 className="text-lg font-bold mb-1">
-                  এই ঈদে টপ ৩০ জন সেলার পাবেন সর্বোচ্চ
+                  Top 30 sellers will receive maximum this Eid
                 </h3>
                 <p className="text-2xl font-bold text-yellow-300">
-                  ৫০ হাজার টাকা বোনাস
+                  1000 Dollar Bonus
                 </p>
                 <p className="text-sm opacity-90 mt-1">
-                  ক্যাম্পেইনে অংশগ্রহণ করে আজই ঈদ বোনাস পান
+                  Participate in the campaign and get Eid bonus today
                 </p>
                 <p className="text-xs opacity-75 mt-2">
-                  এখন টপ ৩০ জন সেলার পাবেন কর্পোরেট গিফট ও আকর্ষণীয় পুরস্কার
+                  Now top 30 sellers will receive corporate gifts and attractive
+                  rewards
                 </p>
               </div>
               <div className="flex-shrink-0 ml-4">

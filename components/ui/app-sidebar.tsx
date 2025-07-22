@@ -15,7 +15,12 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   Sidebar,
   SidebarContent,
@@ -35,21 +40,21 @@ import { Separator } from "./separator";
 import AdminButton from "../auth/adminButton";
 
 const menuItems = [
-  { icon: Home, label: "হোম", href: "/store" },
-  { icon: User, label: "প্রোফাইল", href: "/store/profile" },
-  // { icon: FileText, label: "নতুন পোস্ট", href: "/store/posts" },
-  { icon: Folder, label: "সকল প্রোডাক্ট", href: "/store/categories" },
-  // { icon: Video, label: "প্রোডাক্টের ভিডিও", href: "/store#" },
-  { icon: Heart, label: "ফেভরিট প্রোডাক্ট", href: "/store/favorites" },
-  { icon: Clock, label: "স্টকআউট প্রোডাক্ট", href: "/store/stock-out" },
-  { icon: List, label: "অর্ডার লিস্ট", href: "/store/orders" },
-  { icon: List, label: "অ্যাক্টিভ অর্ডার", href: "/store/active-orders" },
-  { icon: ShoppingCart, label: "কার্ট লিস্ট", href: "/store/cart" },
-  { icon: BarChart2, label: "সেলস & প্রফিট", href: "/store/sales-profit" },
-  { icon: FileCheck, label: "ব্যালেন্স স্টেটমেন্ট", href: "/store/balance" },
-  { icon: CreditCard, label: "অ্যাড একাউন্ট", href: "/store/paymentMethod" },
-  { icon: CreditCard, label: "টাকা উত্তোলন", href: "/store/withdraw" },
-  { icon: HelpCircle, label: "সাপোর্ট টিকেট", href: "/store/support" },
+  { icon: Home, label: "Home", href: "/store" },
+  { icon: User, label: "Profile", href: "/store/profile" },
+  // { icon: FileText, label: "New Post", href: "/store/posts" },
+  { icon: Folder, label: "All Products", href: "/store/categories" },
+  // { icon: Video, label: "Product Videos", href: "/store#" },
+  { icon: Heart, label: "Favorite Products", href: "/store/favorites" },
+  { icon: Clock, label: "Stock Out Products", href: "/store/stock-out" },
+  { icon: List, label: "Order List", href: "/store/orders" },
+  { icon: List, label: "Active Orders", href: "/store/active-orders" },
+  { icon: ShoppingCart, label: "Cart List", href: "/store/cart" },
+  { icon: BarChart2, label: "Sales & Profit", href: "/store/sales-profit" },
+  { icon: FileCheck, label: "Balance Statement", href: "/store/balance" },
+  { icon: CreditCard, label: "Add Account", href: "/store/paymentMethod" },
+  { icon: CreditCard, label: "Withdraw Money", href: "/store/withdraw" },
+  { icon: HelpCircle, label: "Support Ticket", href: "/store/support" },
 ];
 
 export function AppSidebar() {
@@ -77,23 +82,26 @@ export function AppSidebar() {
                 {menuItems.map((item, index) => (
                   <SidebarMenuItem
                     key={index}
-                    className={`transition-colors duration-200 hover:bg-orange-100 mb-0 ${pathname === item.href ? "bg-orange-100" : ""
-                      }`}
+                    className={`transition-colors duration-200 hover:bg-orange-100 mb-0 ${
+                      pathname === item.href ? "bg-orange-100" : ""
+                    }`}
                   >
                     <Link
                       href={item.href}
-                      className={`flex items-center gap-3 pl-4 py-4 ${pathname === item.href
+                      className={`flex items-center gap-3 pl-4 py-4 ${
+                        pathname === item.href
                           ? "text-orange-500 font-bold border-b border-black/40 border-r-0 border-l-0"
                           : ""
-                        }`}
+                      }`}
                     >
                       <item.icon
                         size={24}
                         stroke={pathname === item.href ? "#f97316" : "#DC2626"}
-                        className={`h-5 w-5 ${pathname === item.href
+                        className={`h-5 w-5 ${
+                          pathname === item.href
                             ? "text-orange-500"
                             : "text-primary"
-                          }`}
+                        }`}
                       />
                       <span className="font-semibold text-base">
                         {item.label}
@@ -131,11 +139,9 @@ export function MobileSidebar() {
       </SheetTrigger>
       <SheetContent side="left" className="p-0 w-[250px] gap-0">
         <SheetHeader>
-          <DialogTitle>
-            Re-StockBD
-          </DialogTitle>
+          <DialogTitle>Re-StockBD</DialogTitle>
         </SheetHeader>
-          <Separator/>
+        <Separator />
         <div className="h-full bg-background">
           <SidebarContent className="">
             <SidebarGroup>
@@ -149,14 +155,16 @@ export function MobileSidebar() {
                       <SidebarMenuButton asChild>
                         <Link
                           href={item.href}
-                          className={`flex items-center gap-3 pl-4 py-4 ${pathname === item.href ? " font-bold" : ""
-                            }`}
+                          className={`flex items-center gap-3 pl-4 py-4 ${
+                            pathname === item.href ? " font-bold" : ""
+                          }`}
                         >
                           <item.icon
-                            className={`h-5 w-5 ${pathname === item.href
+                            className={`h-5 w-5 ${
+                              pathname === item.href
                                 ? "text-orange-500"
                                 : "text-primary"
-                              }`}
+                            }`}
                           />
                           <span>{item.label}</span>
                         </Link>

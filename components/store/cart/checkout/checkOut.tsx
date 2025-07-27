@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ShoppingCart, Trash2 } from "lucide-react";
+import { ShoppingCart, Trash2, TriangleAlert } from "lucide-react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -34,6 +34,8 @@ import { FormSchema } from "@/lib/zod/checkOut";
 import useCart from "@/lib/zustand/store";
 import { useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 /* ------------------------------------------------------------------ */
 /* Types helpers                                                      */
@@ -60,6 +62,8 @@ export default function CheckoutPage() {
   const [districts, setDistricts] = useState<District[]>([]);
   const [upazilas, setUpazilas] = useState<District["upazila"][number][]>([]);
   const [unions, setUnions] = useState<Format[]>([]);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   /* ---------------- react-hook-form ------------------------------- */
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -87,6 +91,24 @@ export default function CheckoutPage() {
   const total = subtotal + deliveryCharge;
 
   function onSubmit(values: z.infer<typeof FormSchema>) {
+    if (cart.items.length === 0) {
+      toast.error("প্রথমে প্রোডাক্ট এড করুন", {
+        duration: 5000,
+        icon: <TriangleAlert className="h-4 w-4" />,
+        style: {
+          borderRadius: "6px",
+          background: "red",
+          color: "white",
+          border: "1px solid #ff0000",
+          fontSize: "16px",
+          fontWeight: "bold",
+        },
+      });
+      return;
+    }
+
+    toast.loading("প্রসেস হচ্ছে...");
+    setLoading(true);
     axios
       .post("/api/store/order", {
         values,
@@ -94,10 +116,30 @@ export default function CheckoutPage() {
         subtotal,
       })
       .then((res) => {
+        router.push("/store/order/success");
         console.log(res);
+        cart.removeAll();
+        toast.dismiss();
+        setLoading(false);
+        toast.success("অর্ডার সম্পন্ন হয়েছে");
       })
       .catch((err) => {
         console.log(err);
+        toast.dismiss();
+        setLoading(false);
+        router.push("/store/order/failed");
+        toast.error("অর্ডার সম্পন্ন হয়নি", {
+          duration: 5000,
+          icon: <TriangleAlert className="h-4 w-4" />,
+          style: {
+            borderRadius: "6px",
+            background: "red",
+            color: "white",
+            border: "1px solid #ff0000",
+            fontSize: "16px",
+            fontWeight: "bold",
+          },
+        });
       });
   }
 
@@ -178,6 +220,7 @@ export default function CheckoutPage() {
                     <Button
                       variant="ghost"
                       size="icon"
+                      disabled={loading}
                       className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
                       onClick={() => removeItem(item.id, item.size)}
                     >
@@ -232,6 +275,7 @@ export default function CheckoutPage() {
                           <FormControl>
                             <Input
                               placeholder="01639393834"
+                              disabled={loading}
                               maxLength={11}
                               {...field}
                             />
@@ -252,8 +296,9 @@ export default function CheckoutPage() {
                           </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Enter your full name"
                               {...field}
+                              disabled={loading}
+                              placeholder="Enter your full name"
                             />
                           </FormControl>
                           <FormMessage />
@@ -276,6 +321,7 @@ export default function CheckoutPage() {
                                 field.onChange(v);
                                 handleDivisionChange(v);
                               }}
+                              disabled={loading}
                               defaultValue={field.value}
                             >
                               <FormControl>
@@ -314,7 +360,7 @@ export default function CheckoutPage() {
                                 handleDistrictChange(v);
                               }}
                               defaultValue={field.value}
-                              disabled={!form.watch("division")}
+                              disabled={!form.watch("division") || loading}
                             >
                               <FormControl>
                                 <SelectTrigger>
@@ -358,7 +404,7 @@ export default function CheckoutPage() {
                                 handleUpazilaChange(v);
                               }}
                               defaultValue={field.value}
-                              disabled={!form.watch("district")}
+                              disabled={!form.watch("district") || loading}
                             >
                               <FormControl>
                                 <SelectTrigger>
@@ -397,7 +443,7 @@ export default function CheckoutPage() {
                             <Select
                               onValueChange={field.onChange}
                               defaultValue={field.value}
-                              disabled={!form.watch("upazila")}
+                              disabled={!form.watch("upazila") || loading}
                             >
                               <FormControl>
                                 <SelectTrigger>
@@ -439,6 +485,7 @@ export default function CheckoutPage() {
                               placeholder="Enter your complete delivery address with landmarks"
                               className="min-h-[100px]"
                               {...field}
+                              disabled={loading}
                             />
                           </FormControl>
                           <FormDescription className="text-red-500 text-xs">
@@ -465,6 +512,7 @@ export default function CheckoutPage() {
                               onValueChange={field.onChange}
                               defaultValue={field.value}
                               className="flex flex-row space-x-6"
+                              disabled={loading}
                             >
                               <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="yes" id="yes" />
@@ -521,9 +569,10 @@ export default function CheckoutPage() {
                           <FormLabel>Comments (Optional)</FormLabel>
                           <FormControl>
                             <Textarea
+                              {...field}
+                              disabled={loading}
                               placeholder="Any special instructions or comments for your order"
                               className="min-h-[80px]"
-                              {...field}
                             />
                           </FormControl>
                           <FormDescription className="text-red-500 text-xs">

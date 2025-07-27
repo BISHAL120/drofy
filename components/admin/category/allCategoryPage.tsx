@@ -82,7 +82,6 @@ export default function CategoriesPage({ allCategories }: BaseCategory) {
       });
   };
 
-
   const handleDeleteSubCategory = async (subCategoryId: string) => {
     toast.loading("Processing...");
     axios
@@ -296,9 +295,12 @@ export default function CategoriesPage({ allCategories }: BaseCategory) {
                             className="flex items-center justify-between p-3 border rounded-lg"
                           >
                             <div className="flex items-center space-x-2">
-                              <span title={subCategory.name} className="text-sm font-medium">
+                              <span
+                                title={subCategory.name}
+                                className="text-sm font-medium"
+                              >
                                 {subCategory.name.slice(0, 15)}
-                                {subCategory.name.length > 15 ? '...' : ''}
+                                {subCategory.name.length > 15 ? "..." : ""}
                               </span>
                               <span className="text-sm text-muted-foreground">
                                 ({subCategory.productCount} products)

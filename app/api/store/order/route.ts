@@ -19,7 +19,6 @@ export async function POST(
             return NextResponse.json({ message: "User not found." }, { status: 400 });
         }
 
-
         if (!name) {
             return NextResponse.json({ message: "Name is required." }, { status: 400 });
         }
@@ -89,6 +88,25 @@ export async function POST(
                 cartItems: true,
             }
         })
+
+        const cartItemsCount = cartItems.reduce((total: number, item: AddCartProps) => total + item.quantity, 0);
+
+        const getUser = await db.user.findUnique({
+            where: {
+                id: user.id as string,
+            }
+        })
+
+        await db.user.update({
+            where: {
+                id: user.id as string,
+            },
+            data: {
+                saleCount: getUser?.saleCount + cartItemsCount,
+                totalRevenue: getUser?.totalRevenue + subtotal,
+            }
+        })
+
 
         return NextResponse.json({ data: order, message: "Order created successfully." }, { status: 201 });
     } catch (error) {

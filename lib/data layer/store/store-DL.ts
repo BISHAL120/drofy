@@ -149,3 +149,4 @@ export const getFeaturedCategory = async () => {
 
     return result
 }
+

@@ -1,6 +1,6 @@
 import db from "@/lib/db";
+import { OrderStatus, DeliveryChargeStatus, ProductStatus, ResellerLevel, UserStatus } from "@prisma/client";
 import { isAdmin } from "../checkAccess";
-import { ProductStatus, ResellerLevel, UserStatus } from "@prisma/client";
 
 export const getAllCategories = async () => {
     isAdmin();
@@ -289,7 +289,7 @@ export const getAllResellers = async ({
             email: true,
             resellerLevel: true,
             saleCount: true,
-            totalSales: true,
+            totalRevenue: true,
             wallet: true,
             status: true,
             createdAt: true
@@ -334,7 +334,7 @@ export const getNewResellers = async ({ search }: { search: string }) => {
             email: true,
             resellerLevel: true,
             saleCount: true,
-            totalSales: true,
+            totalRevenue: true,
             wallet: true,
             status: true,
             isActive: true,
@@ -364,7 +364,7 @@ export const getResellerById = async (id: string) => {
             resellerLevel: true,
             status: true,
             saleCount: true,
-            totalSales: true,
+            totalRevenue: true,
             wallet: true,
             isActive: true,
             createdAt: true,
@@ -388,4 +388,145 @@ export const referredUsers = async (code: number | undefined) => {
     })
 
     return users;
+}
+
+
+export const getAllOrders = async ({
+    search,
+    status,
+    payment
+}: {
+    search: string,
+    status: string,
+    payment: string
+}) => {
+    isAdmin();
+
+    interface WhereClauseProps {
+        status?: OrderStatus;
+        chargeStatus?: DeliveryChargeStatus;
+        OR?: {
+            reseller?: {
+                name?: {
+                    contains?: string;
+                    mode?: 'insensitive';
+                };
+            };
+            orderCount?: {
+                equals?: number;
+            };
+        }[];
+    }
+
+    const whereClause: WhereClauseProps = {}
+
+    // Search Filter
+    if (search && search.trim() !== "") {
+        whereClause.OR = [
+            {
+                reseller: {
+                    name: {
+                        contains: search,
+                        mode: 'insensitive'
+                    }
+                }
+            },
+            {
+                orderCount: {
+                    equals: Number(search),
+                }
+            }
+        ]
+    }
+
+    // status filter
+    if (status && status.trim() !== "") {
+        whereClause.status = status.trim() as OrderStatus;
+    }
+
+    // payment filter
+    if (payment && payment.trim() !== "") {
+        whereClause.chargeStatus = payment.trim() as DeliveryChargeStatus;
+    }
+
+
+    const orders = await db.order.findMany({
+        where: whereClause,
+        select: {
+            id: true,
+            orderCount: true,
+            customerName: true,
+            reseller: {
+                select: {
+                    name: true
+                }
+            },
+            cartItems: {
+                select: {
+                    productName: true
+                }
+            },
+            status: true,
+            chargeStatus: true,
+            totalPrice: true,
+            totalProfit: true,
+            createdAt: true
+        }
+    })
+
+    return orders;
+}
+
+
+
+export const getOrderDetailsById = async (id: string) => {
+    isAdmin();
+    const order = await db.order.findUnique({
+        where: {
+            id: id
+        },
+        select: {
+            id: true,
+            orderCount: true,
+            status: true,
+            chargeStatus: true,
+            totalPrice: true,
+            totalProfit: true,
+            deliveryCharge: true,
+            advanceCharge: true,
+            customerName: true,
+            customerPhone: true,
+            customerDivision: true,
+            customerDistrict: true,
+            customerUpazila: true,
+            customerUnion: true,
+            customerAddress: true,
+            comments: true,
+            note: true,
+            createdAt: true,
+            updatedAt: true,
+            cartItems: {
+                select: {
+                    productName: true,
+                    productPrice: true,
+                    sellingPrice: true,
+                    profit: true,
+                    productImage: true,
+                    productQuantity: true,
+                    productSize: true,
+                    productSubcategory: true,
+                }
+            },
+            reseller: {
+                select: {
+                    name: true,
+                    phone: true,
+                    email: true,
+                    profileImage: true,
+                }
+            }
+        }
+    })
+
+    return order
 }

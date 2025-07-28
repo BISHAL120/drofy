@@ -62,7 +62,7 @@ interface NewResellerProps {
   status: string;
   wallet: number;
   saleCount: number | null;
-  totalSales: number | null;
+  totalRevenue: number | null;
   resellerLevel: string;
   referralCode: number;
   createdAt: Date;
@@ -219,8 +219,8 @@ const NewResellerPage = ({ resellers }: { resellers: NewResellerProps[] }) => {
                           : "NO (orders)"}
                       </TableCell>
                       <TableCell>
-                        {reseller.totalSales
-                          ? reseller.totalSales
+                        {reseller.totalRevenue
+                          ? reseller.totalRevenue
                           : "NO (sales)"}
                       </TableCell>
                       <TableCell>{reseller.wallet}</TableCell>

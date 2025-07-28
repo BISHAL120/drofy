@@ -39,7 +39,7 @@ const UserDetailsPage = ({
     isActive: boolean;
     wallet: number;
     saleCount: number | null;
-    totalSales: number | null;
+    totalRevenue: number | null;
     companyName: string | null;
     resellerLevel: ResellerLevel;
     createdAt: Date;
@@ -206,7 +206,7 @@ const UserDetailsPage = ({
               <div>
                 <p className="text-sm text-slate-500">Total Sales</p>
                 <p className="text-2xl font-bold text-slate-800">
-                  ${user.totalSales ? user.totalSales.toLocaleString() : 0}
+                  ${user.totalRevenue ? user.totalRevenue.toLocaleString() : 0}
                 </p>
               </div>
             </div>

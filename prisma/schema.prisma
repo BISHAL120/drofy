@@ -45,7 +45,7 @@ model User {
   status        UserStatus    @default(INACTIVE)
   wallet        Float         @default(0)
   saleCount     Int?          @default(0)
-  totalSales    Float?        @default(0)
+  totalRevenue  Float?        @default(0)
   companyName   String?
   resellerLevel ResellerLevel @default(BEGINNER)
   referralCode  Float         @unique
@@ -206,6 +206,7 @@ model Order {
   advanceCharge    Boolean
   totalPrice       String
   comments         String
+  note             String?
   cartItems        CartItem[]
   status           OrderStatus          @default(PENDING)
   chargeStatus     DeliveryChargeStatus

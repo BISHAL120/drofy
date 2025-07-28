@@ -19,7 +19,7 @@ const SubCategoryCard = ({
         href={`/store/sub-category/${subCategory.id}`}
         prefetch={true}
         key={subCategory.id}
-        className="max-w-[200px] max-h-[200px] xl:max-w-[300px] xl:max-h-[300px] bg-white aspect-square rounded-md p-2 flex flex-col items-center shadow-sm hover:shadow-md transition-shadow"
+        className="w-[200px] h-[200px] max-w-full bg-white aspect-square rounded-md p-2 flex flex-col items-center shadow-sm hover:shadow-md transition-shadow"
       >
         <div className="relative w-full h-3/4 mb-2">
           <Image
@@ -30,8 +30,7 @@ const SubCategoryCard = ({
           />
         </div>
         <span className="text-xs text-center font-medium">
-          {subCategory.name.slice(0, 15)}
-          {subCategory.name.length > 15 ? "..." : ""}
+          {subCategory.name}
         </span>
         <span className="text-xs text-gray-500">
           {subCategory.productCount}

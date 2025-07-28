@@ -83,7 +83,7 @@ interface AllResellerProps {
     email: string | null;
     resellerLevel: ResellerLevel;
     saleCount: number | null;
-    totalSales: number | null;
+    totalRevenue: number | null;
     wallet: number;
     status: UserStatus;
     createdAt: Date;
@@ -288,8 +288,8 @@ const AllResellersPage = ({
                           : "NO (orders)"}
                       </TableCell>
                       <TableCell>
-                        {reseller.totalSales
-                          ? reseller.totalSales
+                        {reseller.totalRevenue
+                          ? reseller.totalRevenue
                           : "NO (sales)"}
                       </TableCell>
                       <TableCell>{reseller.wallet}</TableCell>

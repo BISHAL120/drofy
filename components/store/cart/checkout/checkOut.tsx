@@ -77,7 +77,7 @@ export default function CheckoutPage() {
       union: "",
       address: "",
       deliveryCharge: "120",
-      advanceCharge: "yes",
+      advanceCharge: "no",
       comments: "",
     },
   });
@@ -116,8 +116,7 @@ export default function CheckoutPage() {
         subtotal,
       })
       .then((res) => {
-        router.push("/store/order/success");
-        console.log(res);
+        router.push(`/store/order/success/${res.data.id}`);
         cart.removeAll();
         toast.dismiss();
         setLoading(false);
@@ -330,11 +329,8 @@ export default function CheckoutPage() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {locationData.map((d) => (
-                                  <SelectItem
-                                    key={d.name.value}
-                                    value={d.name.value}
-                                  >
+                                {locationData.map((d, idx) => (
+                                  <SelectItem key={idx} value={d.name.value}>
                                     {d.name.name}
                                   </SelectItem>
                                 ))}
@@ -374,11 +370,8 @@ export default function CheckoutPage() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {districts.map((d) => (
-                                  <SelectItem
-                                    key={d.name.value}
-                                    value={d.name.value}
-                                  >
+                                {districts.map((d, idx) => (
+                                  <SelectItem key={idx} value={d.name.value}>
                                     {d.name.name}
                                   </SelectItem>
                                 ))}
@@ -418,11 +411,8 @@ export default function CheckoutPage() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {upazilas.map((u) => (
-                                  <SelectItem
-                                    key={u.name.value}
-                                    value={u.name.value}
-                                  >
+                                {upazilas.map((u, idx) => (
+                                  <SelectItem key={idx} value={u.name.value}>
                                     {u.name.name}
                                   </SelectItem>
                                 ))}

@@ -122,7 +122,7 @@ const getStatusText = (status: string) => {
   }
 };
 
-export default function OrderList() {
+export default function OrdersList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
 

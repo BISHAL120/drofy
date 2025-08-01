@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { convertToBengaliNumber } from "@/hooks/convertNum";
 import useCart from "@/lib/zustand/store";
-import { ImageObj, VariantType } from "@prisma/client";
+import { ImageObj, VarientObj } from "@prisma/client";
 import {
   Check,
   Copy,
@@ -28,7 +28,7 @@ interface ProductDetailsProps {
     createdAt: Date;
     inStock: boolean;
     images: ImageObj[];
-    variant: VariantType[];
+    variant: VarientObj[];
     shortDescription: string | null;
     note: string | null;
     fullDescription: string;
@@ -258,18 +258,50 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               <p className="mb-3 font-medium text-lg">সাইজ:</p>
               <RadioGroup
                 value={selectedSize}
-                onValueChange={(value) => setSelectedSize(value)}
+                onValueChange={(value) => {
+                  setSelectedSize(value);
+                  // Reset quantity when size changes
+                  setQuantity(1);
+                }}
                 className="flex gap-4"
               >
-                {product?.variant.map((size) => (
-                  <div className="flex items-center space-x-1.5" key={size}>
+                {product?.variant.map((size, idx) => (
+                  <div className="flex items-center space-x-1.5" key={idx}>
                     <RadioGroupItem
-                      value={size}
-                      id={`size-${size}`}
-                      className="h-5 w-5"
+                      value={size.variantType}
+                      id={`size-${size.variantType}`}
+                      className={`h-5 w-5 ${
+                        size.stock === 0 ? "cursor-not-allowed" : ""
+                      }`}
+                      disabled={size.stock === 0}
                     />
-                    <Label htmlFor={`size-${size}`} className="text-base">
-                      {size}
+                    <Label
+                      htmlFor={`size-${size.variantType}`}
+                      onClick={() =>
+                        size.stock === 0 &&
+                        toast.error("সাইজের স্টক শেষ!", {
+                          duration: 5000,
+                          icon: <TriangleAlert className="h-4 w-4" />,
+                          style: {
+                            borderRadius: "6px",
+                            background: "red",
+                            color: "white",
+                            border: "1px solid #ff0000",
+                            fontSize: "16px",
+                            fontWeight: "bold",
+                          },
+                        })
+                      }
+                      className={`text-base ${
+                        size.stock === 0
+                          ? "cursor-not-allowed text-gray-400"
+                          : ""
+                      }`}
+                    >
+                      {size.variantType}{" "}
+                      <span className="text-sm text-gray-500">
+                        ({convertToBengaliNumber(size.stock)} পিস)
+                      </span>
                     </Label>
                   </div>
                 ))}
@@ -281,22 +313,63 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 <p className="mb-2 font-medium">পরিমাণ/পিস</p>
                 <Input
                   type="number"
-                  min={1}
-                  value={quantity}
-                  onChange={(e) =>
-                    setQuantity(Number.parseInt(e.target.value) || 1)
-                  }
+                  min={0}
+                  value={quantity || ""}
+                  disabled={!selectedSize}
+                  onChange={(e) => {
+                    const selectedVariant = product?.variant.find(
+                      (v) => v.variantType === selectedSize
+                    );
+                    const inputValue = Number.parseInt(e.target.value);
+
+                    if (!e.target.value) {
+                      setQuantity(0);
+                      return;
+                    }
+
+                    if (selectedVariant && inputValue > selectedVariant.stock) {
+                      toast.error(
+                        `সর্বোচ্চ ${convertToBengaliNumber(
+                          selectedVariant.stock
+                        )} পিস অর্ডার করা যাবে`,
+                        {
+                          duration: 5000,
+                          icon: <TriangleAlert className="h-4 w-4" />,
+                          style: {
+                            borderRadius: "6px",
+                            background: "red",
+                            color: "white",
+                            border: "1px solid #ff0000",
+                            fontSize: "16px",
+                            fontWeight: "bold",
+                          },
+                        }
+                      );
+                      setQuantity(selectedVariant.stock);
+                    } else {
+                      setQuantity(inputValue);
+                    }
+                  }}
                   className="w-full"
+                  placeholder={
+                    selectedSize ? "Enter quantity" : "First select size"
+                  }
                 />
               </div>
               <div>
                 <p className="mb-2 font-medium">বিক্রয়-মূল্য</p>
                 <Input
                   type="number"
-                  onChange={(e) =>
-                    setPrice(Number.parseInt(e.target.value) || 0)
-                  }
+                  value={price || ""}
+                  disabled={!selectedSize}
+                  onChange={(e) => {
+                    const inputValue = Number.parseInt(e.target.value);
+                    setPrice(e.target.value ? inputValue : 0);
+                  }}
                   className="w-full"
+                  placeholder={
+                    selectedSize ? "Enter price" : "First select size"
+                  }
                 />
               </div>
             </div>

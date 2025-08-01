@@ -76,7 +76,7 @@ export default function CheckoutPage() {
       upazila: "",
       union: "",
       address: "",
-      deliveryCharge: "120",
+      deliveryCharge: "130",
       advanceCharge: "no",
       comments: "",
     },
@@ -120,14 +120,18 @@ export default function CheckoutPage() {
         cart.removeAll();
         toast.dismiss();
         setLoading(false);
-        toast.success("অর্ডার সম্পন্ন হয়েছে");
+        toast.success(res.data.message);
       })
       .catch((err) => {
         console.log(err);
         toast.dismiss();
         setLoading(false);
-        router.push("/store/order/failed");
-        toast.error("অর্ডার সম্পন্ন হয়নি", {
+        router.push(
+          `/store/order/failed?message=${err.response.data.message
+            .split(" ")
+            .join("-")}`
+        );
+        toast.error(err.response.data.message, {
           duration: 5000,
           icon: <TriangleAlert className="h-4 w-4" />,
           style: {
@@ -389,7 +393,7 @@ export default function CheckoutPage() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>
-                              Upazila <span className="text-red-500">*</span>
+                              Thana <span className="text-red-500">*</span>
                             </FormLabel>
                             <Select
                               onValueChange={(v) => {

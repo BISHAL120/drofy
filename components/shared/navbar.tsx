@@ -1,3 +1,5 @@
+import { auth } from "@/auth";
+import { MenuIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -7,9 +9,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { MenuIcon } from "lucide-react";
-import { auth } from "@/auth";
-import LogoutButton from "../auth/logoutButton";
 
 const Navbar = async () => {
   const session = await auth();
@@ -22,7 +21,7 @@ const Navbar = async () => {
           <div className="flex items-center space-x-2">
             <Link href="/" className="w-full">
               <Image
-                src="/assets/logo.png"
+                src="/assets/logo.webp"
                 alt="Your Logo"
                 width={200}
                 height={50}
@@ -54,7 +53,7 @@ const Navbar = async () => {
                 <Link href="/store" className="hover:underline">
                   ড্যাশবোর্ড
                 </Link>
-                <LogoutButton className="pt-0.5 text-white border " />
+                {/* <LogoutButton className="pt-0.5 text-white border " /> */}
               </>
             )}
           </div>
@@ -68,7 +67,7 @@ const Navbar = async () => {
                 <SheetTitle className="border-b">
                   <div className="flex flex-col items-center py-6 bg-gradient-to-r from-teal-50 to-cyan-50">
                     <Image
-                      src="/assets/logo.png"
+                      src="/assets/logo.webp"
                       alt="Your Logo"
                       width={150}
                       height={40}

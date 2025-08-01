@@ -42,11 +42,18 @@ export const getCategoriesForStore = async () => {
 export const getStoreProducts = async (subCatId: string | undefined) => {
     const products = await db.product.findMany({
         where: {
-            subCategoryId: subCatId
+            subCategoryId: subCatId,
+            status: "ACTIVE",
+            isDeleted: false,
+            stock: {
+                gt: 0
+            },
         },
         select: {
             id: true,
             images: true,
+            inStock: true,
+
             name: true,
             sellingPrice: true,
             discountPrice: true,
@@ -150,3 +157,40 @@ export const getFeaturedCategory = async () => {
     return result
 }
 
+
+
+export const getWaletBalanceById = async (id: string) => {
+    const result = await db.user.findUnique({
+        where: {
+            id: id
+        },
+        select: {
+            wallet: true,
+        }
+    })
+
+    return result
+}
+
+export const getOrderDataById = async (id: string) => {
+    const result = await db.order.findUnique({
+        where: {
+            id: id
+        },
+        select: {
+            totalPrice: true,
+            createdAt: true,
+            orderNumber: true,
+            cartItems: {
+                select: {
+                    productName: true,
+                    productQuantity: true,
+                    sellingPrice: true,
+                    productImage: true,
+                },
+            },
+        },
+    })
+
+    return result
+}

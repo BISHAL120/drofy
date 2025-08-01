@@ -1,5 +1,5 @@
 import db from "@/lib/db";
-import { OrderStatus, DeliveryChargeStatus, ProductStatus, ResellerLevel, UserStatus } from "@prisma/client";
+import { DeliveryChargeStatus, OrderStatus, ProductStatus, ResellerLevel, UserStatus } from "@prisma/client";
 import { isAdmin } from "../checkAccess";
 
 export const getAllCategories = async () => {
@@ -131,7 +131,7 @@ export const getAllProducts = async ({
     }
     const products = await db.product.findMany({
         orderBy: {
-            createdAt: 'asc'
+            createdAt: 'desc'
         },
         where: whereClause,
         select: {
@@ -247,6 +247,10 @@ export const getAllResellers = async ({
                 contains?: string;
                 mode?: 'insensitive';
             };
+            phone?: {
+                contains?: string;
+                mode?: 'insensitive';
+            };
 
         }[];
     }
@@ -261,6 +265,12 @@ export const getAllResellers = async ({
                     mode: 'insensitive'
                 }
             },
+            {
+                phone: {
+                    contains: search.trim(),
+                    mode: 'insensitive'
+                }
+            }
 
         ];
     }
@@ -288,7 +298,7 @@ export const getAllResellers = async ({
             phone: true,
             email: true,
             resellerLevel: true,
-            saleCount: true,
+            orderCount: true,
             totalRevenue: true,
             wallet: true,
             status: true,
@@ -333,7 +343,7 @@ export const getNewResellers = async ({ search }: { search: string }) => {
             phone: true,
             email: true,
             resellerLevel: true,
-            saleCount: true,
+            orderCount: true,
             totalRevenue: true,
             wallet: true,
             status: true,
@@ -363,7 +373,7 @@ export const getResellerById = async (id: string) => {
             companyName: true,
             resellerLevel: true,
             status: true,
-            saleCount: true,
+            orderCount: true,
             totalRevenue: true,
             wallet: true,
             isActive: true,
@@ -383,7 +393,7 @@ export const referredUsers = async (code: number | undefined) => {
 
     const users = await db.user.count({
         where: {
-            referredBy: code.toString()
+            referredBy: code
         }
     })
 
@@ -454,8 +464,9 @@ export const getAllOrders = async ({
         where: whereClause,
         select: {
             id: true,
-            orderCount: true,
+            orderNumber: true,
             customerName: true,
+            tracking_code: true,
             reseller: {
                 select: {
                     name: true
@@ -471,6 +482,9 @@ export const getAllOrders = async ({
             totalPrice: true,
             totalProfit: true,
             createdAt: true
+        },
+        orderBy: {
+            createdAt: 'desc'
         }
     })
 
@@ -487,7 +501,7 @@ export const getOrderDetailsById = async (id: string) => {
         },
         select: {
             id: true,
-            orderCount: true,
+            orderNumber: true,
             status: true,
             chargeStatus: true,
             totalPrice: true,
@@ -503,6 +517,7 @@ export const getOrderDetailsById = async (id: string) => {
             customerAddress: true,
             comments: true,
             note: true,
+            tracking_code: true,
             createdAt: true,
             updatedAt: true,
             cartItems: {

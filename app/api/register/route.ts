@@ -6,7 +6,7 @@ import db from '@/lib/db';
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { name, number, password, email, address } = body;
+        const { name, number, password, email, address, referralCode } = body;
 
         // Validation checks
         if (!name || !number || !password) {
@@ -24,8 +24,21 @@ export async function POST(request: Request) {
                 { status: 400 }
             );
         }
+        // check if user email already exists
+        const existingEmail = await db.user.findUnique({
+            where: {
+                email: email,
+            }
+        });
 
-        // Check if user already exists
+        if (existingEmail) {
+            return NextResponse.json(
+                { message: 'ইমেইলটি ইতিমধ্যে ব্যবহৃত হয়েছে' },
+                { status: 409 }
+            );
+        }
+
+        // Check if user number already exists
         const existingUser = await db.user.findUnique({
             where: {
                 phone: number,
@@ -45,6 +58,22 @@ export async function POST(request: Request) {
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Check if referral code exists
+        if (referralCode) {
+            const referredUser = await db.user.findUnique({
+                where: {
+                    referralCode: Number(referralCode),
+                }
+            });
+
+            if (!referredUser) {
+                return NextResponse.json(
+                    { message: 'রেফারাল কোড সঠিক নয়' },
+                    { status: 400 }
+                );
+            }
+        }
+
         // Create new user
         const user = await db.user.create({
             data: {
@@ -54,15 +83,13 @@ export async function POST(request: Request) {
                 email: email || "",
                 address: address || "",
                 role: isAdmin ? ["ADMIN"] : ["USER"],
-                isActive: isAdmin ? true : false,
-                verified: isAdmin ? true : false,
-                resellerLevel: isAdmin ? "LEGENDARY" : "BEGINNER",
                 referralCode: userCount + 1,
+                referredBy: Number(referralCode) || null,
             }
         });
 
         return NextResponse.json(
-            { message: 'একাউন্ট তৈরি সম্পন্ন হয়েছে', user },
+            { message: 'একাউন্ট তৈরি সম্পন্ন হয়েছে', data: user },
             { status: 201 }
         );
 

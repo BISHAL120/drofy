@@ -23,21 +23,20 @@ import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { format, formatDistanceToNow } from "date-fns";
 import {
-  AlertCircle,
   Calendar,
-  CheckCircle,
-  Clock,
   DollarSign,
   Edit,
+  Loader2,
   MapPin,
   MessageSquare,
   Package,
+  PackageCheckIcon,
   Phone,
   Truck,
   User,
-  XCircle,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -110,23 +109,6 @@ const orderData = {
   ],
 };
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case "COMPLETED":
-      return "bg-green-100 text-green-800";
-    case "PROCESSING":
-      return "bg-blue-100 text-blue-800";
-    case "PENDING":
-      return "bg-yellow-100 text-yellow-800";
-    case "DELIVERED":
-      return "bg-purple-100 text-purple-800";
-    case "CANCELLED":
-      return "bg-red-100 text-red-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
-};
-
 const getChargeStatusColor = (status: string) => {
   switch (status) {
     case "COD":
@@ -138,28 +120,11 @@ const getChargeStatusColor = (status: string) => {
   }
 };
 
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case "COMPLETED":
-      return <CheckCircle className="h-4 w-4" />;
-    case "PROCESSING":
-      return <Clock className="h-4 w-4" />;
-    case "PENDING":
-      return <AlertCircle className="h-4 w-4" />;
-    case "DELIVERED":
-      return <Package className="h-4 w-4" />;
-    case "CANCELLED":
-      return <XCircle className="h-4 w-4" />;
-    default:
-      return <Clock className="h-4 w-4" />;
-  }
-};
-
 interface OrderProps {
   id: string;
   advanceCharge: boolean;
   deliveryCharge: string;
-  orderCount: number;
+  orderNumber: number;
   status: string;
   chargeStatus: string;
   totalPrice: string;
@@ -173,6 +138,7 @@ interface OrderProps {
   customerAddress: string;
   comments: string;
   note: string | null;
+  tracking_code: string | null;
   createdAt: Date;
   updatedAt: Date;
   cartItems: {
@@ -196,6 +162,7 @@ interface OrderProps {
 export default function OrderDetailsPage({ order }: { order: OrderProps }) {
   const [orderStatus, setOrderStatus] = useState(order.status);
   const [note, setNote] = useState(order.note);
+  const [deliveryCharge, setDeliveryCharge] = useState(order.deliveryCharge);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -267,6 +234,63 @@ export default function OrderDetailsPage({ order }: { order: OrderProps }) {
       });
   };
 
+  const haddleCourier = (orderId: string) => {
+    setLoading(true);
+    toast.loading("Assigning courier...");
+    axios
+      .post("/api/steadFast/create_order", {
+        orderId,
+      })
+      .then((res) => {
+        setLoading(false);
+        toast.dismiss();
+        router.refresh();
+        router.push("/admin/orders");
+        toast.success(res.data.message, {
+          duration: 5000,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+        toast.dismiss();
+        toast.error(err.response.data.message, {
+          duration: 5000,
+        });
+      });
+  };
+
+  const handleDeliveryChargeUpdate = () => {
+    toast.loading("Updating delivery charge...");
+    setLoading(true);
+
+    console.log(deliveryCharge);
+
+    axios
+      .patch(`/api/admin/orders`, {
+        id: order.id,
+        deliveryCharge: deliveryCharge,
+      })
+      .then((res) => {
+        console.log(res);
+        setLoading(false);
+        toast.dismiss();
+        router.refresh();
+        toast.success("Delivery Charge Updated", {
+          description: "Order delivery charge has been updated successfully.",
+          duration: 5000,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+        toast.dismiss();
+        toast.error(err.response.data.message, {
+          duration: 5000,
+        });
+      });
+  };
+
   return (
     <div className="flex flex-col">
       <div className="flex-1 space-y-6 p-6">
@@ -275,15 +299,29 @@ export default function OrderDetailsPage({ order }: { order: OrderProps }) {
           <div className="flex items-center space-x-4">
             <div>
               <h2 className="text-3xl font-bold tracking-tight">
-                Order #{order.orderCount}
+                Order #{order.orderNumber}
               </h2>
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <Badge className={getStatusColor(order.status)} variant="secondary">
-              {getStatusIcon(order.status)}
-              <span className="ml-1">{order.status}</span>
-            </Badge>
+            {!order.tracking_code ? (
+              <Button
+                onClick={() => haddleCourier(order.id)}
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2" />
+                ) : (
+                  <PackageCheckIcon className="mr-2 h-5 w-5" />
+                )}
+                Add Courier
+              </Button>
+            ) : (
+              <div className="flex items-center gap-2 text-green-600 font-medium">
+                <Truck className="h-5 w-5" />
+                <span>Already Added to Courier</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -375,7 +413,9 @@ export default function OrderDetailsPage({ order }: { order: OrderProps }) {
                   <Separator />
                   <div className="flex justify-between font-semibold text-lg">
                     <span>Total:</span>
-                    <span>৳{order.totalPrice + order.deliveryCharge}</span>
+                    <span>
+                      ৳{Number(order.totalPrice) + Number(order.deliveryCharge)}
+                    </span>
                   </div>
                   <div className="flex justify-between text-green-600 font-medium">
                     <span>Total Profit:</span>
@@ -453,6 +493,36 @@ export default function OrderDetailsPage({ order }: { order: OrderProps }) {
                     {order.customerAddress}
                   </p>
                 </div>
+                <Separator className="my-4" />
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <Label className="text-sm font-medium">
+                      Delivery Charge
+                    </Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <input
+                        type="number"
+                        value={deliveryCharge}
+                        onChange={(e) => {
+                          setDeliveryCharge(e.target.value);
+                        }}
+                        className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                      />
+                      <Button
+                        onClick={() => {
+                          handleDeliveryChargeUpdate();
+                        }}
+                        disabled={loading}
+                        size="sm"
+                      >
+                        {loading && (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        )}
+                        Update
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
@@ -484,7 +554,7 @@ export default function OrderDetailsPage({ order }: { order: OrderProps }) {
                       onClick={handleNoteUpdate}
                       variant="ghost"
                       size="sm"
-                      className="h-8"
+                      className="h-8 border"
                     >
                       <Edit className="h-3.5 w-3.5 mr-1" />
                       Save Note
@@ -634,10 +704,21 @@ export default function OrderDetailsPage({ order }: { order: OrderProps }) {
                 <CardTitle>Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button variant="outline" className="w-full bg-transparent">
-                  <Truck className="mr-2 h-4 w-4" />
-                  Track Delivery
-                </Button>
+                {order.tracking_code && (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full bg-transparent"
+                  >
+                    <Link
+                      target="_blank"
+                      href={`https://steadfast.com.bd/t/${order.tracking_code}`}
+                    >
+                      <Truck className="mr-2 h-4 w-4" />
+                      Track Delivery
+                    </Link>
+                  </Button>
+                )}
                 <Button variant="outline" className="w-full bg-transparent">
                   <MessageSquare className="mr-2 h-4 w-4" />
                   Contact Customer

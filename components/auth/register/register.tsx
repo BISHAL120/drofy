@@ -6,26 +6,25 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import axios from "axios";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { registerSchema } from "@/lib/zod/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { ChevronsRight, Eye, EyeClosed, Loader2 } from "lucide-react";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import * as React from "react";
+import Link from "next/link";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [showPassword, setShowPassword] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -33,9 +32,10 @@ export default function RegisterPage() {
       name: "",
       number: "",
       password: "",
+      referralCode: "1",
       confirmPassword: "",
-      address: undefined,
-      email: undefined,
+      email: "",
+      address: "",
     },
   });
 
@@ -44,7 +44,7 @@ export default function RegisterPage() {
       if (values.password !== values.confirmPassword) {
         toast.dismiss(); // Dismiss any existing toast if there is one
         toast.error("ভুল কনফার্ম পাসওয়ার্ড!", {
-          position: "top-center",
+          duration: 5000,
           icon: "⚠️",
           style: {
             background: "red",
@@ -71,7 +71,7 @@ export default function RegisterPage() {
       axios
         .post("/api/register", values)
         .then((res) => {
-          console.log("Response :", res.data);
+          console.log("Response :", res.data.data);
           // toast.success("OTP sent to your mobile number");
           toast.dismiss();
           toast.success("রেজিস্ট্রেশন সম্পন্ন হয়েছে", {
@@ -89,20 +89,28 @@ export default function RegisterPage() {
           signIn("credentials", {
             number: values.number,
             password: values.password,
-            redirect: false,
+            redirect: true,
+            callbackUrl: "/register/success",
           });
-          router.push("/register/success");
+          setIsLoading(false);
         })
         .catch((err) => {
           console.log("Error :", err);
+          setIsLoading(false);
           toast.dismiss();
           toast.error(err.response.data.message, {
-            position: "top-center",
+            duration: 5000,
             icon: "⚠️",
+            style: {
+              background: "red",
+              border: "2px solid #DC2626", // Adjusted to a darker red border
+              color: "white",
+              fontWeight: "600",
+              fontSize: "16px", // Adjusted font size
+              padding: "10px 20px", // Adjusted padding
+            },
           });
         });
-      setIsLoading(false);
-      router.refresh();
     } catch (error) {
       setIsLoading(false);
       toast.dismiss();
@@ -118,7 +126,7 @@ export default function RegisterPage() {
           <div className="flex justify-center mb-6">
             <div className="p-2 bg-purple-100 rounded-lg">
               <Image
-                src="/assets/logo.png"
+                src="/assets/logo.webp"
                 alt="Logo"
                 width={350}
                 height={150}
@@ -130,7 +138,7 @@ export default function RegisterPage() {
             রিসেলার রেজিস্ট্রেশন
           </h1>
           <p className="text-sm text-gray-600 text-center mb-6">
-            আপনার মোবাইলে একটি ওটিপি কোড পাঠানো হবে, কোড টি বসিয়ে রেজিস্ট্রেশন
+            আপনার ইমেইল এ একটি ওটিপি কোড পাঠানো হবে, কোডটি বসিয়ে রেজিস্ট্রেশন
             সম্পূর্ণ করুন।
           </p>
 
@@ -143,9 +151,12 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormControl>
                       <div>
-                        <Label htmlFor="name" className="text-sm text-gray-600">
+                        <FormLabel
+                          htmlFor="name"
+                          className="text-sm text-gray-600"
+                        >
                           নাম *
-                        </Label>
+                        </FormLabel>
                         <Input
                           {...field}
                           id="name"
@@ -171,12 +182,12 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormControl>
                       <div>
-                        <Label
+                        <FormLabel
                           htmlFor="mobile"
                           className="text-sm text-gray-600"
                         >
                           মোবাইল নং *
-                        </Label>
+                        </FormLabel>
                         <Input
                           {...field}
                           id="mobile"
@@ -203,17 +214,44 @@ export default function RegisterPage() {
 
               <FormField
                 control={form.control}
+                name="referralCode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div>
+                        <FormLabel
+                          htmlFor="referralCode"
+                          className="text-sm text-gray-600"
+                        >
+                          রেফারেল কোড
+                        </FormLabel>
+                        <Input
+                          {...field}
+                          id="referralCode"
+                          placeholder="রেফারেল কোড"
+                          disabled={isLoading}
+                          className="mt-1"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <div className="relative">
-                        <Label
+                        <FormLabel
                           htmlFor="password"
                           className="text-sm text-gray-600"
                         >
                           পাসওয়ার্ড *
-                        </Label>
+                        </FormLabel>
                         <div className="relative">
                           <Input
                             {...field}
@@ -252,12 +290,12 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormControl>
                       <div className="relative">
-                        <Label
+                        <FormLabel
                           htmlFor="confirmPassword"
                           className="text-sm text-gray-600"
                         >
                           কনফার্ম পাসওয়ার্ড *
-                        </Label>
+                        </FormLabel>
                         <div className="relative">
                           <Input
                             {...field}
@@ -296,12 +334,12 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormControl>
                       <div>
-                        <Label
+                        <FormLabel
                           htmlFor="email"
                           className="text-sm text-gray-600"
                         >
-                          ইমেইল * (Optional)
-                        </Label>
+                          ইমেইল
+                        </FormLabel>
                         <Input
                           {...field}
                           id="email"
@@ -326,12 +364,12 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormControl>
                       <div>
-                        <Label
+                        <FormLabel
                           htmlFor="address"
                           className="text-sm text-gray-600"
                         >
                           ঠিকানা * (Optional)
-                        </Label>
+                        </FormLabel>
                         <textarea
                           {...field}
                           id="address"
@@ -350,14 +388,52 @@ export default function RegisterPage() {
               />
 
               <Button
+                type="submit"
                 className="w-full bg-orange-500 hover:bg-orange-600 text-white cursor-pointer"
                 disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                ওটিপি পাঠান <ChevronsRight className="ml-2 h-4 w-4" />
+                রেজিস্ট্রেশন করুন <ChevronsRight className="ml-2 h-4 w-4" />
               </Button>
             </form>
           </Form>
+          <div className="mt-6 text-center space-y-2">
+            <p className="text-sm text-gray-600">
+              ইতিমধ্যে একাউন্ট আছে?{" "}
+              <Link
+                href="/login"
+                className="font-semibold text-orange-600 hover:text-orange-500"
+              >
+                লগইন করুন
+              </Link>
+            </p>
+            <p className="text-sm text-gray-600">
+              পাসওয়ার্ড ভুলে গেছেন?{" "}
+              <Link
+                href="/forgot-password"
+                className="font-semibold text-orange-600 hover:text-orange-500"
+              >
+                পাসওয়ার্ড রিসেট করুন
+              </Link>
+            </p>
+            <p className="text-xs text-gray-500 mt-4">
+              রেজিস্ট্রেশন করার মাধ্যমে আপনি আমাদের{" "}
+              <Link
+                href="/terms"
+                className="underline text-orange-600 hover:text-orange-500"
+              >
+                শর্তাবলী
+              </Link>{" "}
+              এবং{" "}
+              <Link
+                href="/privacy"
+                className="underline text-orange-600 hover:text-orange-500"
+              >
+                গোপনীয়তা নীতি
+              </Link>{" "}
+              মেনে নিচ্ছেন
+            </p>
+          </div>
         </div>
       </div>
     </div>

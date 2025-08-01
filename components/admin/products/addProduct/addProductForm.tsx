@@ -110,6 +110,7 @@ export default function AddProductPage({
           isFeatured: false,
           isVerified: false,
           stockAlert: "",
+          // variant: [],
           weight: "",
           dimensions: "",
           cost: "",
@@ -206,7 +207,7 @@ export default function AddProductPage({
             descriptionClassName: "text-sm",
             duration: 5000,
           });
-          // router.push("/admin/products");
+          router.push("/admin/products");
         })
         .catch((error) => {
           console.log(error);
@@ -637,7 +638,7 @@ export default function AddProductPage({
                                           <X className="h-4 w-4" />
                                         </Button>
 
-                                        <div className="absolute bottom-2 left-2 bg-gradient-to-r from-green-500 to-teal-500 text-gray-100 text-xs px-3 py-1.5 rounded-full font-semibold shadow-md border border-white/20 backdrop-blur-sm">
+                                        <div className="absolute bottom-2 left-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs px-3 py-1.5 rounded-full font-semibold shadow-md border border-white/20 backdrop-blur-sm">
                                           New Image
                                         </div>
                                       </div>
@@ -1128,56 +1129,97 @@ export default function AddProductPage({
                               </FormDescription>
                             </CardDescription>
                           </CardHeader>
-                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                          <div className="grid grid-cols-2 md:grid-cols-3  gap-4">
                             {["XS", "S", "M", "L", "XL", "XXL", "XXXL"].map(
-                              (size) => (
-                                <div
-                                  key={size}
-                                  className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-accent transition-colors cursor-pointer"
-                                  onClick={() => {
-                                    const isChecked = field.value?.includes(
-                                      size as
-                                        | "XS"
-                                        | "S"
-                                        | "M"
-                                        | "L"
-                                        | "XL"
-                                        | "XXL"
-                                        | "XXXL"
-                                    );
-                                    const updatedVariants = isChecked
-                                      ? field.value?.filter(
-                                          (v) => v !== size
-                                        ) || []
-                                      : [...(field.value || []), size];
-                                    field.onChange(updatedVariants);
-                                  }}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    id={size}
-                                    checked={field.value?.includes(
-                                      size as
-                                        | "XS"
-                                        | "S"
-                                        | "M"
-                                        | "L"
-                                        | "XL"
-                                        | "XXL"
-                                        | "XXXL"
-                                    )}
-                                    onChange={() => {}} // Handled by parent div onClick
-                                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                                    disabled={isLoading}
-                                  />
-                                  <label
-                                    htmlFor={size}
-                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              (size) => {
+                                const variantExists = field.value?.find(
+                                  (v) => v.variantType === size
+                                );
+
+                                return (
+                                  <div
+                                    key={size}
+                                    className="space-y-2 border rounded-lg p-4 hover:bg-accent transition-colors"
                                   >
-                                    {size}
-                                  </label>
-                                </div>
-                              )
+                                    <div className="flex items-center space-x-2">
+                                      <input
+                                        type="checkbox"
+                                        id={size}
+                                        checked={!!variantExists}
+                                        onChange={(e) => {
+                                          const newVariants = e.target.checked
+                                            ? [
+                                                ...(field.value || []),
+                                                { variantType: size, stock: 0 },
+                                              ]
+                                            : field.value?.filter(
+                                                (v) => v.variantType !== size
+                                              ) || [];
+                                          field.onChange(newVariants);
+
+                                          // Focus on stock input when checkbox is checked
+                                          if (e.target.checked) {
+                                            setTimeout(() => {
+                                              document
+                                                .getElementById(`stock-${size}`)
+                                                ?.focus();
+                                            }, 0);
+                                          }
+                                        }}
+                                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                        disabled={isLoading}
+                                      />
+                                      <label
+                                        htmlFor={size}
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                      >
+                                        {size}
+                                      </label>
+                                    </div>
+
+                                    {variantExists && (
+                                      <div className="pt-2">
+                                        <Input
+                                          min={0}
+                                          id={`stock-${size}`}
+                                          placeholder="Stock"
+                                          value={variantExists.stock}
+                                          onChange={(e) => {
+                                            const newVariants =
+                                              field.value?.map((v) =>
+                                                v.variantType === size
+                                                  ? {
+                                                      ...v,
+                                                      stock:
+                                                        parseInt(
+                                                          e.target.value
+                                                        ) || 0,
+                                                    }
+                                                  : v
+                                              ) || [];
+                                            field.onChange(newVariants);
+                                            const totalStock =
+                                              newVariants.reduce(
+                                                (total, variant) =>
+                                                  total +
+                                                  (parseInt(
+                                                    variant.stock.toLocaleString()
+                                                  ) || 0),
+                                                0
+                                              ) || 0;
+                                            form.setValue(
+                                              "stock",
+                                              totalStock.toLocaleString()
+                                            );
+                                          }}
+                                          className="w-full"
+                                          disabled={isLoading}
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              }
                             )}
                           </div>
                           <FormMessage className="mt-4" />
@@ -1376,7 +1418,19 @@ export default function AddProductPage({
                           <FormControl>
                             <Input
                               {...field}
-                              disabled={isLoading}
+                              disabled
+                              value={
+                                form
+                                  .watch("variant")
+                                  ?.reduce(
+                                    (total, variant) =>
+                                      total +
+                                      (parseInt(
+                                        variant.stock.toLocaleString()
+                                      ) || 0),
+                                    0
+                                  ) || 0
+                              }
                               type="number"
                               placeholder="0"
                               min={0}

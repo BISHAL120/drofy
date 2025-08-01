@@ -10,6 +10,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -26,20 +32,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { ResellerLevel, UserStatus } from "@prisma/client";
 import axios from "axios";
 import { format } from "date-fns";
-import { Ban, Eye, PhoneCallIcon, Search, Undo2, UserPlus } from "lucide-react";
+import {
+  Ban,
+  Eye,
+  MoreVertical,
+  PhoneCallIcon,
+  Search,
+  Undo2,
+  UserPlus,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import ConfirmationDialog from "../components/confirmationDialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const getLevelColor = (level: string) => {
   switch (level) {
@@ -82,7 +96,7 @@ interface AllResellerProps {
     phone: string;
     email: string | null;
     resellerLevel: ResellerLevel;
-    saleCount: number | null;
+    orderCount: number | null;
     totalRevenue: number | null;
     wallet: number;
     status: UserStatus;
@@ -283,8 +297,8 @@ const AllResellersPage = ({
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {reseller.saleCount
-                          ? reseller.saleCount
+                        {reseller.orderCount
+                          ? reseller.orderCount
                           : "NO (orders)"}
                       </TableCell>
                       <TableCell>
@@ -303,43 +317,6 @@ const AllResellersPage = ({
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
-                          <Tooltip>
-                            <Button
-                              disabled={isLoading}
-                              asChild
-                              variant="ghost"
-                              size="sm"
-                              className="border"
-                            >
-                              <TooltipTrigger>
-                                <Link
-                                  href={`/admin/resellers/new/${reseller.id}`}
-                                >
-                                  <Eye className="h-4 w-4" />
-                                </Link>
-                              </TooltipTrigger>
-                            </Button>
-                            <TooltipContent>View details</TooltipContent>
-                          </Tooltip>
-                          <Tooltip>
-                            <Button
-                              disabled={isLoading}
-                              asChild
-                              variant="ghost"
-                              size="sm"
-                              className="border"
-                            >
-                              <TooltipTrigger>
-                                <Link
-                                  href={`https://wa.me/+880${reseller.phone}`}
-                                  target="_blank"
-                                >
-                                  <PhoneCallIcon className="h-4 w-4" />
-                                </Link>
-                              </TooltipTrigger>
-                            </Button>
-                            <TooltipContent>Call reseller</TooltipContent>
-                          </Tooltip>
                           <ConfirmationDialog
                             trigger={
                               <div className="border px-3 py-[7px] rounded-md flex justify-center items-center">
@@ -377,7 +354,42 @@ const AllResellersPage = ({
                               });
                             }}
                           />
-                          <Button variant="ghost" size="sm"></Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="border"
+                              >
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem asChild disabled={isLoading}>
+                                <Link
+                                  href={`/admin/resellers/id/${reseller.id}`}
+                                  className={
+                                    isLoading ? "cursor-not-allowed" : ""
+                                  }
+                                >
+                                  <Eye className="h-4 w-4 mr-2" />
+                                  View details
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem asChild disabled={isLoading}>
+                                <Link
+                                  href={`tel:+880${reseller.phone}`}
+                                  target="_blank"
+                                  className={
+                                    isLoading ? "cursor-not-allowed" : ""
+                                  }
+                                >
+                                  <PhoneCallIcon className="h-4 w-4 mr-2" />
+                                  Call reseller
+                                </Link>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </TableCell>
                     </TableRow>

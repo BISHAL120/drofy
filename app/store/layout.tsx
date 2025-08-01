@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import AdminButton from "@/components/auth/adminButton";
+import WaletBalance from "@/components/store/balance";
 import CartButton from "@/components/store/cartButton";
 import IdActiveAlert from "@/components/store/idActiveAlert";
 import { AppSidebar, MobileSidebar } from "@/components/ui/app-sidebar";
@@ -39,6 +40,7 @@ export default async function StoreLayout({
                   <AdminButton className="border p-2 bg-slate-700 text-white" />
                 </div>
                 <CartButton />
+                <WaletBalance />
               </div>
             </header>
             <main className="flex-1">

@@ -2,6 +2,7 @@
 import { auth } from "@/auth";
 import db from "@/lib/db";
 import { AddCartProps } from "@/lib/zustand/store";
+import { VariantType } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function POST(
@@ -47,16 +48,32 @@ export async function POST(
             return NextResponse.json({ message: "Delivery charge is required." }, { status: 400 });
         }
 
+        // check order number and deducted courier charge from balance
+        const getUser = await db.user.findUnique({
+            where: {
+                id: user.id as string,
+            },
+            select: {
+                orderCount: true,
+                wallet: true,
+                totalRevenue: true,
+            }
+        })
+
+        if (!getUser) return NextResponse.json({ message: "User not found." }, { status: 400 });
+
+
         // Get the order count
         const orderCount = await db.order.count();
 
         // Calculate total profit
         const totalProfit = cartItems.reduce((total: number, item: AddCartProps) => total + (item.sellPrice - item.price) * item.quantity, 0);
 
+        // Create the order
         const order = await db.order.create({
             data: {
                 resellerId: user.id as string,
-                orderCount: orderCount + 1,
+                orderNumber: orderCount + 1,
                 customerPhone: phone,
                 customerName: name,
                 customerDivision: division,
@@ -89,28 +106,69 @@ export async function POST(
             }
         })
 
-        const cartItemsCount = cartItems.reduce((total: number, item: AddCartProps) => total + item.quantity, 0);
 
-        const getUser = await db.user.findUnique({
-            where: {
-                id: user.id as string,
-            }
-        })
+        // Reduce the stock quantity
+        await Promise.all(cartItems.map(async (item: AddCartProps) => {
+
+
+
+            await db.product.update({
+                where: {
+                    id: item.id,
+                },
+                data: {
+                    stock: {
+                        decrement: item.quantity,
+                    },
+                    variant: {
+                        updateMany: {
+                            where: {
+                                variantType: item.size as VariantType
+                            },
+                            data: {
+                                stock: {
+                                    decrement: item.quantity
+                                }
+                            }
+                        }
+                    }
+
+                }
+            })
+        }))
+
 
         await db.user.update({
             where: {
                 id: user.id as string,
             },
             data: {
-                saleCount: getUser?.saleCount + cartItemsCount,
+                orderCount: getUser?.orderCount + 1,
                 totalRevenue: getUser?.totalRevenue + subtotal,
             }
         })
 
+        if (getUser?.orderCount < 10) {
+            // check wallet balance
+            if (getUser?.wallet < deliveryCharge) {
+                return NextResponse.json({ message: "পর্যাপ্ত ব্যালেন্স নাই" }, { status: 400 });
+            }
 
-        return NextResponse.json({ data: order, message: "Order created successfully." }, { status: 201 });
+            // deduct courier charge from wallet
+            await db.user.update({
+                where: {
+                    id: user.id as string,
+                },
+                data: {
+                    wallet: getUser?.wallet - deliveryCharge,
+                }
+            })
+        }
+
+
+        return NextResponse.json({ data: order, message: "Order created successfully.", id: order.id }, { status: 201 });
     } catch (error) {
-        console.log('[ORDERS_POST]', error);
+        console.log('ORDERS_POST :', error);
         return NextResponse.json({ message: "Internal server error." }, { status: 500 });
     }
 }

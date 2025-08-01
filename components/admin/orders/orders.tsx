@@ -46,6 +46,7 @@ import {
   Printer,
   Search,
   Trash2,
+  Truck,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -81,8 +82,9 @@ const getPaymentMethodColor = (method: string) => {
 
 interface OrderProps {
   id: string;
-  orderCount: number;
+  orderNumber: number;
   customerName: string;
+  tracking_code: string | null;
   reseller: {
     name: string;
   };
@@ -198,7 +200,7 @@ export default function OrdersPage({ orders }: { orders: OrderProps[] }) {
         const truncateText = (text: string, maxLength: number) =>
           text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
 
-        doc.text(`ORD-${order.orderCount}`, margin, yPosition);
+        doc.text(`ORD-${order.orderNumber}`, margin, yPosition);
         doc.text(truncateText(order.customerName, 12), margin + 25, yPosition);
         doc.text(truncateText(order.reseller.name, 12), margin + 60, yPosition);
         // doc.text(order.status, margin + 95, yPosition);
@@ -340,9 +342,9 @@ export default function OrdersPage({ orders }: { orders: OrderProps[] }) {
                 </TableHeader>
                 <TableBody>
                   {orders.map((order) => (
-                    <TableRow key={order.orderCount}>
+                    <TableRow key={order.orderNumber}>
                       <TableCell className="font-medium">
-                        ORD-{order.orderCount.toString().padStart(3, "0")}
+                        ORD-{order.orderNumber.toString().padStart(3, "0")}
                       </TableCell>
                       <TableCell>
                         <Tooltip>
@@ -414,19 +416,30 @@ export default function OrdersPage({ orders }: { orders: OrderProps[] }) {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <Link
-                                href={`/admin/orders/${order.id}`}
-                                className="flex items-center"
-                              >
+                            <Link
+                              href={`/admin/orders/${order.id}`}
+                              className=""
+                            >
+                              <DropdownMenuItem className="cursor-pointer">
                                 <Eye className="mr-2 h-4 w-4" />
                                 View Details
-                              </Link>
-                            </DropdownMenuItem>
+                              </DropdownMenuItem>
+                            </Link>
                             <DropdownMenuItem>
                               <Printer className="mr-2 h-4 w-4" />
                               Print Invoice
                             </DropdownMenuItem>
+                            {order.tracking_code ? (
+                              <Link
+                                target="_blank"
+                                href={`https://steadfast.com.bd/t/${order.tracking_code}`}
+                              >
+                                <DropdownMenuItem>
+                                  <Truck className="mr-2 h-4 w-4" />
+                                  Track Order
+                                </DropdownMenuItem>
+                              </Link>
+                            ) : null}
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-red-600">
                               <Trash2 className="mr-2 h-4 w-4" />

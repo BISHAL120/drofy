@@ -40,21 +40,21 @@ import { Separator } from "./separator";
 import AdminButton from "../auth/adminButton";
 
 const menuItems = [
-  { icon: Home, label: "হোম", href: "/store" },
-  { icon: User, label: "প্রোফাইল", href: "/store/profile" },
-  // { icon: FileText, label: "নতুন পোস্ট", href: "/store/posts" },
-  { icon: Folder, label: "সকল প্রোডাক্ট", href: "/store/categories" },
-  // { icon: Video, label: "প্রোডাক্টের ভিডিও", href: "/store#" },
-  { icon: Heart, label: "ফেভরিট প্রোডাক্ট", href: "/store/favorites" },
-  { icon: Clock, label: "স্টকআউট প্রোডাক্ট", href: "/store/stock-out" },
-  { icon: List, label: "অর্ডার লিস্ট", href: "/store/orders" },
-  { icon: List, label: "অ্যাক্টিভ অর্ডার", href: "/store/active-orders" },
-  { icon: ShoppingCart, label: "কার্ট লিস্ট", href: "/store/cart" },
-  { icon: BarChart2, label: "সেলস & প্রফিট", href: "/store/sales-profit" },
-  { icon: FileCheck, label: "ব্যালেন্স স্টেটমেন্ট", href: "/store/balance" },
-  { icon: CreditCard, label: "অ্যাড একাউন্ট", href: "/store/paymentMethod" },
-  { icon: CreditCard, label: "টাকা উত্তোলন", href: "/store/withdraw" },
-  { icon: HelpCircle, label: "সাপোর্ট টিকেট", href: "/store/support" },
+  { icon: Home, label: "Home", href: "/store" },
+  { icon: User, label: "Profile", href: "/store/profile" },
+  // { icon: FileText, label: "New Post", href: "/store/posts" },
+  { icon: Folder, label: "All Products", href: "/store/categories" },
+  // { icon: Video, label: "Product Video", href: "/store#" },
+  { icon: Heart, label: "Favorite", href: "/store/favorites" },
+  { icon: Clock, label: "Stock Out", href: "/store/stock-out" },
+  { icon: List, label: "Order List", href: "/store/orders" },
+  { icon: List, label: "Active Order", href: "/store/active-orders" },
+  { icon: ShoppingCart, label: "Cart List", href: "/store/cart" },
+  { icon: BarChart2, label: "Sales & Profit", href: "/store/sales-profit" },
+  { icon: FileCheck, label: "Balance Statement", href: "/store/balance" },
+  { icon: CreditCard, label: "Add Account", href: "/store/paymentMethod" },
+  { icon: CreditCard, label: "Withdraw", href: "/store/withdraw" },
+  { icon: HelpCircle, label: "Support Ticket", href: "/store/support" },
 ];
 
 export function AppSidebar() {
@@ -62,7 +62,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar className="border-r">
-      <SidebarContent className="hide_scrollbar">
+      <SidebarContent className="hide_scrollbar pb-10">
         <SidebarGroup className="p-0">
           <SidebarGroupContent>
             <SidebarMenu>
@@ -111,7 +111,7 @@ export function AppSidebar() {
                 ))}
               </div>
             </SidebarMenu>
-            <div className="pl-1.5 pr-3">
+            <div className="pl-1.5 pr-3 pt-6">
               <LogoutButton className="w-full justify-start bg-transparent text-black hover:text-white transition-colors duration-300 border-2" />
             </div>
           </SidebarGroupContent>

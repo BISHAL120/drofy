@@ -1,10 +1,10 @@
-import OrderFailedPage from "@/components/store/order/failed/orderFailed";
 import React from "react";
+import NewPassword from "@/components/auth/new-password/new-password";
 
 const Page = () => {
   return (
     <div>
-      <OrderFailedPage />
+      <NewPassword />
     </div>
   );
 };

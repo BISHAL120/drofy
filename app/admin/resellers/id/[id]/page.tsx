@@ -14,7 +14,6 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const resellerDetails = await getResellerById(id);
 
   const referredUsersCount = await referredUsers(resellerDetails?.referralCode);
-  // console.log(referredUsersCount);
 
   return (
     <div>

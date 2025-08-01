@@ -1,8 +1,20 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { ResellerLevel, UserStatus } from "@prisma/client";
 import axios from "axios";
+import { format } from "date-fns";
 import {
   Calendar,
   Check,
@@ -20,6 +32,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 import ConfirmationDialog from "../../components/confirmationDialog";
 
@@ -33,20 +46,23 @@ const UserDetailsPage = ({
     phone: string;
     email: string | null;
     address: string | null;
-    profileImage: string | null;
     referralCode: number;
-    status: UserStatus;
-    isActive: boolean;
-    wallet: number;
-    saleCount: number | null;
-    totalRevenue: number | null;
+    profileImage: string | null;
     companyName: string | null;
     resellerLevel: ResellerLevel;
+    status: UserStatus;
+    isActive: boolean;
+    orderCount: number | null;
+    wallet: number;
+    totalRevenue: number | null;
     createdAt: Date;
   } | null;
   referralCount: number;
 }) => {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [balance, setBalance] = useState(user?.wallet || 0);
+  const [details, setDetails] = useState("Manual balance update");
 
   if (!user) {
     return (
@@ -72,13 +88,38 @@ const UserDetailsPage = ({
     );
   }
 
+  const handleBalanceChange = () => {
+    setLoading(true);
+    toast.loading("Updating balance...");
+
+    axios
+      .post("/api/store/balance", {
+        id: user.id,
+        balance,
+        details,
+      })
+      .then((res) => {
+        setLoading(false);
+        toast.dismiss();
+        router.refresh();
+        toast.success(res.data.message, {
+          duration: 5000,
+        });
+      })
+      .catch((err) => {
+        setLoading(false);
+        toast.dismiss();
+        toast.error(err.response.data.message);
+      });
+  };
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
         {/* Profile Card */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
           <div className="flex items-start gap-6">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-white text-2xl font-bold">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-slate-300 to-slate-400 flex items-center justify-center text-white text-2xl font-bold">
               {user.profileImage ? (
                 <Image
                   src={user.profileImage}
@@ -115,22 +156,85 @@ const UserDetailsPage = ({
                     </span>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-between">
+                <div className="flex flex-col items-end justify-between">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-5 h-5 text-slate-400" />
                     <div>
                       <p className="text-sm text-slate-500">Member since</p>
                       <p className="text-lg font-semibold text-slate-800">
                         {user.createdAt
-                          ? new Date(user.createdAt).toLocaleDateString()
-                          : "-"}
+                          ? format(user.createdAt, "MMMM dd, yyyy")
+                          : ""}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
+                    <Dialog>
+                      <DialogTrigger disabled={loading} asChild>
+                        <Button variant="default">Add Balance</Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Manual Add Balance</DialogTitle>
+                          <DialogDescription>
+                            Input the amount to add to the user wallet. Add
+                            minus to remove balance.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4">
+                          <div className="grid gap-3">
+                            <Input
+                              defaultValue={0}
+                              onChange={(e) =>
+                                setBalance(Number(e.target.value))
+                              }
+                              placeholder="Enter amount"
+                              min={0}
+                            />
+                          </div>
+                          <div className="grid gap-3">
+                            <Input
+                              defaultValue={details}
+                              onChange={(e) => setDetails(e.target.value)}
+                              placeholder="Enter details"
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button
+                              disabled={loading}
+                              variant="outline"
+                              className="px-4 py-2 text-gray-600 hover:bg-gray-100 transition-colors"
+                            >
+                              Cancel
+                            </Button>
+                          </DialogClose>
+                          <DialogClose onClick={handleBalanceChange} asChild>
+                            <Button
+                              disabled={loading}
+                              variant="default"
+                              className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                            >
+                              Add Balance
+                            </Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+
+                    <Link
+                      href={`https://wa.me/+880${user.phone}`}
+                      target="_blank"
+                      className="px-3 py-1.5 bg-rose-50 text-rose-600 font-medium rounded-lg hover:bg-rose-300 transition-colors duration-300 flex items-center gap-1.5 text-sm"
+                    >
+                      <PhoneForwarded className="w-4 h-4" />
+                      <span>WhatsApp</span>
+                    </Link>
                     <ConfirmationDialog
                       trigger={
                         <Button
+                          disabled={loading}
                           className={`${
                             user.isActive
                               ? "bg-rose-500 text-white"
@@ -142,7 +246,9 @@ const UserDetailsPage = ({
                           ) : (
                             <Check className="w-4 h-4" />
                           )}
-                          <span>{user.status}</span>
+                          <span>
+                            {user.isActive ? "Deactivate" : "Activate"}
+                          </span>
                         </Button>
                       }
                       currentState={!user.isActive}
@@ -166,15 +272,6 @@ const UserDetailsPage = ({
                           });
                       }}
                     />
-
-                    <Link
-                      href={`https://wa.me/+880${user.phone}`}
-                      target="_blank"
-                      className="px-3 py-1.5 bg-rose-50 text-rose-600 font-medium rounded-lg hover:bg-rose-300 transition-colors duration-300 flex items-center gap-1.5 text-sm"
-                    >
-                      <PhoneForwarded className="w-4 h-4" />
-                      <span>Call</span>
-                    </Link>
                   </div>
                 </div>
               </div>
@@ -192,7 +289,7 @@ const UserDetailsPage = ({
               <div>
                 <p className="text-sm text-slate-500">Total Orders</p>
                 <p className="text-2xl font-bold text-slate-800">
-                  {user.saleCount ? user.saleCount : 0}
+                  {user.orderCount ? user.orderCount : 0}
                 </p>
               </div>
             </div>
@@ -206,7 +303,7 @@ const UserDetailsPage = ({
               <div>
                 <p className="text-sm text-slate-500">Total Sales</p>
                 <p className="text-2xl font-bold text-slate-800">
-                  ${user.totalRevenue ? user.totalRevenue.toLocaleString() : 0}
+                  {user.totalRevenue ? user.totalRevenue.toLocaleString() : 0}
                 </p>
               </div>
             </div>
@@ -220,7 +317,7 @@ const UserDetailsPage = ({
               <div>
                 <p className="text-sm text-slate-500">Wallet Balance</p>
                 <p className="text-2xl font-bold text-slate-800">
-                  ${user.wallet.toLocaleString()}
+                  {user.wallet.toLocaleString()}
                 </p>
               </div>
             </div>

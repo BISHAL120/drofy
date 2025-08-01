@@ -34,8 +34,7 @@ model User {
   name          String
   phone         String        @unique
   password      String
-  balance       Float         @default(0)
-  email         String?
+  email         String        @unique
   district      String?
   address       String?
   profileImage  String?
@@ -44,12 +43,12 @@ model User {
   isActive      Boolean       @default(false)
   status        UserStatus    @default(INACTIVE)
   wallet        Float         @default(0)
-  saleCount     Int?          @default(0)
-  totalRevenue  Float?        @default(0)
+  orderCount    Int           @default(0)
+  totalRevenue  Float         @default(0)
   companyName   String?
   resellerLevel ResellerLevel @default(BEGINNER)
-  referralCode  Float         @unique
-  referredBy    String? // referralCode of inviter
+  referralCode  Int           @unique
+  referredBy    Int? // referralCode of inviter
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
@@ -84,6 +83,11 @@ type ImageObj {
   imageID  String
 }
 
+type VarientObj {
+  variantType VariantType
+  stock       Int
+}
+
 model Product {
   id               String        @id @default(auto()) @map("_id") @db.ObjectId
   name             String
@@ -105,7 +109,7 @@ model Product {
   saleCount        Int?          @default(0)
   deliveryCharge   Int
   weight           Float
-  variant          VariantType[] @default([M, L, XL])
+  variant          VarientObj[]
   dimensions       String?
   metaTitle        String?
   metaDescription  String?
@@ -194,7 +198,7 @@ model Order {
   reseller   User   @relation(fields: [resellerId], references: [id])
   resellerId String @db.ObjectId
 
-  orderCount       Int                  @unique
+  orderNumber      Int                  @unique
   customerPhone    String
   customerName     String
   customerDivision String
@@ -212,9 +216,37 @@ model Order {
   chargeStatus     DeliveryChargeStatus
   totalProfit      Float? // calculated on complete
 
+  consignment_id Int?
+  tracking_code  String?
+
   completedAt DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+enum WalletTransactionType {
+  BKASH
+  MANUAL
+}
+
+model WalletTransaction {
+  id            String                @id @default(auto()) @map("_id") @db.ObjectId
+  user          User                  @relation(fields: [userId], references: [id])
+  userId        String                @db.ObjectId
+  amount        Float
+  walletBalance Float
+  type          WalletTransactionType
+  reference     String? // optional order/withdrawal ID
+  details       String
+  description   String?
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model WithdrawalRequest {
@@ -228,16 +260,10 @@ model WithdrawalRequest {
   updatedAt   DateTime         @updatedAt
 }
 
-model WalletTransaction {
-  id          String                @id @default(auto()) @map("_id") @db.ObjectId
-  user        User                  @relation(fields: [userId], references: [id])
-  userId      String                @db.ObjectId
-  amount      Float
-  type        WalletTransactionType
-  reference   String? // optional order/withdrawal ID
-  description String?
-  createdAt   DateTime              @default(now())
-  updatedAt   DateTime              @updatedAt
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
 }
 
 model SupportTicket {
@@ -251,14 +277,6 @@ model SupportTicket {
   updatedAt DateTime     @updatedAt
 }
 
-model AdminActivityLog {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  adminId   String
-  action    String
-  metadata  Json
-  createdAt DateTime @default(now())
-}
-
 model ReferralCommission {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   userId       String
@@ -268,29 +286,11 @@ model ReferralCommission {
   createdAt    DateTime @default(now())
 }
 
-model PlatformSetting {
+model Verification {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  key       String   @unique
-  value     Json
+  userId    String
+  email     String
+  code      Int
+  expiresAt DateTime
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// Enums Start
-
-enum TicketStatus {
-  OPEN
-  IN_PROGRESS
-  CLOSED
-}
-
-enum WithdrawalStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
-enum WalletTransactionType {
-  CREDIT
-  DEBIT
 }

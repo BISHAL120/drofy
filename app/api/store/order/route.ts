@@ -138,6 +138,7 @@ export async function POST(
         }))
 
 
+        // Update the user order count and total revenue
         await db.user.update({
             where: {
                 id: user.id as string,

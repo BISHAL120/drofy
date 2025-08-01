@@ -227,6 +227,7 @@ model Order {
 enum WalletTransactionType {
   BKASH
   MANUAL
+  AUTOMATION
 }
 
 model WalletTransaction {

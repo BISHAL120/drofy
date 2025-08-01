@@ -171,7 +171,7 @@ export default function OrderDetailsPage({ order }: { order: OrderProps }) {
     setLoading(true);
 
     axios
-      .patch(`/api/admin/orders`, {
+      .patch(`/api/admin/orders/status`, {
         id: order.id,
         status: orderStatus,
       })
@@ -590,7 +590,6 @@ export default function OrderDetailsPage({ order }: { order: OrderProps }) {
                       <SelectItem value="PENDING">Pending</SelectItem>
                       <SelectItem value="PROCESSING">Processing</SelectItem>
                       <SelectItem value="DELIVERED">Delivered</SelectItem>
-                      <SelectItem value="COMPLETED">Completed</SelectItem>
                       <SelectItem value="CANCELLED">Cancelled</SelectItem>
                     </SelectContent>
                   </Select>

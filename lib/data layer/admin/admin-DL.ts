@@ -422,7 +422,7 @@ export const getAllOrders = async ({
                     mode?: 'insensitive';
                 };
             };
-            orderCount?: {
+            orderNumber?: {
                 equals?: number;
             };
         }[];
@@ -442,7 +442,7 @@ export const getAllOrders = async ({
                 }
             },
             {
-                orderCount: {
+                orderNumber: {
                     equals: Number(search),
                 }
             }

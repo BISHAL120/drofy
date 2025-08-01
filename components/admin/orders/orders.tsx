@@ -54,16 +54,14 @@ import { useEffect, useState } from "react";
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "COMPLETED":
-      return "bg-green-100 text-green-800";
     case "PROCESSING":
       return "bg-blue-100 text-blue-800";
     case "PENDING":
-      return "bg-yellow-100 text-yellow-800";
+      return "bg-yellow-300 text-black";
     case "DELIVERED":
-      return "bg-purple-100 text-purple-800";
+      return "bg-emerald-500 text-white";
     case "CANCELLED":
-      return "bg-red-100 text-red-800";
+      return "bg-rose-500 text-white";
     default:
       return "bg-gray-100 text-gray-800";
   }

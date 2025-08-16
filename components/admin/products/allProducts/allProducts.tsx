@@ -294,11 +294,7 @@ export default function AllProductsPage({
                             )}
                           </div>
                           <div>
-                            <div className="font-medium">
-                              {product.name.length > 50
-                                ? product.name.substring(0, 47) + "..."
-                                : product.name}
-                            </div>
+                            <div className="font-medium">{product.name}</div>
                             <div className="text-sm text-muted-foreground">
                               {product.sku}
                             </div>

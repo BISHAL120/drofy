@@ -40,21 +40,21 @@ import { Separator } from "./separator";
 import AdminButton from "../auth/adminButton";
 
 const menuItems = [
-  { icon: Home, label: "Home", href: "/store" },
-  { icon: User, label: "Profile", href: "/store/profile" },
-  // { icon: FileText, label: "New Post", href: "/store/posts" },
-  { icon: Folder, label: "All Products", href: "/store/categories" },
-  // { icon: Video, label: "Product Video", href: "/store#" },
-  { icon: Heart, label: "Favorite", href: "/store/favorites" },
-  { icon: Clock, label: "Stock Out", href: "/store/stock-out" },
-  { icon: List, label: "Order List", href: "/store/orders" },
-  { icon: List, label: "Active Order", href: "/store/active-orders" },
-  { icon: ShoppingCart, label: "Cart List", href: "/store/cart" },
-  { icon: BarChart2, label: "Sales & Profit", href: "/store/sales-profit" },
-  { icon: FileCheck, label: "Balance Statement", href: "/store/balance" },
-  { icon: CreditCard, label: "Add Account", href: "/store/paymentMethod" },
-  { icon: CreditCard, label: "Withdraw", href: "/store/withdraw" },
-  { icon: HelpCircle, label: "Support Ticket", href: "/store/support" },
+  { icon: Home, label: { bn: "হোম", en: "Home" }, href: "/store" },
+  { icon: User, label: { bn: "প্রোফাইল", en: "Profile" }, href: "/store/profile" },
+  // { icon: FileText, label: "নতুন পোস্ট", href: "/store/posts" },
+  { icon: Folder, label: { bn: "সকল প্রোডাক্ট", en: "All Products" }, href: "/store/categories" },
+  // { icon: Video, label: "প্রোডাক্টের ভিডিও", href: "/store#" },
+  { icon: Heart, label: { bn: "ফেভরিট প্রোডাক্ট", en: "Favorite Products" }, href: "/store/favorites" },
+  { icon: Clock, label: { bn: "স্টকআউট প্রোডাক্ট", en: "Stock Out Products" }, href: "/store/stock-out" },
+  { icon: List, label: { bn: "অর্ডার লিস্ট", en: "Order List" }, href: "/store/orders" },
+  { icon: List, label: { bn: "অ্যাক্টিভ অর্ডার", en: "Active Orders" }, href: "/store/active-orders" },
+  { icon: ShoppingCart, label: { bn: "কার্ট লিস্ট", en: "Cart List" }, href: "/store/cart" },
+  { icon: BarChart2, label: { bn: "সেলস & প্রফিট", en: "Sales & Profit" }, href: "/store/sales-profit" },
+  { icon: FileCheck, label: { bn: "ব্যালেন্স স্টেটমেন্ট", en: "Balance Statement" }, href: "/store/balance" },
+  { icon: CreditCard, label: { bn: "অ্যাড একাউন্ট", en: "Add Account" }, href: "/store/paymentMethod" },
+  { icon: CreditCard, label: { bn: "টাকা উত্তোলন", en: "Withdraw Money" }, href: "/store/withdraw" },
+  { icon: HelpCircle, label: { bn: "সাপোর্ট টিকেট", en: "Support Ticket" }, href: "/store/support" },
 ];
 
 export function AppSidebar() {
@@ -104,7 +104,9 @@ export function AppSidebar() {
                         }`}
                       />
                       <span className="font-semibold text-base">
-                        {item.label}
+                        {process.env.LANGUAGE === "bn"
+                          ? item.label.bn
+                          : item.label.en}
                       </span>
                     </Link>
                   </SidebarMenuItem>
@@ -166,7 +168,11 @@ export function MobileSidebar() {
                                 : "text-primary"
                             }`}
                           />
-                          <span>{item.label}</span>
+                          <span>
+                            {process.env.LANGUAGE === "bn"
+                              ? item.label.bn
+                              : item.label.en}
+                          </span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

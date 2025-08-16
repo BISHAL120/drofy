@@ -17,12 +17,12 @@ export default function RootLayout({
   return (
     <div>
       <TooltipProvider>
-        <SidebarProvider defaultOpen={true}>
-          <div className="flex min-h-screen w-full">
-            <AdminSidebar />
-            <main className="flex-1 overflow-hidden">{children}</main>
-          </div>
-        </SidebarProvider>
+      <SidebarProvider defaultOpen={true}>
+        <div className="flex min-h-screen w-full">
+          <AdminSidebar />
+          <main className="flex-1 overflow-hidden">{children}</main>
+        </div>
+      </SidebarProvider>
       </TooltipProvider>
     </div>
   );

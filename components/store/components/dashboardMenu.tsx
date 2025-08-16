@@ -13,6 +13,7 @@ import {
   HelpCircle,
   Image as ImageIcon,
   Star,
+  UserPlus2,
   X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -20,128 +21,164 @@ import { useState } from "react";
 
 interface ServiceItem {
   id: string;
-  title: string;
+  title: {
+    bn: string;
+    en: string;
+  };
   icon: React.ReactNode;
   color: string;
   route: string;
 }
 
 const topBannerButtons = [
-  { title: "Offer Details", route: "/order-details" },
-  { title: "Top Selling Products", route: "/top-selling" },
-  { title: "Active Orders", route: "/update-order" },
-  { title: "Customize Print", route: "/customize-print" },
+  { title: { bn: "অফার ডিটেইলস", en: "Offer Details" }, route: "/order-details" },
+  { title: { bn: "টপ সেলিং প্রোডাক্ট", en: "Top Selling Products" }, route: "/top-selling" },
+  { title: { bn: "অ্যাক্টিভ অর্ডারস", en: "Active Orders" }, route: "/update-order" },
+  { title: { bn: "কাস্টমাইজ প্রিন্ট", en: "Customize Print" }, route: "/customize-print" },
 ];
 
 const services: ServiceItem[] = [
   {
     id: "1",
-    title: "All Products",
+    title: {
+      bn: "সকল প্রোডাক্ট",
+      en: "All Products",
+    },
     icon: <Folder className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "store/categories",
   },
   {
     id: "2",
-    title: "Search by Image",
+    title: {
+      bn: "ছবি দিয়ে সার্চ করুন",
+      en: "Search by Image",
+    },
     icon: <ImageIcon className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "/store/product-search",
   },
   /* {
         id: "2",
-        title: "New Product Posts",
+        title: {
+            bn: "প্রোডাক্টের নতুন পোস্ট",
+            en: "New Product Post",
+        },
         icon: <Facebook className="w-8 h-8" />,
         color: "bg-blue-500",
         route: "/facebook-page",
     }, */
   {
     id: "3",
-    title: "Verified Products",
+    title: {
+      bn: "ভেরিফাইড প্রোডাক্ট",
+      en: "Verified Products",
+    },
     icon: <Star className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "/store/favorites",
   },
   /*  {
          id: "4",
-         title: "Boosting Products",
+         title: {
+            bn: "বুস্টিং প্রোডাক্ট",
+            en: "Boosting Products",
+         },
          icon: <Megaphone className="w-8 h-8" />,
          color: "bg-orange-500",
          route: "/promotion",
      }, */
   {
     id: "5",
-    title: "Sales Guidelines",
+    title: {
+      bn: "সেলস গাইডলাইন",
+      en: "Sales Guidelines",
+    },
     icon: <Gift className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "/store/guide-line",
   },
-  /* {
-        id: "6",
-        title: "Learning Videos",
-        icon: <Video className="w-8 h-8" />,
-        color: "bg-orange-500",
-        route: "/live-video",
+  {
+    id: "6",
+    title: {
+      bn: "প্যাসিভ ইনকাম",
+      en: "Passive Income",
     },
-    {
+    icon: <UserPlus2 className="w-8 h-8" />,
+    color: "bg-emerald-500",
+    route: "/store/pasive-income",
+  },
+  /*  {
         id: "7",
-        title: "Digital Payment",
+        title: {
+            bn: "ডিজিটাল পেমেন্ট",
+            en: "Digital Payment",
+        },
         icon: <CreditCard className="w-8 h-8" />,
         color: "bg-blue-500",
         route: "/payment",
     },
     {
         id: "8",
-        title: "Mobile Recharge",
+        title: "মোবাইল রিচার্জ",
         icon: <Smartphone className="w-8 h-8" />,
         color: "bg-orange-500",
         route: "/mobile-recharge",
     },
     {
         id: "9",
-        title: "E-commerce Website",
+        title: "ই-কমার্স ওয়েবসাইট",
         icon: <Monitor className="w-8 h-8" />,
         color: "bg-blue-500",
         route: "/ecommerce",
     },
     {
         id: "10",
-        title: "Service Valuation",
+        title: "সেবা ভ্যালুয়েশন",
         icon: <Clock className="w-8 h-8" />,
         color: "bg-emerald-500",
         route: "/service-valuation",
     },
     {
         id: "11",
-        title: "Business Plan",
+        title: "ব্যবসায় পরিকল্পনা",
         icon: <FileText className="w-8 h-8" />,
         color: "bg-blue-500",
         route: "/business-plan",
     },
     {
         id: "12",
-        title: "Social Responsibility",
+        title: "সামাজিক দায়বদ্ধতা",
         icon: <Users className="w-8 h-8" />,
         color: "bg-emerald-500",
         route: "/social-responsibility",
     }, */
   {
     id: "13",
-    title: "Balance Statement",
+    title: {
+      bn: "ব্যালেন্স স্টেটমেন্ট",
+      en: "Balance Statement",
+    },
     icon: <HelpCircle className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "/store/balance",
   },
   {
     id: "14",
-    title: "Telegram Support Group",
+    title: {
+      bn: "টেলিগ্রাম সাপোর্ট গ্রুপ",
+      en: "Telegram Support Group",
+    },
     icon: <CheckCircle className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "#",
   },
   {
     id: "15",
-    title: "Support Center",
+    title: {
+      bn: "সাপোর্ট সেন্টার",
+      en: "Support Center",
+    },
     icon: <Headphones className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "/store/support",
@@ -164,7 +201,7 @@ export function DashboardMenu() {
     <div className="w-full h-full max-w-7xl mx-auto p-4 space-y-6">
       {/* Mobile Promotional Banner */}
       {showMobileBanner && (
-        <div className=" relative">
+        <div className="relative">
           <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white p-6 rounded-xl shadow-lg overflow-hidden">
             <Button
               variant="ghost"
@@ -177,17 +214,24 @@ export function DashboardMenu() {
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <h3 className="text-lg font-bold mb-1">
-                  Top 30 sellers will receive maximum this Eid
+                  {process.env.LANGUAGE === 'bn' 
+                    ? "এই ঈদে টপ ৩০ জন সেলার পাবেন সর্বোচ্চ"
+                    : "This Eid, top 30 sellers will receive maximum"}
                 </h3>
                 <p className="text-2xl font-bold text-yellow-300">
-                  1000 Dollar Bonus
+                  {process.env.LANGUAGE === 'bn'
+                    ? "৫০ হাজার টাকা বোনাস"
+                    : "50 thousand taka bonus"}
                 </p>
                 <p className="text-sm opacity-90 mt-1">
-                  Participate in the campaign and get Eid bonus today
+                  {process.env.LANGUAGE === 'bn'
+                    ? "ক্যাম্পেইনে অংশগ্রহণ করে আজই ঈদ বোনাস পান"
+                    : "Participate in the campaign and get Eid bonus today"}
                 </p>
                 <p className="text-xs opacity-75 mt-2">
-                  Now top 30 sellers will receive corporate gifts and attractive
-                  rewards
+                  {process.env.LANGUAGE === 'bn'
+                    ? "এখন টপ ৩০ জন সেলার পাবেন কর্পোরেট গিফট ও আকর্ষণীয় পুরস্কার"
+                    : "Now top 30 sellers will receive corporate gifts and attractive prizes"}
                 </p>
               </div>
               <div className="flex-shrink-0 ml-4">
@@ -210,7 +254,7 @@ export function DashboardMenu() {
                 onClick={() => handleBannerClick(button.route)}
                 className="bg-orange-500 hover:bg-orange-600 text-white py-4 px-6 rounded-lg font-medium text-sm md:text-base transition-all duration-200 hover:shadow-lg hover:scale-105 group"
               >
-                {button.title}
+                {process.env.LANGUAGE === 'bn' ? button.title.bn : button.title.en}
                 <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             ))}
@@ -229,7 +273,7 @@ export function DashboardMenu() {
                     {service.icon}
                   </div>
                   <h3 className="font-semibold text-sm leading-tight">
-                    {service.title}
+                    {process.env.LANGUAGE === 'bn' ? service.title.bn : service.title.en}
                   </h3>
                 </div>
               </Card>

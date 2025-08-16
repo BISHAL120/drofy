@@ -2,13 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Calendar,
-  CheckCircle,
-  Clock,
-  Download,
-  Printer,
-  ShoppingBag,
-  Truck,
+    Calendar,
+    CheckCircle,
+    Clock,
+    Download,
+    Printer,
+    ShoppingBag,
+    Truck
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,15 +26,11 @@ interface OrderDataProps {
   }[];
 }
 
-export default function OrderSuccessPage({
-  data,
-}: {
-  data: OrderDataProps | null;
-}) {
+export default function OrderSuccessPage({data}:{data:OrderDataProps | null}) {
   const [isVisible, setIsVisible] = useState(false);
   const [checkmarkVisible, setCheckmarkVisible] = useState(false);
 
-  console.log(data);
+  console.log(data)
 
   useEffect(() => {
     setIsVisible(true);
@@ -92,7 +88,7 @@ export default function OrderSuccessPage({
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-                  Order #{data?.orderNumber.toString().padStart(4, "0")}
+                  Order #{data?.orderNumber.toString().padStart(4, '0')}
                 </h2>
                 <div className="flex items-center text-gray-600 mb-1">
                   <Calendar className="w-4 h-4 mr-2" />
@@ -124,17 +120,15 @@ export default function OrderSuccessPage({
                 className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0"
               >
                 <div className="flex items-center gap-4">
-                  <Image
+                  <Image 
                     width={64}
                     height={64}
-                    src={item.productImage}
+                    src={item.productImage} 
                     alt={item.productName}
                     className="w-16 h-16 object-cover rounded-lg"
                   />
                   <div>
-                    <p className="font-medium text-gray-900">
-                      {item.productName}
-                    </p>
+                    <p className="font-medium text-gray-900">{item.productName}</p>
                     <p className="text-sm text-gray-600">
                       Quantity: {item.productQuantity}
                     </p>
@@ -150,7 +144,9 @@ export default function OrderSuccessPage({
           {/* Payment Method */}
           <div className="flex items-center text-gray-600 bg-gray-50 rounded-lg p-4">
             <Truck className="w-5 h-5 mr-3" />
-            <span>ক্যাশ অন ডেলিভারিতে প্রোডাক্টটি পাঠিয়ে দেওয়া হবে|</span>
+            <span>
+              ক্যাশ অন ডেলিভারিতে প্রোডাক্টটি পাঠিয়ে দেওয়া হবে|
+            </span>
           </div>
         </div>
 

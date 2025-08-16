@@ -8,14 +8,16 @@ const HeroSection = () => {
       <div className="container mx-auto md:px-4 py-10 md:py-16">
         <div className="flex flex-col lg:flex-row items-center justify-between">
           <div className="mb-8 lg:w-2/5">
+            {/* Bengali Content */}
             <h2 className="text-2xl text-center md:text-start md:text-3xl font-bold mb-4">
-              ড্রপশিপিং ও রিসেলিং সেবা, ব্যবসার সহজ সমাধান
+              {process.env.LANGUAGE === "bn"
+                ? "ড্রপশিপিং ও রিসেলিং সেবা, ব্যবসার সহজ সমাধান"
+                : "Dropshipping & Reselling Services, Easy Business Solution"}
             </h2>
             <p className="text-white/90 text-justify md:text-start mb-6 px-1 md:text-lg">
-              রিস্টক বিডি বাংলাদেশের সর্ববৃহৎ একটি ড্রপশিপিং এবং রিসেলিং
-              প্লাটফর্ম। কোন প্রকার পূঁজি বা ইনভেস্টমেন্ট ছারাই ঘরে বসে অসংখ্য
-              ক্যাটেগরির প্রায় দশ হাজারেরও বেশি প্রোডাক্ট নিয়ে বিজনেস করতে
-              পারবেন |
+              {process.env.LANGUAGE === "bn"
+                ? "রিস্টক বিডি বাংলাদেশের সর্ববৃহৎ একটি ড্রপশিপিং এবং রিসেলিং প্লাটফর্ম। কোন প্রকার পূজি বা ইনভেস্টমেন্ট ছারাই ঘরে বসে অসংখ্য ক্যাটেগরির প্রায় দশ হাজারেরও বেশি প্রোডাক্ট নিয়ে বিজনেস করতে পারবেন |"
+                : "Drofy is the largest dropshipping and reselling platform in Bangladesh. You can do business with more than ten thousand products across numerous categories from home without any capital or investment."}
             </p>
             <div className="flex justify-center md:justify-start flex-wrap gap-2 p-2 md:p-0 md:pr-3">
               <Button className="w-full md:flex-1 lg:max-w-[210px] bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold tracking-wide border-none hover:from-purple-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300 shadow-xl text-lg cursor-pointer">
@@ -36,7 +38,7 @@ const HeroSection = () => {
                 alt="Happy shopping online"
                 width={620}
                 height={450}
-                className="w-full h-full max-h-[200px] md:max-h-[250px] lg:max-h-[300px] rounded-md object-cover"
+                className="w-full h-full max-h-[200px] md:max-h-[250px] lg:max-h-[300px] rounded-md object-contain"
               />
             </div>
           </div>

@@ -73,8 +73,8 @@ export default function OrdersLoadingPage() {
             <Skeleton className="h-4 w-64" />
           </div>
           <div className="flex items-center space-x-2">
-            <button
-              disabled
+            <button 
+              disabled 
               className="inline-flex items-center justify-center rounded-md text-sm font-medium border border-gray-300 bg-white hover:bg-gray-50 h-10 px-4 py-2 opacity-50 cursor-not-allowed"
             >
               <Download className="mr-2 h-4 w-4" />
@@ -90,7 +90,7 @@ export default function OrdersLoadingPage() {
             <Skeleton className="h-6 w-40" />
             <Skeleton className="h-4 w-56" />
           </div>
-
+          
           {/* Card Content */}
           <div className="p-6">
             {/* Filters Section */}
@@ -105,20 +105,20 @@ export default function OrdersLoadingPage() {
                 />
               </div>
               <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
-                <select
-                  disabled
+                <select 
+                  disabled 
                   className="w-full sm:w-[180px] px-3 py-2 text-sm border border-gray-300 rounded-md opacity-50 cursor-not-allowed"
                 >
                   <option>Filter by status</option>
                 </select>
-                <select
-                  disabled
+                <select 
+                  disabled 
                   className="w-full sm:w-[180px] px-3 py-2 text-sm border border-gray-300 rounded-md opacity-50 cursor-not-allowed"
                 >
                   <option>Payment method</option>
                 </select>
-                <button
-                  disabled
+                <button 
+                  disabled 
                   className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-md bg-white opacity-50 cursor-not-allowed"
                 >
                   Reset Filters

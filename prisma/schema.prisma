@@ -48,7 +48,7 @@ model User {
   companyName   String?
   resellerLevel ResellerLevel @default(BEGINNER)
   referralCode  Int           @unique
-  referredBy    Int? // referralCode of inviter
+  referredBy    Int // referralCode of inviter
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
@@ -113,6 +113,7 @@ model Product {
   dimensions       String?
   metaTitle        String?
   metaDescription  String?
+  ratings          String?
   inStock          Boolean       @default(true)
   isDeleted        Boolean       @default(false)
   isVerified       Boolean       @default(false)
@@ -201,10 +202,8 @@ model Order {
   orderNumber      Int                  @unique
   customerPhone    String
   customerName     String
-  customerDivision String
   customerDistrict String
   customerUpazila  String
-  customerUnion    String
   customerAddress  String
   deliveryCharge   String
   advanceCharge    Boolean
@@ -224,6 +223,20 @@ model Order {
   updatedAt   DateTime  @updatedAt
 }
 
+model steadFastDeliveryStatus {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  notification_type String
+  consignment_id    Int
+  invoice           String
+  cod_amount        Float?
+  status            String?
+  delivery_charge   Float?
+  tracking_message  String
+  updated_at        String
+
+  createdAt DateTime @default(now())
+}
+
 enum WalletTransactionType {
   BKASH
   MANUAL
@@ -236,10 +249,9 @@ model WalletTransaction {
   userId        String                @db.ObjectId
   amount        Float
   walletBalance Float
+  details       String
   type          WalletTransactionType
   reference     String? // optional order/withdrawal ID
-  details       String
-  description   String?
   createdAt     DateTime              @default(now())
   updatedAt     DateTime              @updatedAt
 }
@@ -251,14 +263,18 @@ enum WithdrawalStatus {
 }
 
 model WithdrawalRequest {
-  id          String           @id @default(auto()) @map("_id") @db.ObjectId
-  reseller    User             @relation(fields: [resellerId], references: [id])
-  resellerId  String           @db.ObjectId
-  amount      Float
-  status      WithdrawalStatus @default(PENDING)
-  processedAt DateTime?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  id            String           @id @default(auto()) @map("_id") @db.ObjectId
+  requestId     String           @unique
+  method        String
+  amount        Float
+  number        String
+  processedDate String?
+  note          String?
+  status        WithdrawalStatus @default(PENDING)
+  reseller      User             @relation(fields: [resellerId], references: [id])
+  resellerId    String           @db.ObjectId
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 }
 
 enum TicketStatus {
@@ -276,15 +292,6 @@ model SupportTicket {
   status    TicketStatus @default(OPEN)
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
-}
-
-model ReferralCommission {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId       String
-  referredUser String
-  orderId      String?
-  commission   Float
-  createdAt    DateTime @default(now())
 }
 
 model Verification {

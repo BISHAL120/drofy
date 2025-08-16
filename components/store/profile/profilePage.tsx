@@ -58,7 +58,11 @@ const ProfilePage = ({ initialData }: { initialData: ProfileFormValues }) => {
   // Handle form submission
   const onSubmit = async (data: z.infer<typeof profileSchema>) => {
     setLoading(true);
-    toast.loading("পরিবর্তন হচ্ছে...");
+    toast.loading(
+      process.env.LANGUAGE === 'bn'
+        ? "পরিবর্তন হচ্ছে..."
+        : "Updating profile..."
+    );
     axios
       .patch("/api/store/profile", { id: initialData?.id, ...data })
       .then((res) => {
@@ -91,7 +95,11 @@ const ProfilePage = ({ initialData }: { initialData: ProfileFormValues }) => {
       <div className="flex items-center justify-center mb-6">
         <div className="flex items-center space-x-2 text-orange-500">
           <User size={24} />
-          <h2 className="text-xl font-semibold">পার্সোনাল প্রোফাইল</h2>
+          <h2 className="text-xl font-semibold">
+            {process.env.LANGUAGE === 'bn'
+              ? "পার্সোনাল প্রোফাইল"
+              : "Personal Profile"}
+          </h2>
         </div>
       </div>
 
@@ -103,7 +111,9 @@ const ProfilePage = ({ initialData }: { initialData: ProfileFormValues }) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center">
-                  মোবাইল নং <span className="text-red-500 ml-1">*</span>
+                  {process.env.LANGUAGE === 'bn'
+                    ? "মোবাইল নং"
+                    : "Mobile Number"} <span className="text-red-500 ml-1">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input {...field} disabled className="bg-gray-100" />
@@ -119,7 +129,9 @@ const ProfilePage = ({ initialData }: { initialData: ProfileFormValues }) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center">
-                  আপনার নাম <span className="text-red-500 ml-1">*</span>
+                  {process.env.LANGUAGE === 'bn'
+                    ? "আপনার নাম"
+                    : "Your Name"} <span className="text-red-500 ml-1">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input {...field} />
@@ -135,8 +147,9 @@ const ProfilePage = ({ initialData }: { initialData: ProfileFormValues }) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center">
-                  শপ নাম / ব্যবসায়িক প্রতিষ্ঠান নাম{" "}
-                  <span className="text-red-500 ml-1">*</span>
+                  {process.env.LANGUAGE === 'bn'
+                    ? "শপ নাম / ব্যবসায়িক প্রতিষ্ঠান নাম"
+                    : "Shop Name / Business Institution Name"} <span className="text-red-500 ml-1">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input {...field} />
@@ -151,7 +164,11 @@ const ProfilePage = ({ initialData }: { initialData: ProfileFormValues }) => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>ইমেইল (ঐচ্ছিক/optional)</FormLabel>
+                <FormLabel className="flex items-center">
+                  {process.env.LANGUAGE === 'bn'
+                    ? "ইমেইল ঐচ্ছিক"
+                    : "Email optional"} 
+                </FormLabel>
                 <FormControl>
                   <Input {...field} type="email" />
                 </FormControl>
@@ -166,10 +183,14 @@ const ProfilePage = ({ initialData }: { initialData: ProfileFormValues }) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center">
-                  জেলা <span className="text-red-500 ml-1">*</span>
+                  {process.env.LANGUAGE === 'bn'
+                    ? "জেলা"
+                    : "District"} <span className="text-red-500 ml-1">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="আপনার জেলার নাম লিখুন" />
+                  <Input {...field} placeholder={process.env.LANGUAGE === 'bn'
+                    ? "আপনার জেলার নাম লিখুন"
+                    : "Write your district name"} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -182,13 +203,17 @@ const ProfilePage = ({ initialData }: { initialData: ProfileFormValues }) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center">
-                  ঠিকানা <span className="text-red-500 ml-1">*</span>
+                  {process.env.LANGUAGE === 'bn'
+                    ? "ঠিকানা"
+                    : "Address"} <span className="text-red-500 ml-1">*</span>
                 </FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
                     className="min-h-[100px]"
-                    placeholder="আপনার বিস্তারিত ঠিকানা লিখুন"
+                    placeholder={process.env.LANGUAGE === 'bn'
+                    ? "আপনার বিস্তারিত ঠিকানা লিখুন"
+                    : "Write your detailed address"}
                   />
                 </FormControl>
                 <FormMessage />
@@ -202,7 +227,9 @@ const ProfilePage = ({ initialData }: { initialData: ProfileFormValues }) => {
               type="submit"
               className="w-full bg-orange-500 hover:bg-orange-600 text-white"
             >
-              পরিবর্তন করুন
+              {process.env.LANGUAGE === 'bn'
+                ? "পরিবর্তন করুন"
+                : "Update"}
             </Button>
           </div>
         </form>

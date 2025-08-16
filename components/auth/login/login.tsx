@@ -12,9 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginSchema } from "@/lib/zod/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRightCircle, Eye, EyeOff, Loader2 } from "lucide-react";
-import Image from "next/image";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
@@ -37,16 +37,19 @@ export default function LoginPage() {
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     try {
-      toast.loading("প্রসেসিং...", {
-        style: {
-          background: "#FFA500",
-          border: "2px solid #FF8C00",
-          color: "white",
-          fontWeight: "600",
-          fontSize: "16px",
-          padding: "10px 20px",
-        },
-      });
+      toast.loading(
+        process.env.LANGUAGE === "bn" ? "প্রসেসিং..." : "Processing...",
+        {
+          style: {
+            background: "#FFA500",
+            border: "2px solid #FF8C00",
+            color: "white",
+            fontWeight: "600",
+            fontSize: "16px",
+            padding: "10px 20px",
+          },
+        }
+      );
       setIsLoading(true);
       const result = await signIn("credentials", {
         ...values,
@@ -55,7 +58,53 @@ export default function LoginPage() {
       if (result?.error) {
         // Handle login error
         toast.dismiss();
-        toast.error("নাম্বার বা পাসওয়ার্ডটি সঠিক নয়!", {
+        toast.error(
+          process.env.LANGUAGE === "bn"
+            ? "নাম্বার বা পাসওয়ার্ডটি সঠিক নয়!"
+            : "Invalid number or password!",
+          {
+            style: {
+              background: "red", // Red background
+              border: "2px solid #DC2626", // Darker red border
+              color: "white",
+              fontWeight: "600",
+              fontSize: "16px",
+              padding: "10px 20px",
+            },
+            position: "top-center",
+            icon: "❌",
+          }
+        );
+      } else {
+        toast.dismiss();
+        toast.success(
+          process.env.LANGUAGE === "bn"
+            ? "লগইন সম্পন্ন হয়েছে"
+            : "Login successful",
+          {
+            style: {
+              background: "#22C55E", // Green background
+              border: "2px solid #16A34A", // Darker green border
+              color: "white",
+              fontWeight: "600",
+              fontSize: "16px",
+              padding: "10px 20px",
+            },
+            position: "top-center",
+            icon: "✅",
+          }
+        );
+        router.push(`/store`);
+        router.refresh();
+      }
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      toast.error(
+        process.env.LANGUAGE === "bn"
+          ? "নাম্বার বা পাসওয়ার্ডটি সঠিক নয়!"
+          : "Invalid number or password!",
+        {
           style: {
             background: "red", // Red background
             border: "2px solid #DC2626", // Darker red border
@@ -66,39 +115,8 @@ export default function LoginPage() {
           },
           position: "top-center",
           icon: "❌",
-        });
-      } else {
-        toast.dismiss();
-        toast.success("লগইন সম্পন্ন হয়েছে", {
-          style: {
-            background: "#22C55E", // Green background
-            border: "2px solid #16A34A", // Darker green border
-            color: "white",
-            fontWeight: "600",
-            fontSize: "16px",
-            padding: "10px 20px",
-          },
-          position: "top-center",
-          icon: "✅",
-        });
-        router.push(`/store`);
-        router.refresh();
-      }
-      setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-      toast.error("নাম্বার বা পাসওয়ার্ডটি সঠিক নয়!", {
-        style: {
-          background: "red", // Red background
-          border: "2px solid #DC2626", // Darker red border
-          color: "white",
-          fontWeight: "600",
-          fontSize: "16px",
-          padding: "10px 20px",
-        },
-        position: "top-center",
-        icon: "❌",
-      });
+        }
+      );
       console.log("Error :", error);
     }
   }
@@ -110,7 +128,7 @@ export default function LoginPage() {
           <div className="flex justify-center mb-6">
             <div className="p-2 bg-purple-100 rounded-lg">
               <Image
-                src="/assets/logo.png"
+                src="/assets/logo.webp"
                 alt="Logo"
                 width={350}
                 height={150}
@@ -119,7 +137,7 @@ export default function LoginPage() {
           </div>
 
           <h1 className="text-3xl font-semibold text-center text-orange-600 mb-6">
-            রিস্টক রিসেলার-প্লেস
+            {process.env.LANGUAGE === "bn" ? "রিস্টক লগইন" : "Restock Login"}
           </h1>
 
           <Form {...form}>
@@ -135,7 +153,9 @@ export default function LoginPage() {
                           htmlFor="mobile"
                           className="text-sm text-gray-600"
                         >
-                          মোবাইল নং *
+                          {process.env.LANGUAGE === "bn"
+                            ? "মোবাইল নং *"
+                            : "Mobile Number *"}
                         </Label>
                         <Input
                           {...field}
@@ -173,7 +193,9 @@ export default function LoginPage() {
                           htmlFor="password"
                           className="text-sm text-gray-600"
                         >
-                          পাসওয়ার্ড *
+                          {process.env.LANGUAGE === "bn"
+                            ? "পাসওয়ার্ড *"
+                            : "Password *"}
                         </Label>
                         <div className="relative mt-1">
                           <Input
@@ -210,25 +232,37 @@ export default function LoginPage() {
                 disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                লগইন করুন
+                {process.env.LANGUAGE === "bn" ? "লগইন করুন" : "Login"}
               </Button>
 
-              <div className="flex justify-center mt-4">
-                <Link
-                  href="/register"
-                  className="flex items-center justify-center gap-1 text-md font-medium text-orange-600 hover:underline"
-                >
-                  <span>রেজিস্ট্রেশন করুন</span>
-                  <ArrowRightCircle size={18} />
-                </Link>
-              </div>
-              <div className="flex justify-center mt-4">
-                <Link
-                  href="/reset-password"
-                  className="text-sm text-green-600 hover:underline"
-                >
-                  পাসওয়ার্ড ভুলে গেছেন?
-                </Link>
+              <div className="mt-6 text-center space-y-2">
+                <p className="text-sm text-gray-600">
+                  {process.env.LANGUAGE === "bn"
+                    ? "নতুন একাউন্ট খুলুন"
+                    : "New Account? "}
+                  <Link
+                    href="/register"
+                    className="font-semibold text-orange-600 hover:text-orange-500"
+                  >
+                    {process.env.LANGUAGE === "bn"
+                      ? "রেজিস্টার করুন"
+                      : "Register"}
+
+                  </Link>
+                </p>
+                <p className="text-sm text-gray-600">
+                  {process.env.LANGUAGE === "bn"
+                    ? "পাসওয়ার্ড ভুলে গেছেন?"
+                    : "Forgot Password?"}{" "}
+                  <Link
+                    href="/forgot-password"
+                    className="font-semibold text-orange-600 hover:text-orange-500"
+                  >
+                    {process.env.LANGUAGE === "bn"
+                      ? "পাসওয়ার্ড রিসেট করুন"
+                      : "Reset"}
+                  </Link>
+                </p>
               </div>
             </form>
           </Form>

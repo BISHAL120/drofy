@@ -39,6 +39,7 @@ interface BaseCategory {
   } & {
     subCategory: {
       id: string;
+      isActive: boolean;
       name: string;
       productCount: number;
     }[];
@@ -292,7 +293,7 @@ export default function CategoriesPage({ allCategories }: BaseCategory) {
                         {category.subCategory.map((subCategory, index) => (
                           <div
                             key={index}
-                            className="flex items-center justify-between p-3 border rounded-lg"
+                            className={`flex items-center justify-between p-3 border rounded-lg ${subCategory.isActive ? '' : 'bg-red-500'}`}
                           >
                             <div className="flex items-center space-x-2">
                               <span
@@ -306,7 +307,7 @@ export default function CategoriesPage({ allCategories }: BaseCategory) {
                                 ({subCategory.productCount} products)
                               </span>
                             </div>
-                            <div className="flex items-center space-x-2">
+                            <div className={`flex items-center space-x-2`}>
                               <Button asChild variant="ghost" size="sm">
                                 <Link
                                   href={`/admin/categories/new-subcategory?type=edit&catId=${subCategory.id}&subCatId=${subCategory.id}`}

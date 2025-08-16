@@ -9,11 +9,6 @@ export const FormSchema = z.object({
     name: z.string().min(2, {
         message: "কাস্টমারের নাম লিখুন|",
     }),
-    division: z.string({
-        required_error: "বিভাগ সিলেক্ট করুন|",
-    }).min(2, {
-        message: "বিভাগ সিলেক্ট করুন|",
-    }),
     district: z.string({
         required_error: "জেলা সিলেক্ট করুন|",
     }).min(2, {
@@ -24,7 +19,6 @@ export const FormSchema = z.object({
     }).min(2, {
         message: "উপজেলা সিলেক্ট করুন|"
     }),
-    union: z.string().optional(),
     address: z.string().min(10, {
         message: "কাস্টমারের এড্রেস লিখুন|",
     }).min(1),

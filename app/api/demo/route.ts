@@ -1,17 +1,14 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
+export async function GET() {
     try {
-        const body = await request.formData()
 
-        const allImage = body.getAll("imageUrl")
-        allImage.forEach(image => {
-            console.log(image)
-        })
+
+
 
         // Return success response
         return NextResponse.json(
-            { message: 'Demo POST request successful', data: body },
+            { message: 'Demo POST request successful', data: "Data" },
             { status: 200 }
         )
     } catch (error) {

@@ -2,8 +2,8 @@ import db from "@/lib/db"
 import { NextResponse } from "next/server"
 import { Resend } from 'resend';
 import PasswordResetEmail from '@/components/auth/forgot-password/password-reset-email';
-const COMPANY_NAME = "Restock BD";
-const SUPPORT_EMAIL = "support@restockbd.com";
+const COMPANY_NAME = "Drofy";
+const SUPPORT_EMAIL = "support@drofy.com";
 
 export async function POST(req: Request) {
     try {
@@ -72,7 +72,7 @@ export async function POST(req: Request) {
         const resendResponse = await resend.emails.send({
             from: 'onboarding@resend.dev',
             to: user.email,
-            subject: 'Reset Your Password - Restock BD',
+            subject: 'Reset Your Password - Drofy',
             react: PasswordResetEmail({
                 code: code.toString(),
                 userEmail: user.email,

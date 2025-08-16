@@ -3,7 +3,7 @@ import { DeliveryChargeStatus, OrderStatus, ProductStatus, ResellerLevel, UserSt
 import { isAdmin } from "../checkAccess";
 
 export const getAllCategories = async () => {
-    isAdmin();
+    await isAdmin();
     const categories = await db.category.findMany({
         orderBy: {
             sortOrder: 'asc'
@@ -23,6 +23,7 @@ export const getAllCategories = async () => {
                 },
                 select: {
                     id: true,
+                    isActive: true,
                     name: true,
                     productCount: true
                 }
@@ -34,7 +35,7 @@ export const getAllCategories = async () => {
 }
 
 export const getAllCategories_name_id = async () => {
-    isAdmin();
+    await isAdmin();
     const categories = await db.category.findMany({
         orderBy: {
             sortOrder: 'asc'
@@ -50,7 +51,7 @@ export const getAllCategories_name_id = async () => {
 
 /* For Category form don't need to add select field need all the data */
 export const getCategory = async (id: string) => {
-    isAdmin();
+    await isAdmin();
     const category = await db.category.findUnique({
         where: {
             id: id
@@ -71,7 +72,7 @@ export const getAllProducts = async ({
     status: string
     currentPage: number
 }) => {
-    isAdmin();
+    await isAdmin();
 
     interface WhereClause {
         categoryId?: string;
@@ -168,7 +169,7 @@ export const getAllProducts = async ({
 
 /* For Product form don't need to add select field need all the data */
 export const getProduct = async (id: string) => {
-    isAdmin();
+    await isAdmin();
     const category = await db.product.findUnique({
         where: {
             id: id
@@ -179,7 +180,7 @@ export const getProduct = async (id: string) => {
 }
 
 export const getDeletedProducts = async (currentPage: number) => {
-    isAdmin();
+   await isAdmin();
     const products = await db.product.findMany({
         where: {
             isDeleted: true
@@ -217,7 +218,7 @@ export const getDeletedProducts = async (currentPage: number) => {
 
 /* For subcategory form don't need to add select field need all the data */
 export const getSubCategoryById = async (id: string) => {
-    isAdmin();
+    await isAdmin();
     const subCategory = await db.subCategory.findUnique({
         where: {
             id: id
@@ -238,7 +239,7 @@ export const getAllResellers = async ({
     status: string,
     currentPage: number
 }) => {
-    isAdmin();
+   await isAdmin();
     interface WhereClause {
         status?: UserStatus;
         resellerLevel?: ResellerLevel;
@@ -311,7 +312,7 @@ export const getAllResellers = async ({
 }
 
 export const getNewResellers = async ({ search }: { search: string }) => {
-    isAdmin();
+   await isAdmin();
     const resellers = await db.user.findMany({
         where: {
             isActive: false,
@@ -357,7 +358,7 @@ export const getNewResellers = async ({ search }: { search: string }) => {
 }
 
 export const getResellerById = async (id: string) => {
-    isAdmin();
+   await isAdmin();
     const reseller = await db.user.findUnique({
         where: {
             id: id
@@ -386,7 +387,7 @@ export const getResellerById = async (id: string) => {
 }
 
 export const referredUsers = async (code: number | undefined) => {
-    isAdmin();
+    await isAdmin();
     if (!code) {
         throw new Error("Referral code not found");
     }
@@ -400,7 +401,6 @@ export const referredUsers = async (code: number | undefined) => {
     return users;
 }
 
-
 export const getAllOrders = async ({
     search,
     status,
@@ -410,7 +410,7 @@ export const getAllOrders = async ({
     status: string,
     payment: string
 }) => {
-    isAdmin();
+   await isAdmin();
 
     interface WhereClauseProps {
         status?: OrderStatus;
@@ -429,6 +429,7 @@ export const getAllOrders = async ({
     }
 
     const whereClause: WhereClauseProps = {}
+    const convertNumber = Number(search);
 
     // Search Filter
     if (search && search.trim() !== "") {
@@ -443,7 +444,7 @@ export const getAllOrders = async ({
             },
             {
                 orderNumber: {
-                    equals: Number(search),
+                    equals: Number.isNaN(convertNumber) ? undefined : convertNumber,
                 }
             }
         ]
@@ -491,10 +492,8 @@ export const getAllOrders = async ({
     return orders;
 }
 
-
-
 export const getOrderDetailsById = async (id: string) => {
-    isAdmin();
+    await isAdmin();
     const order = await db.order.findUnique({
         where: {
             id: id
@@ -510,10 +509,8 @@ export const getOrderDetailsById = async (id: string) => {
             advanceCharge: true,
             customerName: true,
             customerPhone: true,
-            customerDivision: true,
             customerDistrict: true,
             customerUpazila: true,
-            customerUnion: true,
             customerAddress: true,
             comments: true,
             note: true,

@@ -41,74 +41,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-// Mock data based on your Prisma schema
-const orderData = {
-  id: "ORD-001",
-  orderCount: 1001,
-  reseller: {
-    id: "RES-001",
-    name: "Alex Thompson",
-    email: "alex@example.com",
-    phone: "+1234567890",
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-  customerName: "John Doe",
-  customerPhone: "+8801712345678",
-  customerDivision: "Dhaka",
-  customerDistrict: "Dhaka",
-  customerUpazila: "Dhanmondi",
-  customerUnion: "Ward 15",
-  customerAddress: "House 123, Road 27, Block A, Dhanmondi, Dhaka-1209",
-  deliveryCharge: "60",
-  advanceCharge: true,
-  totalPrice: "2547",
-  totalProfit: 382.05,
-  comments: "Please deliver between 2-5 PM. Customer prefers cash payment.",
-  status: "PROCESSING",
-  chargeStatus: "COD",
-  createdAt: "2024-01-15T10:30:00Z",
-  updatedAt: "2024-01-15T14:20:00Z",
-  completedAt: null,
-  cartItems: [
-    {
-      id: "CART-001",
-      productId: "PROD-001",
-      productName: "iPhone 15 Pro",
-      productPrice: "999",
-      sellingPrice: "1149",
-      profit: "150",
-      productImage: "/placeholder.svg?height=80&width=80",
-      productQuantity: "1",
-      productSize: "128GB",
-      productSubcategory: "Smartphones",
-    },
-    {
-      id: "CART-002",
-      productId: "PROD-002",
-      productName: "AirPods Pro",
-      productPrice: "249",
-      sellingPrice: "289",
-      profit: "40",
-      productImage: "/placeholder.svg?height=80&width=80",
-      productQuantity: "2",
-      productSize: "Standard",
-      productSubcategory: "Audio",
-    },
-    {
-      id: "CART-003",
-      productId: "PROD-003",
-      productName: "iPhone Case",
-      productPrice: "25",
-      sellingPrice: "35",
-      profit: "10",
-      productImage: "/placeholder.svg?height=80&width=80",
-      productQuantity: "3",
-      productSize: "iPhone 15 Pro",
-      productSubcategory: "Accessories",
-    },
-  ],
-};
-
 const getChargeStatusColor = (status: string) => {
   switch (status) {
     case "COD":
@@ -131,10 +63,8 @@ interface OrderProps {
   totalProfit: number | null;
   customerName: string;
   customerPhone: string;
-  customerDivision: string;
   customerDistrict: string;
   customerUpazila: string;
-  customerUnion: string;
   customerAddress: string;
   comments: string;
   note: string | null;
@@ -179,7 +109,7 @@ export default function OrderDetailsPage({ order }: { order: OrderProps }) {
         console.log(res);
         setLoading(false);
         toast.dismiss();
-        router.refresh();
+        router.push("/admin/orders");
         toast.success("Status Updated", {
           description: "Order status has been updated successfully.",
           duration: 5000,
@@ -463,27 +393,15 @@ export default function OrderDetailsPage({ order }: { order: OrderProps }) {
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
-                    <Label className="text-sm font-medium">Division</Label>
-                    <p className="text-sm text-muted-foreground">
-                      {order.customerDivision}
-                    </p>
-                  </div>
-                  <div>
                     <Label className="text-sm font-medium">District</Label>
                     <p className="text-sm text-muted-foreground">
-                      {orderData.customerDistrict}
+                      {order.customerDistrict}
                     </p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium">Upazila</Label>
                     <p className="text-sm text-muted-foreground">
                       {order.customerUpazila}
-                    </p>
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium">Union</Label>
-                    <p className="text-sm text-muted-foreground">
-                      {order.customerUnion}
                     </p>
                   </div>
                 </div>
@@ -582,9 +500,15 @@ export default function OrderDetailsPage({ order }: { order: OrderProps }) {
               <CardContent className="space-y-4">
                 <div>
                   <Label className="text-sm font-medium">Current Status</Label>
-                  <Select value={order.status} onValueChange={setOrderStatus}>
+                  <Select
+                    value={orderStatus}
+                    disabled={
+                      orderStatus === "DELIVERED" || orderStatus === "CANCELLED"
+                    }
+                    onValueChange={setOrderStatus}
+                  >
                     <SelectTrigger className="mt-1">
-                      <SelectValue />
+                      <SelectValue defaultValue={order.status} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="PENDING">Pending</SelectItem>
@@ -686,14 +610,6 @@ export default function OrderDetailsPage({ order }: { order: OrderProps }) {
                     {formatDistanceToNow(order.updatedAt, { addSuffix: true })}
                   </span>
                 </div>
-                {orderData.completedAt && (
-                  <div className="flex justify-between">
-                    <span className="text-sm">Completed:</span>
-                    <span className="text-sm">
-                      {formatDate(orderData.completedAt)}
-                    </span>
-                  </div>
-                )}
               </CardContent>
             </Card>
 

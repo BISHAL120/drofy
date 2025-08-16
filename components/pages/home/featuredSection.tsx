@@ -62,7 +62,7 @@ const FeaturedSection = ({ featuredContent }: FeaturedContentProps) => {
     <section className="py-12 bg-white">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold">ফিচার প্রোডাক্ট</h2>
+          <h2 className="text-2xl md:text-3xl font-bold">Featured Products</h2>
         </div>
 
         <Tabs defaultValue={featuredContent[0]?.id || ""} className="w-full">

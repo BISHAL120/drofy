@@ -59,7 +59,7 @@ export async function POST(request: Request) {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Check if referral code exists
-        if (referralCode) {
+        if (userCount > 0 && referralCode) {
             const referredUser = await db.user.findUnique({
                 where: {
                     referralCode: Number(referralCode),
@@ -84,12 +84,14 @@ export async function POST(request: Request) {
                 address: address || "",
                 role: isAdmin ? ["ADMIN"] : ["USER"],
                 referralCode: userCount + 1,
-                referredBy: Number(referralCode) || null,
+                referredBy: Number(referralCode),
+                isActive: isAdmin ? true : false,
+                
             }
         });
 
         return NextResponse.json(
-            { message: 'একাউন্ট তৈরি সম্পন্ন হয়েছে', data: user },
+            { message: 'একাউন্ট তৈরি সম্পন্ন হয়েছে',data: user },
             { status: 201 }
         );
 

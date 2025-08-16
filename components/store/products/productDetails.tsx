@@ -13,6 +13,7 @@ import {
   Download,
   Heart,
   ShoppingCart,
+  Star,
   TriangleAlert,
 } from "lucide-react";
 import Image from "next/image";
@@ -28,8 +29,12 @@ interface ProductDetailsProps {
     createdAt: Date;
     inStock: boolean;
     images: ImageObj[];
+    videoUrl: {
+      videoUrl: string;
+    }[];
     variant: VarientObj[];
     shortDescription: string | null;
+    ratings: string | null;
     note: string | null;
     fullDescription: string;
     sku: string;
@@ -130,7 +135,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
     if (actualPrice >= price) {
       return toast.error(
-        `সর্বনিম্ন মূল্য ${convertToBengaliNumber(actualPrice)}`,
+        `সর্বনিম্ন মূল্য ${convertToBengaliNumber(actualPrice * quantity)}`,
         {
           duration: 5000,
           icon: <TriangleAlert className="h-4 w-4" />,
@@ -178,8 +183,8 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
   return (
     <div className="p-4 mb-20 lg:p-6 max-w-[1400px] mx-auto">
       {product?.note && (
-        <div className="py-2 px-4 mb-3 rounded-xl font-semibold text-center bg-indigo-300">
-          This is a note
+        <div className="py-2 px-4 mb-3 rounded-sm font-semibold text-center bg-emerald-300">
+          {product?.note}
         </div>
       )}
       <div className="grid md:grid-cols-2 gap-8 bg-white rounded-xl shadow-sm overflow-hidden">
@@ -224,33 +229,47 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
         <div className="p-4 lg:p-6">
           <h1 className="text-2xl font-bold mb-4">{product?.name}</h1>
           <p className="text-gray-600 mb-6">{product?.shortDescription}</p>
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <h2 className="text-lg font-medium">
-                প্রাইস:{" "}
+          {/* Price */}
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-medium">
+              প্রাইস:{" "}
+              {product?.discountPrice
+                ? convertToBengaliNumber(product.discountPrice)
+                : convertToBengaliNumber(product?.sellingPrice || 0)}{" "}
+              <span className="line-through text-gray-400 text-sm">
                 {product?.discountPrice
-                  ? convertToBengaliNumber(product.discountPrice)
-                  : convertToBengaliNumber(product?.sellingPrice || 0)}{" "}
-                <span className="line-through text-gray-400 text-sm">
-                  {product?.discountPrice
-                    ? convertToBengaliNumber(product?.sellingPrice || 0)
-                    : null}
-                </span>
-              </h2>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-sm">স্টক:</span>
-                <span className="text-green-600 font-medium">
-                  {product?.inStock ? "আছে" : "নেই"}
-                </span>
+                  ? convertToBengaliNumber(product?.sellingPrice || 0)
+                  : null}
+              </span>
+            </h2>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-sm">স্টক:</span>
+              <span className="text-green-600 font-medium">
+                {product?.inStock ? "আছে" : "নেই"}
+              </span>
+            </div>
+          </div>
+          {/* Verification & Ratings */}
+          {product?.isVerified && (
+            <div className="flex justify-between items-center gap-1">
+              <div className="flex items-center gap-1 bg-green-100 text-green-600 px-3 py-1.5 rounded-sm">
+                <Check className="h-4 w-4" />
+                <span className="text-sm font-medium">ভেরিফাইড প্রোডাক্ট</span>
+              </div>
+              <div className="flex items-center gap-0.5">
+                {[...Array(5)].map((_, index) => (
+                  <Star
+                    key={index}
+                    className={`h-4 w-4 ${
+                      index < Number(product?.ratings)
+                        ? "fill-yellow-400 text-yellow-400"
+                        : "fill-gray-200 text-gray-200"
+                    }`}
+                  />
+                ))}
               </div>
             </div>
-            {product?.isVerified && (
-              <div className="flex items-center bg-green-50 text-green-600 px-3 py-1 rounded-full">
-                <Check className="h-4 w-4 mr-1" />
-                <span className="text-sm">ভেরিফাইড প্রোডাক্ট</span>
-              </div>
-            )}
-          </div>
+          )}
 
           <div className="border-t border-b py-2 my-2 ">
             <p className="font-medium mb-4">{product?.sku}</p>
@@ -271,9 +290,9 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                       value={size.variantType}
                       id={`size-${size.variantType}`}
                       className={`h-5 w-5 ${
-                        size.stock === 0 ? "cursor-not-allowed" : ""
+                        size.stock <= 0 ? "cursor-not-allowed" : ""
                       }`}
-                      disabled={size.stock === 0}
+                      disabled={size.stock <= 0}
                     />
                     <Label
                       htmlFor={`size-${size.variantType}`}
@@ -293,14 +312,20 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                         })
                       }
                       className={`text-base ${
-                        size.stock === 0
+                        size.stock <= 0
                           ? "cursor-not-allowed text-gray-400"
                           : ""
                       }`}
                     >
                       {size.variantType}{" "}
-                      <span className="text-sm text-gray-500">
-                        ({convertToBengaliNumber(size.stock)} পিস)
+                      <span
+                        className={`text-sm ${size.stock <= 0 ? "text-gray-500" : "text-black"}`}
+                      >
+                        (
+                        {convertToBengaliNumber(
+                          size.stock <= 0 ? 0 : size.stock
+                        )}{" "}
+                        পিস)
                       </span>
                     </Label>
                   </div>
@@ -312,7 +337,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               <div>
                 <p className="mb-2 font-medium">পরিমাণ/পিস</p>
                 <Input
-                  type="number"
                   min={0}
                   value={quantity || ""}
                   disabled={!selectedSize}
@@ -329,9 +353,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
                     if (selectedVariant && inputValue > selectedVariant.stock) {
                       toast.error(
-                        `সর্বোচ্চ ${convertToBengaliNumber(
-                          selectedVariant.stock
-                        )} পিস অর্ডার করা যাবে`,
+                        `সর্বোচ্চ ${convertToBengaliNumber(selectedVariant.stock)} পিস অর্ডার করা যাবে`,
                         {
                           duration: 5000,
                           icon: <TriangleAlert className="h-4 w-4" />,
@@ -359,7 +381,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               <div>
                 <p className="mb-2 font-medium">বিক্রয়-মূল্য</p>
                 <Input
-                  type="number"
                   value={price || ""}
                   disabled={!selectedSize}
                   onChange={(e) => {
@@ -376,7 +397,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
             <p className="text-sm text-red-500 mb-4">
               বিক্রয় মূল্যের জন্যগাহক শুধু প্রোডাক্ট এর প্রাইস দিবেন, কুরিয়ার
-              চার্জের অর্ডসন পরবর্তী পেইজে পাবেন।
+              চার্জের অপশন পরবর্তী পেইজে পাবেন।
             </p>
           </div>
           <Button
@@ -435,6 +456,24 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             </div>
           )}
         </div>
+      </div>
+      {/* Product Videos */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+        {product.videoUrl?.map(
+          (video: { videoUrl: string }, index: number) =>
+            video.videoUrl && (
+              <div key={index} className="aspect-video w-full">
+                <iframe
+                  src={`https://www.youtube.com/embed/${
+                    video.videoUrl.split("v=")[1]
+                  }`}
+                  title={`Product video ${index + 1}`}
+                  className="w-full h-full rounded-lg"
+                  allowFullScreen
+                />
+              </div>
+            )
+        )}
       </div>
     </div>
   );

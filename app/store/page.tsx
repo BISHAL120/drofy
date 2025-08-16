@@ -1,5 +1,5 @@
 // import { auth } from '@/auth'
-import { DashboardMenu } from '@/components/store/dashboardMenu'
+import { DashboardMenu } from '@/components/store/components/dashboardMenu'
 import React from 'react'
 
 const HomePage = async () => {

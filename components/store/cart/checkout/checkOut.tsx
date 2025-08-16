@@ -28,53 +28,37 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
-import locationData from "@/constants/location.json"; // <- your JSON
+import { Textarea } from "@/components/ui/textarea"; // <- your JSON
 import { FormSchema } from "@/lib/zod/checkOut";
+import { location } from "@/constants/location";
 import useCart from "@/lib/zustand/store";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { convertToBengaliNumber } from "@/hooks/convertNum";
 
-/* ------------------------------------------------------------------ */
-/* Types helpers                                                      */
-/* ------------------------------------------------------------------ */
-type Format = { name: string; value: string };
-
-type District = {
-  name: Format;
-  upazila: Array<{
-    name: Format;
-    union: Format[];
-  }>;
+type ThanaProps = {
+  id: string;
+  district_id: string;
+  name: string;
+  bn_name: string;
 };
 
-/* ------------------------------------------------------------------ */
-/* Component                                                          */
-/* ------------------------------------------------------------------ */
 export default function CheckoutPage() {
-  /* ---------------- cart state ------------------------------------ */
+  const [upazilas, setUpazilas] = useState<ThanaProps[]>([]);
+  const [loading, setLoading] = useState(false);
   const cart = useCart();
   const cartItems = cart.items;
-
-  /* ---------------- location state -------------------------------- */
-  const [districts, setDistricts] = useState<District[]>([]);
-  const [upazilas, setUpazilas] = useState<District["upazila"][number][]>([]);
-  const [unions, setUnions] = useState<Format[]>([]);
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  /* ---------------- react-hook-form ------------------------------- */
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       phone: "",
       name: "",
-      division: "",
       district: "",
       upazila: "",
-      union: "",
       address: "",
       deliveryCharge: "130",
       advanceCharge: "no",
@@ -82,7 +66,6 @@ export default function CheckoutPage() {
     },
   });
 
-  /* ---------------- totals ---------------------------------------- */
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.sellPrice * item.quantity,
     0
@@ -92,7 +75,7 @@ export default function CheckoutPage() {
 
   function onSubmit(values: z.infer<typeof FormSchema>) {
     if (cart.items.length === 0) {
-      toast.error("প্রথমে প্রোডাক্ট এড করুন", {
+      toast.error(process.env.LANGUAGE === 'bn' ? "প্রথমে প্রোডাক্ট এড করুন" : "Please add products first", {
         duration: 5000,
         icon: <TriangleAlert className="h-4 w-4" />,
         style: {
@@ -107,7 +90,7 @@ export default function CheckoutPage() {
       return;
     }
 
-    toast.loading("প্রসেস হচ্ছে...");
+    toast.loading(process.env.LANGUAGE === 'bn' ? "প্রসেস হচ্ছে..." : "Processing...");
     setLoading(true);
     axios
       .post("/api/store/order", {
@@ -127,9 +110,7 @@ export default function CheckoutPage() {
         toast.dismiss();
         setLoading(false);
         router.push(
-          `/store/order/failed?message=${err.response.data.message
-            .split(" ")
-            .join("-")}`
+          `/store/order/failed?message=${err.response.data.message.split(" ").join("-")}`
         );
         toast.error(err.response.data.message, {
           duration: 5000,
@@ -146,45 +127,22 @@ export default function CheckoutPage() {
       });
   }
 
-  /* ---------------- handlers -------------------------------------- */
   const removeItem = (id: string, size: string) => cart.removeItem(id, size);
 
-  const handleDivisionChange = (divisionValue: string) => {
-    const divisionObj = locationData.find(
-      (d) => d.name.value === divisionValue
-    );
-    setDistricts((divisionObj?.district as District[]) ?? []);
-    form.setValue("district", "");
-    form.setValue("upazila", "");
-    form.setValue("union", "");
-    setUpazilas([]);
-    setUnions([]);
-  };
-
   const handleDistrictChange = (districtValue: string) => {
-    const districtObj = districts.find((d) => d.name.value === districtValue);
-    setUpazilas(districtObj?.upazila ?? []);
-    form.setValue("upazila", "");
-    form.setValue("union", "");
-    setUnions([]);
+    const Thana = location.find((d) => d.name === districtValue)?.thana;
+    setUpazilas(Thana || []);
   };
 
-  const handleUpazilaChange = (upazilaValue: string) => {
-    const upazilaObj = upazilas.find((u) => u.name.value === upazilaValue);
-    setUnions(upazilaObj?.union ?? []);
-    form.setValue("union", "");
-  };
-
-  /* ---------------------------------------------------------------- */
-  /* Render                                                           */
-  /* ---------------------------------------------------------------- */
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Checkout</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            {process.env.LANGUAGE === 'bn' ? "চেকআউট" : "Checkout"}
+          </h1>
           <p className="text-gray-600">
-            Review your order and complete your purchase
+            {process.env.LANGUAGE === 'bn' ? "আপনার অর্ডার পর্যালোচনা করুন এবং আপনার ক্রয় সম্পূর্ণ করুন" : "Review your order and complete your purchase"}
           </p>
         </div>
 
@@ -195,7 +153,9 @@ export default function CheckoutPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <ShoppingCart className="h-5 w-5" />
-                  Your Order ({cartItems.length} items)
+                  {process.env.LANGUAGE === 'bn' ? "অর্ডার তালিকা" : "Order List"} ({process.env.LANGUAGE === 'bn' ? convertToBengaliNumber(cartItems.length) : cartItems.length} {process.env.LANGUAGE === 'bn' ? "টি" : "items"})
+
+
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -215,9 +175,14 @@ export default function CheckoutPage() {
                       <h3 className="font-medium text-gray-900 truncate">
                         {item.name}
                       </h3>
-                      <p className="text-sm text-gray-500">Size: {item.size}</p>
+                      <p className="text-sm text-gray-500">
+                        {process.env.LANGUAGE === 'bn' ? "সাইজ" : "Size"}: {process.env.LANGUAGE === 'bn' ? convertToBengaliNumber(item.size) : item.size}
+
+                      </p>
                       <p className="text-lg font-semibold text-gray-900">
-                        ৳{item.sellPrice.toLocaleString()} x {item.quantity}
+                        {process.env.LANGUAGE === 'bn' ? "পরিমাণ" : "Quantity"}:{process.env.LANGUAGE === 'bn' ? convertToBengaliNumber(item.quantity) : item.quantity} x ৳
+
+                        {convertToBengaliNumber(item.sellPrice)}
                       </p>
                     </div>
                     <Button
@@ -234,17 +199,23 @@ export default function CheckoutPage() {
                 <Separator />
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span>Subtotal:</span>
-                    <span>৳{subtotal.toLocaleString()}</span>
+                    <span>{process.env.LANGUAGE === 'bn' ? "সর্বমোট পণ্যের দাম:" : "Subtotal:"}</span>
+                    <span>৳{process.env.LANGUAGE === 'bn' ? convertToBengaliNumber(subtotal) : subtotal}</span>
+
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>Delivery Charge:</span>
-                    <span>৳{deliveryCharge}</span>
+                    <span>{process.env.LANGUAGE === 'bn' ? "ডেলিভারি চার্জ:" : "Delivery Charge:"}</span>
+                    <span>{process.env.LANGUAGE === 'bn' ? "৳" : ""}{process.env.LANGUAGE === 'bn' ? convertToBengaliNumber(deliveryCharge) : deliveryCharge}</span>
+
+
                   </div>
                   <Separator />
                   <div className="flex justify-between text-lg font-semibold">
-                    <span>Total:</span>
-                    <span>৳{total.toLocaleString()}</span>
+                    <span>{process.env.LANGUAGE === 'bn' ? "মোট:" : "Total:"}</span>
+
+                    <span>{process.env.LANGUAGE === 'bn' ? "৳" : ""}{process.env.LANGUAGE === 'bn' ? convertToBengaliNumber(total) : total}</span>
+
+
                   </div>
                 </div>
               </CardContent>
@@ -255,9 +226,9 @@ export default function CheckoutPage() {
           <div>
             <Card>
               <CardHeader>
-                <CardTitle>Customer Details</CardTitle>
+                <CardTitle>{process.env.LANGUAGE === 'bn' ? "কাস্টমারের বিবরণ" : "Customer Information"}</CardTitle>
                 <p className="text-sm text-red-500">
-                  * Please provide accurate information for delivery
+                  {process.env.LANGUAGE === 'bn' ? "অনুগ্রহ করে সঠিক তথ্য প্রদান করুন" : "Please provide accurate information"}
                 </p>
               </CardHeader>
               <CardContent>
@@ -272,12 +243,12 @@ export default function CheckoutPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-base font-medium">
-                            Customer Phone Number{" "}
+                            {process.env.LANGUAGE === 'bn' ? "কাস্টমারের মোবাইল নম্বর" : "Customer's Mobile Number"}
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="01639393834"
+                              placeholder={process.env.LANGUAGE === 'bn' ? "০১৬২৩৯৩৯৮৩৪" : "01623939834"}
                               disabled={loading}
                               maxLength={11}
                               {...field}
@@ -294,14 +265,15 @@ export default function CheckoutPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-base font-medium">
-                            Customer Name{" "}
+                            {process.env.LANGUAGE === 'bn' ? "কাস্টমারের নাম" : "Customer's Name"}
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
                             <Input
                               {...field}
                               disabled={loading}
-                              placeholder="Enter your full name"
+                              placeholder={process.env.LANGUAGE === 'bn' ? "কাস্টমারের সম্পূর্ণ নাম লিখুন" : "Write your full name"}
+
                             />
                           </FormControl>
                           <FormMessage />
@@ -310,41 +282,6 @@ export default function CheckoutPage() {
                     />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Division */}
-                      <FormField
-                        control={form.control}
-                        name="division"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>
-                              Division <span className="text-red-500">*</span>
-                            </FormLabel>
-                            <Select
-                              onValueChange={(v) => {
-                                field.onChange(v);
-                                handleDivisionChange(v);
-                              }}
-                              disabled={loading}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select division" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {locationData.map((d, idx) => (
-                                  <SelectItem key={idx} value={d.name.value}>
-                                    {d.name.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
                       {/* District */}
                       <FormField
                         control={form.control}
@@ -352,7 +289,8 @@ export default function CheckoutPage() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>
-                              District <span className="text-red-500">*</span>
+                              {process.env.LANGUAGE === 'bn' ? "কাস্টমারের জেলা" : "Customer's District"}
+                              <span className="text-red-500">*</span>
                             </FormLabel>
                             <Select
                               onValueChange={(v) => {
@@ -360,23 +298,19 @@ export default function CheckoutPage() {
                                 handleDistrictChange(v);
                               }}
                               defaultValue={field.value}
-                              disabled={!form.watch("division") || loading}
                             >
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue
-                                    placeholder={
-                                      form.watch("division")
-                                        ? "Select district"
-                                        : "select division first"
-                                    }
+                                    placeholder={process.env.LANGUAGE === 'bn' ? "জেলা নির্বাচন করুন" : "Select district"}
+
                                   />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {districts.map((d, idx) => (
-                                  <SelectItem key={idx} value={d.name.value}>
-                                    {d.name.name}
+                                {location.map((d, idx) => (
+                                  <SelectItem key={idx} value={d.name}>
+                                    {d.name}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -393,12 +327,12 @@ export default function CheckoutPage() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>
-                              Thana <span className="text-red-500">*</span>
+                              {process.env.LANGUAGE === 'bn' ? "কাস্টমারের থানা/এরিয়া" : "Customer's Upazila/Area"}
+                              <span className="text-red-500">*</span>
                             </FormLabel>
                             <Select
                               onValueChange={(v) => {
                                 field.onChange(v);
-                                handleUpazilaChange(v);
                               }}
                               defaultValue={field.value}
                               disabled={!form.watch("district") || loading}
@@ -408,52 +342,17 @@ export default function CheckoutPage() {
                                   <SelectValue
                                     placeholder={
                                       form.watch("district")
-                                        ? "Select upazila"
-                                        : "select district first"
+                                        ? process.env.LANGUAGE === 'bn' ? "থানা/এরিয়া নির্বাচন করুন" : "Select upazila"
+                                        : process.env.LANGUAGE === 'bn' ? "জেলা নির্বাচন করুন" : "select district first"
                                     }
                                   />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
                                 {upazilas.map((u, idx) => (
-                                  <SelectItem key={idx} value={u.name.value}>
-                                    {u.name.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                                  <SelectItem key={idx} value={u.name}>
+                                    {process.env.LANGUAGE === 'bn' ? u.bn_name : u.name}
 
-                      {/* Union */}
-                      <FormField
-                        control={form.control}
-                        name="union"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Union (Optional)</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                              disabled={!form.watch("upazila") || loading}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue
-                                    placeholder={
-                                      form.watch("upazila")
-                                        ? "Select union"
-                                        : "select upazila first"
-                                    }
-                                  />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {unions.map((u, idx) => (
-                                  <SelectItem key={idx} value={u.value}>
-                                    {u.name}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -471,21 +370,22 @@ export default function CheckoutPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>
-                            Delivery Address{" "}
+                            {process.env.LANGUAGE === 'bn' ? "ডেলিভারির ঠিকানা" : "Delivery Address"}
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder="Enter your complete delivery address with landmarks"
+                              placeholder={process.env.LANGUAGE === 'bn' ? "কাস্টমারের সম্পূর্ণ ঠিকানা লিখুন" : "Write your full address"}
+
                               className="min-h-[100px]"
                               {...field}
                               disabled={loading}
                             />
                           </FormControl>
                           <FormDescription className="text-red-500 text-xs">
-                            Please provide your complete address with house
-                            number, road, and nearby landmarks for accurate
-                            delivery.
+                            {process.env.LANGUAGE === 'bn'
+                              ? "সঠিক ডেলিভারির জন্য অনুগ্রহ করে কাস্টমারের সম্পূর্ণ ঠিকানা, বাড়ির নম্বর, রাস্তা এবং কাছাকাছি ল্যান্ডমার্ক প্রদান করুন।"
+                              : "Please provide your full address, house number, road, and landmark for accurate delivery."}
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -499,7 +399,8 @@ export default function CheckoutPage() {
                       render={({ field }) => (
                         <FormItem className="space-y-3">
                           <FormLabel className="text-base font-medium">
-                            চার্জ অগ্রিম নিয়েছেন?*
+                            {process.env.LANGUAGE === 'bn' ? "চার্জ অগ্রিম নিয়েছেন?" : "Have you paid advance charge?"}
+                            *
                           </FormLabel>
                           <FormControl>
                             <RadioGroup
@@ -511,21 +412,21 @@ export default function CheckoutPage() {
                               <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="yes" id="yes" />
                                 <Label htmlFor="yes" className="text-[20px]">
-                                  হাঁ
+                                  {process.env.LANGUAGE === 'bn' ? "হ্যাঁ" : "Yes"}
                                 </Label>
                               </div>
                               <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="no" id="no" />
                                 <Label htmlFor="no" className="text-[20px]">
-                                  না
+                                  {process.env.LANGUAGE === 'bn' ? "না" : "No"}
                                 </Label>
                               </div>
                             </RadioGroup>
                           </FormControl>
                           <FormDescription className="text-[16px]">
-                            আপনি যদি ডেলিভারি চার্জ অগ্রিম নিয়ে থাকেন, তাহলে
-                            আমরা চার্জ বাদ দিয়ে কাস্টমারের কাছ থেকে শুধু
-                            প্রোডাক্টের দাম কালেক্ট করব।
+                            {process.env.LANGUAGE === 'bn'
+                              ? "আপনি যদি ডেলিভারি চার্জ অগ্রিম নিয়ে থাকেন, তাহলে আমরা চার্জ বাদ দিয়ে কাস্টমারের কাছ থেকে শুধু প্রোডাক্টের দাম কালেক্ট করব।"
+                              : "If you have paid advance charge, we will collect only the product price from the customer's side."}
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -539,15 +440,16 @@ export default function CheckoutPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>
-                            Delivery Charge{" "}
-                            <span className="text-red-500">*</span>
+                            {process.env.LANGUAGE === 'bn' ? "ডেলিভারি চার্জ" : "Delivery Charge"}
+                            *
                           </FormLabel>
                           <FormControl>
                             <Input {...field} disabled />
                           </FormControl>
                           <FormDescription className="text-red-500 text-xs">
-                            Delivery charge varies based on location. Standard
-                            charge is 120 Taka within Dhaka city.
+                            {process.env.LANGUAGE === 'bn'
+                              ? "ডেলিভারি চার্জ বা কার্যক্রমের বিভিন্ন অংশগ্রহণের জন্য প্রয়োজনীয় চার্জ।"
+                              : "Delivery charge or any other necessary charge for different parts of the order."}
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -560,18 +462,21 @@ export default function CheckoutPage() {
                       name="comments"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Comments (Optional)</FormLabel>
+                          <FormLabel>
+                            {process.env.LANGUAGE === 'bn' ? "কমেন্টস (অপশনাল)" : "Comments (Optional)"}
+                          </FormLabel>
                           <FormControl>
                             <Textarea
                               {...field}
                               disabled={loading}
-                              placeholder="Any special instructions or comments for your order"
+                              placeholder={process.env.LANGUAGE === 'bn' ? "অর্ডার সম্পর্কে কোন অতিরিক্ত নির্দেশনা থাকলে লিখুন।" : "Write any additional instructions about the order."}
                               className="min-h-[80px]"
                             />
                           </FormControl>
                           <FormDescription className="text-red-500 text-xs">
-                            Please mention any special delivery instructions or
-                            preferences.
+                            {process.env.LANGUAGE === 'bn'
+                              ? "অর্ডার সম্পর্কে কোন অতিরিক্ত নির্দেশনা থাকলে লিখুন।"
+                              : "Write any additional instructions about the order."}
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -583,7 +488,7 @@ export default function CheckoutPage() {
                       className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 text-lg"
                       size="lg"
                     >
-                      Place Order
+                      {process.env.LANGUAGE === 'bn' ? "অর্ডার করুন" : "Place Order"}
                     </Button>
                   </form>
                 </Form>

@@ -274,7 +274,12 @@ export default function AllWithdrawalsPage() {
                           {withdrawal.status}
                         </Badge>
                       </TableCell>
-                      <TableCell>{withdrawal.requestDate}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span>{withdrawal.requestDate}</span>
+                          <span className="text-xs text-muted-foreground">2 hours ago</span>
+                        </div>
+                      </TableCell>
                       <TableCell>{withdrawal.processedDate || "-"}</TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">

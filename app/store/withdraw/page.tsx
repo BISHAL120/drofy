@@ -1,10 +1,13 @@
+import { auth } from '@/auth'
 import WithdrawPage from '@/components/store/withdraw/withdrawPage'
 import React from 'react'
 
-const Page = () => {
+const Page = async () => {
+    const session = await auth()
+    const userId = session?.user.id
     return (
         <div>
-            <WithdrawPage />
+            <WithdrawPage userId={userId!} />
         </div>
     )
 }

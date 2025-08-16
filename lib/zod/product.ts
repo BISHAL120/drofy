@@ -11,6 +11,7 @@ export const productSchema = z.object({
     deliveryCharge: z.string().min(1, { message: "Delivery charge is required" }),
     variant: z.array(z.object({ variantType: z.enum(["XS", "S", "M", "L", "XL", "XXL", "XXXL"]), stock: z.number() }), { required_error: "Variant is required, Please select at least one variant" }),
     videoUrl: z.array(z.object({ videoUrl: z.string() })).optional(),
+    ratings: z.string().optional(),
     stock: z.string().optional(),
     brand: z.string().optional(),
     sku: z.string().optional(),

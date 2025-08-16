@@ -1,15 +1,28 @@
-import ComingSoon from "@/components/ui/comingSoon";
+import ProductGridWithTittle from "@/components/shared/productGridWithTittle";
+import { ImageObj } from "@prisma/client";
 
-const StockOutProducts = () => {
+
+interface StockOutProductProps {
+  products: {
+    id: string;
+    name: string;
+    sellingPrice: number;
+    discountPrice: number | null;
+    createdAt: Date;
+    images: ImageObj[];
+    SubCategory: {
+      name: string;
+    };
+  }[];
+}
+
+
+const StockOutProducts = ({ products }: StockOutProductProps) => {
   return (
     <div>
-      <ComingSoon />
+      <ProductGridWithTittle products={products} title="স্টক আউট প্রোডাক্ট" />
     </div>
   );
 };
 
 export default StockOutProducts;
-
-{
-  /* <ProductGridWithTittle products={DemoData} title="স্টক আউট প্রোডাক্ট" /> */
-}

@@ -10,8 +10,8 @@ const CartButton = () => {
   const itemCount = cart.items.length;
 
   return (
-    <Link
-      href="/store/cart"
+    <Link 
+      href="/store/cart" 
       className="relative group ml-auto"
       aria-label={`Shopping cart with ${itemCount} items`}
     >

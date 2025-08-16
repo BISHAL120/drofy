@@ -1,16 +1,16 @@
 interface PasswordResetEmailProps {
-  code: string;
-  userEmail: string;
-  companyName: string;
-  supportEmail: string;
-  expiryMinutes?: number;
+  code: string
+  userEmail: string
+  companyName: string
+  supportEmail: string
+  expiryMinutes?: number
   theme?: {
-    primary?: string;
-    secondary?: string;
-    background?: string;
-    text?: string;
-    border?: string;
-  };
+    primary?: string
+    secondary?: string
+    background?: string
+    text?: string
+    border?: string
+  }
 }
 
 export default function PasswordResetEmail({
@@ -24,13 +24,12 @@ export default function PasswordResetEmail({
     secondary: "#007bff",
     background: "#f8f9fa",
     text: "#333333",
-    border: "#e9ecef",
-  },
+    border: "#e9ecef"
+  }
 }: PasswordResetEmailProps) {
   const styles = {
     container: {
-      fontFamily:
-        "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
       lineHeight: "1.6",
       color: theme.text,
       maxWidth: "600px",
@@ -103,8 +102,8 @@ export default function PasswordResetEmail({
     link: {
       color: theme.secondary,
       textDecoration: "none",
-    },
-  };
+    }
+  }
 
   return (
     <div style={styles.container}>
@@ -116,8 +115,7 @@ export default function PasswordResetEmail({
         <h2 style={styles.heading}>Reset Your Password</h2>
 
         <p style={styles.paragraph}>
-          Hi there! We received a request to reset the password for your account
-          associated with {userEmail}.
+          Hi there! We received a request to reset the password for your account associated with {userEmail}.
         </p>
 
         <p style={styles.paragraph}>
@@ -128,61 +126,30 @@ export default function PasswordResetEmail({
           <div style={styles.code}>{code}</div>
         </div>
 
-        <p style={{ ...styles.paragraph, fontSize: "14px", color: "#6c757d" }}>
+        <p style={{...styles.paragraph, fontSize: "14px", color: "#6c757d"}}>
           This code will expire in {expiryMinutes} minutes for security reasons.
         </p>
 
         <div style={styles.instructionsBox}>
-          <h3
-            style={{
-              ...styles.heading,
-              fontSize: "16px",
-              marginBottom: "10px",
-            }}
-          >
+          <h3 style={{...styles.heading, fontSize: "16px", marginBottom: "10px"}}>
             How to use this code:
           </h3>
-          <ol
-            style={{
-              fontSize: "14px",
-              color: "#495057",
-              paddingLeft: "20px",
-              margin: "0",
-            }}
-          >
-            <li style={{ marginBottom: "5px" }}>
-              Go back to the password reset page or click{" "}
-              <a
-                href={`${process.env.NEXT_PUBLIC_URL}/new-password?userEmail=${userEmail}`}
-                style={styles.link}
-              >
-                here
-              </a>
-            </li>
-            <li style={{ marginBottom: "5px" }}>
-              Enter the 6-digit code above
-            </li>
-            <li style={{ marginBottom: "5px" }}>Create your new password</li>
+          <ol style={{fontSize: "14px", color: "#495057", paddingLeft: "20px", margin: "0"}}>
+            <li style={{marginBottom: "5px"}}>Go back to the password reset page or click <a href={`${process.env.NEXT_PUBLIC_URL}/new-password?userEmail=${userEmail}`} style={styles.link}>here</a></li>
+            <li style={{marginBottom: "5px"}}>Enter the 6-digit code above</li>
+            <li style={{marginBottom: "5px"}}>Create your new password</li>
             <li>{"You'll be logged in automatically"}</li>
           </ol>
         </div>
 
         <div style={styles.securityNotice}>
-          <p
-            style={{
-              fontSize: "14px",
-              color: "#856404",
-              margin: "0",
-              fontWeight: "500",
-            }}
-          >
-            <strong>Security Notice:</strong> If you didn&lsquo;t request a
-            password reset, please ignore this email or contact our support team
-            immediately.
+          <p style={{fontSize: "14px", color: "#856404", margin: "0", fontWeight: "500"}}>
+            <strong>Security Notice:</strong> If you didn&lsquo;t request a password reset, please ignore this email or
+            contact our support team immediately.
           </p>
         </div>
 
-        <p style={{ ...styles.paragraph, fontSize: "14px", color: "#6c757d" }}>
+        <p style={{...styles.paragraph, fontSize: "14px", color: "#6c757d"}}>
           Need help? Contact us at{" "}
           <a href={`mailto:${supportEmail}`} style={styles.link}>
             {supportEmail}
@@ -191,13 +158,13 @@ export default function PasswordResetEmail({
       </div>
 
       <div style={styles.footer}>
-        <p style={{ fontSize: "12px", color: "#6c757d", margin: "0" }}>
+        <p style={{fontSize: "12px", color: "#6c757d", margin: "0"}}>
           © {new Date().getFullYear()} {companyName}. All rights reserved.
         </p>
-        <p style={{ fontSize: "12px", color: "#6c757d", margin: "5px 0 0 0" }}>
+        <p style={{fontSize: "12px", color: "#6c757d", margin: "5px 0 0 0"}}>
           This is an automated message, please do not reply to this email.
         </p>
       </div>
     </div>
-  );
+  )
 }

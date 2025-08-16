@@ -86,7 +86,7 @@ const ReportPage = () => {
         });
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("দুঃখিত, ডেটা লোড করা যায়নি", {
+      toast.error("subscription or payment expired!", {
         duration: 5000,
         icon: <TriangleAlert className="h-4 w-4" />,
         style: {
@@ -125,7 +125,7 @@ const ReportPage = () => {
           <CardHeader className="">
             <div className="flex justify-center items-center space-x-2">
               <Image
-                src="/assets/logo.png"
+                src="/assets/logo.webp"
                 alt="Drofy"
                 unoptimized
                 width={40}

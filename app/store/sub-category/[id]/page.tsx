@@ -1,4 +1,5 @@
 import ProductGridWithTittle from "@/components/shared/productGridWithTittle";
+import InvalidIdError from "@/components/store/components/invalidIdError";
 import { Button } from "@/components/ui/button";
 import { getStoreProducts } from "@/lib/data layer/store/store-DL";
 import Link from "next/link";
@@ -11,24 +12,7 @@ const Page = async ({
   const { id } = await params;
 
   if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center px-4 py-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-            Invalid Category ID
-          </h2>
-          <p className="text-gray-500 mb-6">
-            The provided category ID is not valid
-          </p>
-          <Button
-            asChild
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            <Link href="/store/categories">Back To Categories</Link>
-          </Button>
-        </div>
-      </div>
-    );
+    return <InvalidIdError name="Category" link="/store/categories" />;
   }
 
   const products = await getStoreProducts(id);
@@ -54,14 +38,6 @@ const Page = async ({
                 />
               </svg>
             </div>
-            <div className="absolute -top-2 -right-2">
-              <div className="relative">
-                <div className="animate-ping absolute h-8 w-8 rounded-full bg-red-400 opacity-75"></div>
-                <div className="relative h-8 w-8 rounded-full bg-red-500 flex items-center justify-center">
-                  <span className="text-white text-xs">0</span>
-                </div>
-              </div>
-            </div>
           </div>
 
           <div className="text-center space-y-4">
@@ -86,15 +62,6 @@ const Page = async ({
                 <Link href="/store">Back to Store</Link>
               </Button>
             </div>
-          </div>
-
-          <div className="mt-8 text-center">
-            <p className="text-sm text-gray-500">
-              Want to be notified when products are back in stock?
-            </p>
-            <button className="text-indigo-600 hover:text-indigo-700 font-medium text-sm mt-2">
-              Set Alert →
-            </button>
           </div>
         </div>
       </div>

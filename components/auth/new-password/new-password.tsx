@@ -24,7 +24,7 @@ const NewPassword = () => {
   const [password, setPassword] = useState<string>("");
   const searchParams = useSearchParams();
   const userEmail = searchParams.get("userEmail");
-  const router = useRouter();
+  const router = useRouter()
 
   const handleVerifyClick = () => {
     console.log(verificationCode);

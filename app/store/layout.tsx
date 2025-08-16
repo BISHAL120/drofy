@@ -1,8 +1,8 @@
 import { auth } from "@/auth";
 import AdminButton from "@/components/auth/adminButton";
-import WaletBalance from "@/components/store/balance";
-import CartButton from "@/components/store/cartButton";
-import IdActiveAlert from "@/components/store/idActiveAlert";
+import WaletBalance from "@/components/store/components/balance";
+import CartButton from "@/components/store/components/cartButton";
+import IdActiveAlert from "@/components/store/components/idActiveAlert";
 import { AppSidebar, MobileSidebar } from "@/components/ui/app-sidebar";
 import {
   SidebarInset,

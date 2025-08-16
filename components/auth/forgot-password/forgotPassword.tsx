@@ -48,7 +48,7 @@ export default function ForgotPasswordForm() {
     axios
       .post("/api/password/forgetPassword", values)
       .then((res) => {
-        console.log(res.data);
+        console.log(res.data)
         toast.dismiss();
         router.push(`/new-password?userEmail=${values.email}`);
         toast.success("OTP Sent", {
@@ -124,7 +124,7 @@ export default function ForgotPasswordForm() {
                 className="w-full bg-orange-500 hover:bg-orange-600 text-white"
                 disabled={loading}
               >
-                {loading && <Loader2 className="animate-spin" />} ওটিপি পাঠান
+               {loading && <Loader2 className="animate-spin" /> } ওটিপি পাঠান
               </Button>
             </form>
           </Form>

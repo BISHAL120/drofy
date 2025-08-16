@@ -1,6 +1,5 @@
 "use client";
 
-import DemoNavbar from "@/components/demo/demoNavbar";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -67,7 +66,6 @@ const Page = () => {
 
   return (
     <div>
-      <DemoNavbar />
       <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>

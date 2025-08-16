@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 const OrderNotFound = () => {
   return (
@@ -23,8 +23,7 @@ const OrderNotFound = () => {
           No Orders Found
         </h2>
         <p className="text-gray-600 text-center mb-8 max-w-md">
-          We couldn&apos;t find any orders matching your criteria. Try adjusting
-          your filters or create a new order.
+          We couldn&apos;t find any orders matching your criteria. Try adjusting your filters or create a new order.
         </p>
         <button
           onClick={() => window.history.back()}
@@ -34,7 +33,7 @@ const OrderNotFound = () => {
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default OrderNotFound;
+export default OrderNotFound

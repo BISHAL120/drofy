@@ -47,21 +47,21 @@ export async function POST(req: NextRequest) {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Update password
-        await db.user.update({
+          await db.user.update({
             where: {
                 id: verifyCode.userId
             },
             data: {
                 password: hashedPassword
             }
-        })
+        }) 
 
-        // delete all related codes
-        await db.verification.deleteMany({
-            where: {
-                email: userEmail
-            }
-        })
+            // delete all related codes
+            await db.verification.deleteMany({
+                where: {
+                    email: userEmail
+                }
+            })
 
 
         return NextResponse.json({ message: "পাসওয়ার্ড পরিবর্তন সম্পন্ন হয়েছে", data: { userEmail, code, hashedPassword, verifyCode } }, { status: 200 })

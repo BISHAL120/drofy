@@ -139,6 +139,7 @@ export async function DELETE(request: Request) {
             return NextResponse.json({ message: "Sub Category not found" }, { status: 404 });
         }
 
+        /* Delete the sub category image from firebase storage */
         if (subCategory?.imageUrl) {
             await deleteFirebaseImage(subCategory.imageUrl)
         }

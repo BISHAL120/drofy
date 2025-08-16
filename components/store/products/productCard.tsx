@@ -110,17 +110,20 @@ const ProductCard = ({ product }: ProductCardProps) => {
           {
             <div className="flex items-center justify-between">
               <div className="w-full flex items-center justify-between gap-2">
-                <span className="text-red-500 font-bold">
-                  {convertToBengaliNumber(
-                    product.discountPrice || product.sellingPrice
-                  )}
-                </span>
-                {product.discountPrice &&
-                product.sellingPrice > product.discountPrice ? (
-                  <span className="text-gray-400 line-through text-xs">
-                    ৳{convertToBengaliNumber(product.sellingPrice)}
+                <div className="text-sm font-medium text-gray-600">মূল্য:</div>
+                <div className="space-x-2">
+                  <span className="text-red-500 font-bold">
+                    {convertToBengaliNumber(
+                      product.discountPrice || product.sellingPrice
+                    )}
                   </span>
-                ) : null}
+                  {product.discountPrice &&
+                  product.sellingPrice > product.discountPrice ? (
+                    <span className="text-gray-400 line-through text-xs">
+                      ৳{convertToBengaliNumber(product.sellingPrice)}
+                    </span>
+                  ) : null}
+                </div>
               </div>
             </div>
           }

@@ -22,9 +22,11 @@ import {
   Eye,
   Mail,
   MapPin,
+  MinusCircle,
   Package,
   Phone,
   PhoneForwarded,
+  PlusCircle,
   TrendingUp,
   Users2,
   X,
@@ -35,6 +37,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import ConfirmationDialog from "../../components/confirmationDialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const UserDetailsPage = ({
   user,
@@ -62,7 +71,10 @@ const UserDetailsPage = ({
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [balance, setBalance] = useState(user?.wallet || 0);
-  const [details, setDetails] = useState("Manual balance update");
+  const [addBalanceMessage, setAddBalanceMessage] = useState<string>(
+    "Manual balance update"
+  );
+  const [minusBalanceMessage, setMinusBalanceMessage] = useState<string>("");
 
   if (!user) {
     return (
@@ -96,7 +108,7 @@ const UserDetailsPage = ({
       .post("/api/store/balance", {
         id: user.id,
         balance,
-        details,
+        details: minusBalanceMessage ? minusBalanceMessage : addBalanceMessage,
       })
       .then((res) => {
         setLoading(false);
@@ -105,11 +117,15 @@ const UserDetailsPage = ({
         toast.success(res.data.message, {
           duration: 5000,
         });
+        setAddBalanceMessage("Manual balance update");
+        setMinusBalanceMessage("")
+
       })
       .catch((err) => {
         setLoading(false);
         toast.dismiss();
         toast.error(err.response.data.message);
+        console.log(err)
       });
   };
 
@@ -169,9 +185,94 @@ const UserDetailsPage = ({
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
+                    {/* Minus Balance Button */}
                     <Dialog>
                       <DialogTrigger disabled={loading} asChild>
-                        <Button variant="default">Add Balance</Button>
+                        <Button
+                          variant="destructive"
+                          className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white transition-colors duration-200"
+                        >
+                          <span className="font-medium">Minus Balance</span>
+                          <MinusCircle className="w-4 h-4 mb-1" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Manual Minus Balance</DialogTitle>
+                          <DialogDescription>
+                            Input the amount to minus from the user wallet. Add
+                            minus to remove balance.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4">
+                          <div className="grid gap-3">
+                            <Input
+                              defaultValue={0}
+                              onChange={(e) =>
+                                setBalance(Number(-e.target.value))
+                              }
+                              placeholder="Enter amount"
+                              min={0}
+                            />
+                          </div>
+                          <div className="grid gap-3">
+                            {/* <Input
+                              defaultValue={details}
+                              onChange={(e) => setDetails(e.target.value)}
+                              placeholder="Enter details"
+                            /> */}
+                            <Select
+                              onValueChange={(value) =>
+                                setMinusBalanceMessage(value)
+                              }
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select an option" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="রিটার্ন, চার্জ কর্তন হয়েছে।">
+                                  রিটার্ন, চার্জ কর্তন হয়েছে।
+                                </SelectItem>
+                                <SelectItem value="টাকা উত্তোলন">
+                                  টাকা উত্তোলন
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button
+                              disabled={loading}
+                              variant="outline"
+                              className="px-4 py-2 text-gray-600 hover:bg-gray-100 transition-colors"
+                            >
+                              Cancel
+                            </Button>
+                          </DialogClose>
+                          <DialogClose onClick={handleBalanceChange} asChild>
+                            <Button
+                              disabled={loading}
+                              variant="default"
+                              className="px-4 py-2 bg-red-600 text-white hover:bg-red-700 transition-colors"
+                            >
+                              Minus Balance
+                            </Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+
+                    {/* Add Balance Button */}
+                    <Dialog>
+                      <DialogTrigger
+                        className="bg-indigo-500 hover:bg-indigo-600"
+                        disabled={loading}
+                        asChild
+                      >
+                        <Button variant="default">
+                          Add Balance <PlusCircle className="w-4 h-4 mb-1" />{" "}
+                        </Button>
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>
@@ -194,8 +295,10 @@ const UserDetailsPage = ({
                           </div>
                           <div className="grid gap-3">
                             <Input
-                              defaultValue={details}
-                              onChange={(e) => setDetails(e.target.value)}
+                              defaultValue={addBalanceMessage}
+                              onChange={(e) =>
+                                setAddBalanceMessage(e.target.value)
+                              }
                               placeholder="Enter details"
                             />
                           </div>

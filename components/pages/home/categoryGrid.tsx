@@ -105,11 +105,10 @@ const CategoryGrid = ({ featuredCategory }: FeaturedCategoryProps) => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            ফিচার প্রোডাক্ট ক্যাটাগরি
+            All Product Categories
           </h2>
           <p className="text-gray-600 text-base max-w-2xl mx-auto">
-            আমাদের সকল ক্যাটাগরির বিভাগগুলি ঘুরে দেখুন এবং আপনার পছন্দের পণ্যটি
-            খুঁজে বের করুন।
+            Browse through all our category sections and find your favorite products.
           </p>
         </div>
 
@@ -129,11 +128,11 @@ const CategoryGrid = ({ featuredCategory }: FeaturedCategoryProps) => {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                 </div>
-                <div className="p-2 text-center">
+                <div className="p-2 text-center group">
                   <h3 className="font-medium text-sm md:text-base line-clamp-1">
                     {category.name}
                   </h3>
-                  <div className="mt-1 text-orange-500 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="mt-1 none text-orange-500 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity">
                     <span>Shop Now</span>
                     <ArrowRight size={14} className="ml-1" />
                   </div>

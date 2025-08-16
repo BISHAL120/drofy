@@ -10,7 +10,7 @@ export async function POST(
 ) {
     try {
         const body = await req.json();
-        const { address, deliveryCharge, advanceCharge, comments, district, division, name, phone, upazila, union } = body.values;
+        const { address, deliveryCharge, advanceCharge, comments, district, name, phone, upazila } = body.values;
         const { cartItems, subtotal } = body;
 
         const session = await auth();
@@ -32,10 +32,6 @@ export async function POST(
             return NextResponse.json({ message: "Address is required." }, { status: 400 });
         }
 
-        if (!division) {
-            return NextResponse.json({ message: "Division is required." }, { status: 400 });
-        }
-
         if (!district) {
             return NextResponse.json({ message: "District is required." }, { status: 400 });
         }
@@ -48,7 +44,7 @@ export async function POST(
             return NextResponse.json({ message: "Delivery charge is required." }, { status: 400 });
         }
 
-        // check order number and deducted courier charge from balance
+        // find the reseller data
         const getUser = await db.user.findUnique({
             where: {
                 id: user.id as string,
@@ -59,9 +55,36 @@ export async function POST(
                 totalRevenue: true,
             }
         })
-
         if (!getUser) return NextResponse.json({ message: "User not found." }, { status: 400 });
 
+        // check wallet balance
+        if (getUser?.wallet < deliveryCharge) {
+            if(getUser.wallet < 0) {
+                return NextResponse.json({ message: "মাইনাস ব্যালেন্স পরিশোধ করুন!" }, { status: 400 });
+            }
+            return NextResponse.json({ message: "পর্যাপ্ত ব্যালেন্স নাই!" }, { status: 400 });
+        }
+
+        // deduct courier charge from wallet
+        await db.user.update({
+            where: {
+                id: user.id as string,
+            },
+            data: {
+                wallet: getUser?.wallet - deliveryCharge,
+            }
+        })
+
+        // Update Transaction History
+        await db.walletTransaction.create({
+            data: {
+                userId: user.id as string,
+                amount: -deliveryCharge,
+                type: "AUTOMATION",
+                walletBalance: getUser?.wallet - deliveryCharge,
+                details: `${getUser.orderCount + 1} নং অর্ডার টির ডেলিভারি চার্জ আপনার ব্যালেন্স থেকে পেমেন্ট করেছেন ${deliveryCharge} টাকা।`
+            }
+        })
 
         // Get the order count
         const orderCount = await db.order.count();
@@ -76,10 +99,8 @@ export async function POST(
                 orderNumber: orderCount + 1,
                 customerPhone: phone,
                 customerName: name,
-                customerDivision: division,
                 customerDistrict: district,
                 customerUpazila: upazila,
-                customerUnion: union,
                 customerAddress: address,
                 deliveryCharge: deliveryCharge,
                 advanceCharge: advanceCharge == "yes" ? true : false,
@@ -109,9 +130,6 @@ export async function POST(
 
         // Reduce the stock quantity
         await Promise.all(cartItems.map(async (item: AddCartProps) => {
-
-
-
             await db.product.update({
                 where: {
                     id: item.id,
@@ -148,24 +166,6 @@ export async function POST(
                 totalRevenue: getUser?.totalRevenue + subtotal,
             }
         })
-
-        if (getUser?.orderCount < 10) {
-            // check wallet balance
-            if (getUser?.wallet < deliveryCharge) {
-                return NextResponse.json({ message: "পর্যাপ্ত ব্যালেন্স নাই" }, { status: 400 });
-            }
-
-            // deduct courier charge from wallet
-            await db.user.update({
-                where: {
-                    id: user.id as string,
-                },
-                data: {
-                    wallet: getUser?.wallet - deliveryCharge,
-                }
-            })
-        }
-
 
         return NextResponse.json({ data: order, message: "Order created successfully.", id: order.id }, { status: 201 });
     } catch (error) {

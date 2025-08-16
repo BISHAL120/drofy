@@ -4,8 +4,8 @@ import ProductCard from "../store/products/productCard";
 interface ProductGridProps {
   title: string;
   products: {
-    name: string;
     id: string;
+    name: string;
     sellingPrice: number;
     discountPrice: number | null;
     createdAt: Date;

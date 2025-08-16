@@ -84,7 +84,7 @@ export default function OrderFailedPage() {
           </Link>
 
           <Link
-            href="https://m.me/restockbd"
+            href="https://m.me/drofy"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -118,7 +118,11 @@ export default function OrderFailedPage() {
           justify-content: center;
           padding: 1rem;
           background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-          font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          font-family:
+            "Inter",
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
             sans-serif;
         }
 
@@ -129,7 +133,8 @@ export default function OrderFailedPage() {
           background: white;
           border-radius: 16px;
           padding: 3rem 2rem;
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          box-shadow:
+            0 20px 25px -5px rgba(0, 0, 0, 0.1),
             0 10px 10px -5px rgba(0, 0, 0, 0.04);
           opacity: 0;
           transform: translateY(20px);

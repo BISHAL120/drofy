@@ -9,7 +9,6 @@ const protectedPaths = [
     '/admin/*',
 ]
 
-
 export async function middleware(request: NextRequest) {
     const session = await auth();
     const user = session?.user;
@@ -23,6 +22,26 @@ export async function middleware(request: NextRequest) {
         const pattern = path.replace('*', '.*');
         return new RegExp(`^${pattern}$`).test(pathname);
     });
+
+    const protectedApiRouts = [
+        '/api/store',
+        '/api/admin',
+        '/api/steadFast',
+    ]
+
+    /* TODO: Implement Bearer Token Authentication */
+    // Protect API routes
+    if (protectedApiRouts.includes(pathname)) {
+        if (!user || !user.isActive) {
+            return new NextResponse(
+                JSON.stringify({ message: 'Access Denied. Authentication required or account is inactive.' }),
+                {
+                    status: 401,
+                    headers: { 'Content-Type': 'application/json' }
+                }
+            );
+        }
+    }
 
     // Redirect to login if authentication is required but user is not logged in
     if (requiresAuth && !user) {
@@ -40,7 +59,7 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/store', request.url));
         }
     }
-    // Redirect from root path to /home
+
     if (pathname === '/demo') {
         if (user?.phone !== "01312604691") {
             return NextResponse.redirect(new URL('/store', request.url));

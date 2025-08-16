@@ -43,49 +43,62 @@ export default function RegisterPage() {
     try {
       if (values.password !== values.confirmPassword) {
         toast.dismiss(); // Dismiss any existing toast if there is one
-        toast.error("ভুল কনফার্ম পাসওয়ার্ড!", {
-          duration: 5000,
-          icon: "⚠️",
-          style: {
-            background: "red",
-            border: "2px solid #DC2626", // Adjusted to a darker red border
-            color: "white",
-            fontWeight: "600",
-            fontSize: "16px", // Adjusted font size
-            padding: "10px 20px", // Adjusted padding
-          },
-        });
+        toast.error(
+          process.env.LANGUAGE === "bn"
+            ? "ভুল কনফার্ম পাসওয়ার্ড!"
+            : "Invalid confirm password!",
+          {
+            duration: 5000,
+            icon: "⚠️",
+            style: {
+              background: "red",
+              border: "2px solid #DC2626", // Adjusted to a darker red border
+              color: "white",
+              fontWeight: "600",
+              fontSize: "16px", // Adjusted font size
+              padding: "10px 20px", // Adjusted padding
+            },
+          }
+        );
         return;
       }
       setIsLoading(true);
-      toast.loading("প্রসেসিং...", {
-        style: {
-          background: "#FFA500",
-          border: "2px solid #FF8C00",
-          color: "white",
-          fontWeight: "600",
-          fontSize: "16px",
-          padding: "10px 20px",
-        },
-      });
+      toast.loading(
+        process.env.LANGUAGE === "bn" ? "প্রসেসিং..." : "Processing...",
+        {
+          style: {
+            background: "#FFA500",
+            border: "2px solid #FF8C00",
+            color: "white",
+            fontWeight: "600",
+            fontSize: "16px",
+            padding: "10px 20px",
+          },
+        }
+      );
       axios
         .post("/api/register", values)
         .then((res) => {
           console.log("Response :", res.data.data);
           // toast.success("OTP sent to your mobile number");
           toast.dismiss();
-          toast.success("রেজিস্ট্রেশন সম্পন্ন হয়েছে", {
-            style: {
-              background: "#22C55E", // Green background
-              border: "2px solid #16A34A", // Darker green border
-              color: "white",
-              fontWeight: "600",
-              fontSize: "16px",
-              padding: "10px 20px",
-            },
-            position: "top-center",
-            icon: "✅",
-          });
+          toast.success(
+            process.env.LANGUAGE === "bn"
+              ? "রেজিস্ট্রেশন সম্পন্ন হয়েছে"
+              : "Registration completed successfully",
+            {
+              style: {
+                background: "#22C55E", // Green background
+                border: "2px solid #16A34A", // Darker green border
+                color: "white",
+                fontWeight: "600",
+                fontSize: "16px",
+                padding: "10px 20px",
+              },
+              position: "top-center",
+              icon: "✅",
+            }
+          );
           signIn("credentials", {
             number: values.number,
             password: values.password,
@@ -135,11 +148,14 @@ export default function RegisterPage() {
           </div>
 
           <h1 className="text-3xl font-semibold text-center text-orange-600 mb-6">
-            রিসেলার রেজিস্ট্রেশন
+            {process.env.LANGUAGE === "bn"
+              ? "রিসেলার রেজিস্ট্রেশন"
+              : "Reseller Registration"}
           </h1>
           <p className="text-sm text-gray-600 text-center mb-6">
-            আপনার ইমেইল এ একটি ওটিপি কোড পাঠানো হবে, কোডটি বসিয়ে রেজিস্ট্রেশন
-            সম্পূর্ণ করুন।
+            {process.env.LANGUAGE === "bn"
+              ? "আপনার ইমেইল এ একটি ওটিপি কোড পাঠানো হবে, কোডটি বসিয়ে রেজিস্ট্রেশন সম্পূর্ণ করুন।"
+              : "An OTP code will be sent to your email. Please enter the code to complete registration."}
           </p>
 
           <Form {...form}>
@@ -155,12 +171,16 @@ export default function RegisterPage() {
                           htmlFor="name"
                           className="text-sm text-gray-600"
                         >
-                          নাম *
+                          {process.env.LANGUAGE === "bn" ? "নাম *" : "Name *"}
                         </FormLabel>
                         <Input
                           {...field}
                           id="name"
-                          placeholder="আপনার নাম"
+                          placeholder={
+                            process.env.LANGUAGE === "bn"
+                              ? "আপনার নাম"
+                              : "Your name"
+                          }
                           type="text"
                           autoCapitalize="none"
                           autoComplete="name"
@@ -186,12 +206,18 @@ export default function RegisterPage() {
                           htmlFor="mobile"
                           className="text-sm text-gray-600"
                         >
-                          মোবাইল নং *
+                          {process.env.LANGUAGE === "bn"
+                            ? "মোবাইল নং *"
+                            : "Mobile Number *"}
                         </FormLabel>
                         <Input
                           {...field}
                           id="mobile"
-                          placeholder="01700000000"
+                          placeholder={
+                            process.env.LANGUAGE === "bn"
+                              ? "০১৭০০০০০০০০"
+                              : "01700000000"
+                          }
                           autoCapitalize="none"
                           autoComplete="mobile"
                           autoCorrect="off"
@@ -223,12 +249,18 @@ export default function RegisterPage() {
                           htmlFor="referralCode"
                           className="text-sm text-gray-600"
                         >
-                          রেফারেল কোড
+                          {process.env.LANGUAGE === "bn"
+                            ? "রেফারেল কোড"
+                            : "Referral Code"}
                         </FormLabel>
                         <Input
                           {...field}
                           id="referralCode"
-                          placeholder="রেফারেল কোড"
+                          placeholder={
+                            process.env.LANGUAGE === "bn"
+                              ? "রেফারেল কোড"
+                              : "Referral Code"
+                          }
                           disabled={isLoading}
                           className="mt-1"
                         />
@@ -250,7 +282,9 @@ export default function RegisterPage() {
                           htmlFor="password"
                           className="text-sm text-gray-600"
                         >
-                          পাসওয়ার্ড *
+                          {process.env.LANGUAGE === "bn"
+                            ? "পাসওয়ার্ড *"
+                            : "Password *"}
                         </FormLabel>
                         <div className="relative">
                           <Input
@@ -294,7 +328,9 @@ export default function RegisterPage() {
                           htmlFor="confirmPassword"
                           className="text-sm text-gray-600"
                         >
-                          কনফার্ম পাসওয়ার্ড *
+                          {process.env.LANGUAGE === "bn"
+                            ? "কনফার্ম পাসওয়ার্ড *"
+                            : "Confirm Password *"}
                         </FormLabel>
                         <div className="relative">
                           <Input
@@ -338,7 +374,7 @@ export default function RegisterPage() {
                           htmlFor="email"
                           className="text-sm text-gray-600"
                         >
-                          ইমেইল
+                          {process.env.LANGUAGE === "bn" ? "ইমেইল" : "Email"}
                         </FormLabel>
                         <Input
                           {...field}
@@ -368,12 +404,18 @@ export default function RegisterPage() {
                           htmlFor="address"
                           className="text-sm text-gray-600"
                         >
-                          ঠিকানা * (Optional)
+                          {process.env.LANGUAGE === "bn"
+                            ? "ঠিকানা * (অপশনাল)"
+                            : "Address * (Optional)"}
                         </FormLabel>
                         <textarea
                           {...field}
                           id="address"
-                          placeholder="আপনার বর্তমান ঠিকানা"
+                          placeholder={
+                            process.env.LANGUAGE === "bn"
+                              ? "আপনার বর্তমান ঠিকানা"
+                              : "Your current address"
+                          }
                           rows={3}
                           autoCapitalize="none"
                           autoCorrect="off"
@@ -393,45 +435,46 @@ export default function RegisterPage() {
                 disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                রেজিস্ট্রেশন করুন <ChevronsRight className="ml-2 h-4 w-4" />
+                {process.env.LANGUAGE === "bn"
+                  ? "রেজিস্ট্রেশন করুন"
+                  : "Register"}
+                <ChevronsRight className="ml-2 h-4 w-4" />
               </Button>
             </form>
           </Form>
           <div className="mt-6 text-center space-y-2">
             <p className="text-sm text-gray-600">
-              ইতিমধ্যে একাউন্ট আছে?{" "}
+              {process.env.LANGUAGE === "bn"
+                ? "ইতিমধ্যে একাউন্ট আছে? "
+                : "Already have an account? "}
               <Link
                 href="/login"
                 className="font-semibold text-orange-600 hover:text-orange-500"
               >
-                লগইন করুন
+                {process.env.LANGUAGE === "bn" ? "লগইন করুন" : "Login"}
               </Link>
             </p>
-            <p className="text-sm text-gray-600">
-              পাসওয়ার্ড ভুলে গেছেন?{" "}
-              <Link
-                href="/forgot-password"
-                className="font-semibold text-orange-600 hover:text-orange-500"
-              >
-                পাসওয়ার্ড রিসেট করুন
-              </Link>
-            </p>
+
             <p className="text-xs text-gray-500 mt-4">
-              রেজিস্ট্রেশন করার মাধ্যমে আপনি আমাদের{" "}
+              {process.env.LANGUAGE === "bn"
+                ? "রেজিস্ট্রেশন করার মাধ্যমে আপনি আমাদের "
+                : "By registering, you agree to our "}
               <Link
                 href="/terms"
                 className="underline text-orange-600 hover:text-orange-500"
               >
-                শর্তাবলী
+                {process.env.LANGUAGE === "bn" ? "শর্তাবলী" : "Terms"}
               </Link>{" "}
-              এবং{" "}
+              {process.env.LANGUAGE === "bn" ? "এবং" : "and "}
               <Link
                 href="/privacy"
                 className="underline text-orange-600 hover:text-orange-500"
               >
-                গোপনীয়তা নীতি
+                {process.env.LANGUAGE === "bn"
+                  ? "গোপনীয়তা নীতি"
+                  : "Privacy Policy"}
               </Link>{" "}
-              মেনে নিচ্ছেন
+              {process.env.LANGUAGE === "bn" ? "মেনে নিচ্ছেন" : ""}
             </p>
           </div>
         </div>

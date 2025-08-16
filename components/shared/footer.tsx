@@ -141,7 +141,7 @@ const Footer = () => {
               <li>1234 Street Name, City</li>
               <li>Country, Postal Code</li>
               <li>+1 234 567 8901</li>
-              <li>info@drofy.com</li>
+              <li>info@restock.com</li>
               <li>Mon - Fri: 9:00AM - 10:00PM</li>
             </ul>
           </div>

@@ -97,6 +97,7 @@ export default function AddProductPage({
           discountPrice: initialData.discountPrice?.toString() || "",
           stockAlert: initialData.stockAlert?.toString() || "",
           note: initialData.note || "",
+          ratings: initialData.ratings || "",
           dimensions: initialData.dimensions || "",
           metaTitle: initialData.metaTitle || "",
           metaDescription: initialData.metaDescription || "",
@@ -110,7 +111,6 @@ export default function AddProductPage({
           isFeatured: false,
           isVerified: false,
           stockAlert: "",
-          // variant: [],
           weight: "",
           dimensions: "",
           cost: "",
@@ -119,7 +119,7 @@ export default function AddProductPage({
           trackInventory: false,
           inStock: true,
           stock: "",
-          deliveryCharge: "120",
+          deliveryCharge: "130",
           metaTitle: "",
           metaDescription: "",
         },
@@ -395,15 +395,15 @@ export default function AddProductPage({
             </p>
           </div>
           <div>
-            <div className="flex justify-end space-x-4 pt-6">
+            <div className="flex justify-center sm:justify-end space-x-4 pt-6">
               <Link href="/products">
                 <Button disabled={isLoading} type="button" variant="outline">
                   Cancel
                 </Button>
               </Link>
-              <Button disabled={isLoading} type="button" variant="outline">
+              {/* <Button disabled={isLoading} type="button" variant="outline">
                 Save as Draft
-              </Button>
+              </Button> */}
               <Button
                 disabled={isLoading}
                 type="submit"
@@ -1057,7 +1057,6 @@ export default function AddProductPage({
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       control={form.control}
                       name="isFeatured"
@@ -1083,31 +1082,63 @@ export default function AddProductPage({
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="isVerified"
-                      render={({ field }) => (
-                        <FormItem>
-                          <div className="flex flex-col gap-4 space-x-2">
-                            <div className="flex items-center gap-2">
-                              <Switch
-                                id="isVerified"
-                                disabled={isLoading}
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                              <FormLabel htmlFor="isVerified">
-                                Product Verification
-                              </FormLabel>
+                    <div className="flex flex-row items-center gap-6">
+                      <FormField
+                        control={form.control}
+                        name="isVerified"
+                        render={({ field }) => (
+                          <FormItem>
+                            <div className="flex flex-col gap-4 space-x-2">
+                              <div className="flex items-center gap-2">
+                                <Switch
+                                  id="isVerified"
+                                  disabled={isLoading}
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                                <FormLabel htmlFor="isVerified">
+                                  Product Verification
+                                </FormLabel>
+                              </div>
+                              <FormDescription>
+                                check if this product is Verified
+                              </FormDescription>
                             </div>
-                            <FormDescription>
-                              check if this product is Verified
-                            </FormDescription>
-                          </div>
-                          <FormControl></FormControl>
-                        </FormItem>
+                            <FormControl></FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      {form.watch("isVerified") && (
+                        <FormField
+                          control={form.control}
+                          name="ratings"
+                          render={({ field }) => (
+                            <FormItem>
+                              <Select
+                                disabled={isLoading}
+                                onValueChange={field.onChange}
+                                value={field.value}
+                                defaultValue="5"
+                              >
+                                <FormControl>
+                                  <SelectTrigger className="w-[120px]">
+                                    <SelectValue placeholder="Rating" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="1">1 Star</SelectItem>
+                                  <SelectItem value="2">2 Stars</SelectItem>
+                                  <SelectItem value="3">3 Stars</SelectItem>
+                                  <SelectItem value="4">4 Stars</SelectItem>
+                                  <SelectItem value="5">5 Stars</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
                       )}
-                    />
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -1543,9 +1574,9 @@ export default function AddProductPage({
               >
                 <Link href="/admin/products">Cancel</Link>
               </Button>
-              <Button disabled={isLoading} type="button" variant="outline">
+              {/* <Button disabled={isLoading} type="button" variant="outline">
                 Save as Draft
-              </Button>
+              </Button> */}
               <Button disabled={isLoading} type="submit">
                 <Plus className="mr-2 h-4 w-4" />
                 Create Product

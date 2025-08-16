@@ -7,7 +7,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   // Get Order Data
   const orderData = await getOrderDataById(id);
-  console.log(orderData);
+  console.log(orderData)
   return (
     <div>
       <OrderSuccessPage data={orderData} />

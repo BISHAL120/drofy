@@ -31,27 +31,27 @@ const Navbar = async () => {
           </div>
           <div className="hidden md:flex items-center space-x-4">
             <Link href="/" className="hover:underline">
-              হোম
+              {process.env.LANGUAGE === 'bn' ? 'হোম' : 'Home'}
             </Link>
             <Link href="/about" className="hover:underline">
-              আমাদের সম্পর্কে
+              {process.env.LANGUAGE === 'bn' ? 'আমাদের সম্পর্কে' : 'About Us'}
             </Link>
             <Link href="/contact" className="hover:underline">
-              যোগাযোগ
+              {process.env.LANGUAGE === 'bn' ? 'যোগাযোগ' : 'Contact'}
             </Link>
             {!user ? (
               <>
                 <Link href="/login" className="hover:underline">
-                  লগইন{" "}
+                  {process.env.LANGUAGE === 'bn' ? 'লগইন' : 'Login'}{" "}
                 </Link>
                 <Link href="/register" className="hover:underline">
-                  রেজিস্ট্রেশন
+                  {process.env.LANGUAGE === 'bn' ? 'রেজিস্ট্রেশন' : 'Register'}
                 </Link>
               </>
             ) : (
               <>
                 <Link href="/store" className="hover:underline">
-                  ড্যাশবোর্ড
+                  {process.env.LANGUAGE === 'bn' ? 'ড্যাশবোর্ড' : 'Dashboard'}
                 </Link>
                 {/* <LogoutButton className="pt-0.5 text-white border " /> */}
               </>

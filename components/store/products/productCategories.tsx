@@ -18,7 +18,7 @@ export default function ProductCategories({
   categories,
 }: ProductCategoriesProps) {
   return (
-    <div className="w-full px-2 py-4 md:py-6 bg-gray-50">
+    <div className={`w-full px-2 py-4 md:py-6 bg-gray-50 min-h-[calc(100vh-64px)]`}>
       {categories.map((cat) => (
         <div key={cat.id}>
           <div className="mb-6">

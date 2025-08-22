@@ -37,23 +37,6 @@ const ComingSoon = () => {
               We&apos;re working hard to bring you something amazing. Stay
               tuned!
             </p>
-
-            <div className="mt-12 animate-fade-in-delay-2">
-              <form className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  aria-label="Email notification signup"
-                  className="px-6 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-auto"
-                />
-                <button
-                  type="submit"
-                  className="px-8 py-3 rounded-full bg-purple-600 text-white hover:bg-purple-700 transition-colors duration-300 w-full sm:w-auto"
-                >
-                  Notify Me
-                </button>
-              </form>
-            </div>
           </div>
 
           <style jsx>{`

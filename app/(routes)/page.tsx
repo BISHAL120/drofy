@@ -1,20 +1,23 @@
+import { auth } from "@/auth";
 import CategoryGrid from "@/components/pages/home/categoryGrid";
 import FeaturedSection from "@/components/pages/home/featuredSection";
 import HeroSection from "@/components/pages/home/heroSection";
 import {
-  getFeaturedCategory,
+  getFeaturedSubCategory,
   getFeaturedContent,
 } from "@/lib/data layer/store/store-DL";
 
 const Page = async () => {
   const featuredContent = await getFeaturedContent();
-  const featuredCategory = await getFeaturedCategory();
+  const featuredSubCategory = await getFeaturedSubCategory();
+   const session = await auth();
+  const isActive = session?.user.isActive; 
 
   return (
     <div>
       <HeroSection />
-      <FeaturedSection featuredContent={featuredContent} />
-      <CategoryGrid featuredCategory={featuredCategory} />
+      <FeaturedSection isActive={isActive} featuredContent={featuredContent} />
+      <CategoryGrid featuredSubCategory={featuredSubCategory} />
     </div>
   );
 };

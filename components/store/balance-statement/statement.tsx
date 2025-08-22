@@ -7,349 +7,6 @@ import { WalletTransactionType } from "@prisma/client";
 import { format, formatDistanceToNow } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-// Sample transaction data
-const transactions = [
-  {
-    id: 1,
-    date: "2025-05-24",
-    time: "13:17:20",
-    description: "hjyhgjhj - রিফিল, চার্জ করার হয়েছে।",
-    amount: -120,
-    balance: -103,
-  },
-  {
-    id: 2,
-    date: "2025-04-16",
-    time: "07:45:04",
-    description: "bKash - টাকা উত্তোলন",
-    amount: -491,
-    balance: 17,
-  },
-  {
-    id: 3,
-    date: "2025-04-15",
-    time: "14:55:02",
-    description:
-      "Mojahid - রেজিস্ট্রার হয়েছে, অর্ডার প্রিন্ট 491 টাকা। অর্ডার চার্জ 120 টাকা রিচার্জ। অর্ডার পেমেন্ট 120 টাকা দেয়া।",
-    amount: 491,
-    balance: 508,
-  },
-  {
-    id: 4,
-    date: "2025-03-10",
-    time: "12:26:01",
-    description: "M.h Sohel Rana - রিফিল, চার্জ করার হয়েছে।",
-    amount: 0,
-    balance: 17,
-  },
-  {
-    id: 5,
-    date: "2025-03-02",
-    time: "21:09:14",
-    description:
-      "202503023482394 অর্ডার লিং রেজিস্ট্রার চার্জ আপনার কাস্টমার থেকে পেমেন্ট করেছেন 120.00 টাকা।",
-    amount: -120,
-    balance: 17,
-  },
-  {
-    id: 6,
-    date: "2025-03-02",
-    time: "19:44:15",
-    description: "bKash - টাকা উত্তোলন",
-    amount: -2000,
-    balance: 137,
-  },
-  {
-    id: 7,
-    date: "2025-02-27",
-    time: "19:04:27",
-    description:
-      "Moynul Hasan - রেজিস্ট্রার হয়েছে, অর্ডার প্রিন্ট 301 টাকা। অর্ডার পেমেন্ট 70 টাকা দেয়া।",
-    amount: 371,
-    balance: 2137,
-  },
-  {
-    id: 8,
-    date: "2025-02-25",
-    time: "09:45:08",
-    description:
-      "202502253424441 অর্ডার লিং রেজিস্ট্রার চার্জ আপনার কাস্টমার থেকে পেমেন্ট করেছেন 70.00 টাকা।",
-    amount: -70,
-    balance: 1766,
-  },
-  {
-    id: 9,
-    date: "2025-05-24",
-    time: "13:17:20",
-    description: "hjyhgjhj - রিফিল, চার্জ করার হয়েছে।",
-    amount: -120,
-    balance: -103,
-  },
-  {
-    id: 10,
-    date: "2025-04-16",
-    time: "07:45:04",
-    description: "bKash - টাকা উত্তোলন",
-    amount: -491,
-    balance: 17,
-  },
-  {
-    id: 11,
-    date: "2025-04-15",
-    time: "14:55:02",
-    description:
-      "Mojahid - রেজিস্ট্রার হয়েছে, অর্ডার প্রিন্ট 491 টাকা। অর্ডার চার্জ 120 টাকা রিচার্জ। অর্ডার পেমেন্ট 120 টাকা দেয়া।",
-    amount: 491,
-    balance: 508,
-  },
-  {
-    id: 12,
-    date: "2025-03-10",
-    time: "12:26:01",
-    description: "M.h Sohel Rana - রিফিল, চার্জ করার হয়েছে।",
-    amount: 0,
-    balance: 17,
-  },
-  {
-    id: 13,
-    date: "2025-03-02",
-    time: "21:09:14",
-    description:
-      "202503023482394 অর্ডার লিং রেজিস্ট্রার চার্জ আপনার কাস্টমার থেকে পেমেন্ট করেছেন 120.00 টাকা।",
-    amount: -120,
-    balance: 17,
-  },
-  {
-    id: 14,
-    date: "2025-03-02",
-    time: "19:44:15",
-    description: "bKash - টাকা উত্তোলন",
-    amount: -2000,
-    balance: 137,
-  },
-  {
-    id: 15,
-    date: "2025-02-27",
-    time: "19:04:27",
-    description:
-      "Moynul Hasan - রেজিস্ট্রার হয়েছে, অর্ডার প্রিন্ট 301 টাকা। অর্ডার পেমেন্ট 70 টাকা দেয়া।",
-    amount: 371,
-    balance: 2137,
-  },
-  {
-    id: 16,
-    date: "2025-02-25",
-    time: "09:45:08",
-    description:
-      "202502253424441 অর্ডার লিং রেজিস্ট্রার চার্জ আপনার কাস্টমার থেকে পেমেন্ট করেছেন 70.00 টাকা।",
-    amount: -70,
-    balance: 1766,
-  },
-  {
-    id: 17,
-    date: "2025-05-24",
-    time: "13:17:20",
-    description: "hjyhgjhj - রিফিল, চার্জ করার হয়েছে।",
-    amount: -120,
-    balance: -103,
-  },
-  {
-    id: 18,
-    date: "2025-04-16",
-    time: "07:45:04",
-    description: "bKash - টাকা উত্তোলন",
-    amount: -491,
-    balance: 17,
-  },
-  {
-    id: 19,
-    date: "2025-04-15",
-    time: "14:55:02",
-    description:
-      "Mojahid - রেজিস্ট্রার হয়েছে, অর্ডার প্রিন্ট 491 টাকা। অর্ডার চার্জ 120 টাকা রিচার্জ। অর্ডার পেমেন্ট 120 টাকা দেয়া।",
-    amount: 491,
-    balance: 508,
-  },
-  {
-    id: 20,
-    date: "2025-03-10",
-    time: "12:26:01",
-    description: "M.h Sohel Rana - রিফিল, চার্জ করার হয়েছে।",
-    amount: 0,
-    balance: 17,
-  },
-  {
-    id: 21,
-    date: "2025-03-02",
-    time: "21:09:14",
-    description:
-      "202503023482394 অর্ডার লিং রেজিস্ট্রার চার্জ আপনার কাস্টমার থেকে পেমেন্ট করেছেন 120.00 টাকা।",
-    amount: -120,
-    balance: 17,
-  },
-  {
-    id: 22,
-    date: "2025-03-02",
-    time: "19:44:15",
-    description: "bKash - টাকা উত্তোলন",
-    amount: -2000,
-    balance: 137,
-  },
-  {
-    id: 23,
-    date: "2025-02-27",
-    time: "19:04:27",
-    description:
-      "Moynul Hasan - রেজিস্ট্রার হয়েছে, অর্ডার প্রিন্ট 301 টাকা। অর্ডার পেমেন্ট 70 টাকা দেয়া।",
-    amount: 371,
-    balance: 2137,
-  },
-  {
-    id: 24,
-    date: "2025-02-25",
-    time: "09:45:08",
-    description:
-      "202502253424441 অর্ডার লিং রেজিস্ট্রার চার্জ আপনার কাস্টমার থেকে পেমেন্ট করেছেন 70.00 টাকা।",
-    amount: -70,
-    balance: 1766,
-  },
-  {
-    id: 24,
-    date: "2025-05-24",
-    time: "13:17:20",
-    description: "hjyhgjhj - রিফিল, চার্জ করার হয়েছে।",
-    amount: -120,
-    balance: -103,
-  },
-  {
-    id: 25,
-    date: "2025-04-16",
-    time: "07:45:04",
-    description: "bKash - টাকা উত্তোলন",
-    amount: -491,
-    balance: 17,
-  },
-  {
-    id: 26,
-    date: "2025-04-15",
-    time: "14:55:02",
-    description:
-      "Mojahid - রেজিস্ট্রার হয়েছে, অর্ডার প্রিন্ট 491 টাকা। অর্ডার চার্জ 120 টাকা রিচার্জ। অর্ডার পেমেন্ট 120 টাকা দেয়া।",
-    amount: 491,
-    balance: 508,
-  },
-  {
-    id: 27,
-    date: "2025-03-10",
-    time: "12:26:01",
-    description: "M.h Sohel Rana - রিফিল, চার্জ করার হয়েছে।",
-    amount: 0,
-    balance: 17,
-  },
-  {
-    id: 28,
-    date: "2025-03-02",
-    time: "21:09:14",
-    description:
-      "202503023482394 অর্ডার লিং রেজিস্ট্রার চার্জ আপনার কাস্টমার থেকে পেমেন্ট করেছেন 120.00 টাকা।",
-    amount: -120,
-    balance: 17,
-  },
-  {
-    id: 29,
-    date: "2025-03-02",
-    time: "19:44:15",
-    description: "bKash - টাকা উত্তোলন",
-    amount: -2000,
-    balance: 137,
-  },
-  {
-    id: 30,
-    date: "2025-02-27",
-    time: "19:04:27",
-    description:
-      "Moynul Hasan - রেজিস্ট্রার হয়েছে, অর্ডার প্রিন্ট 301 টাকা। অর্ডার পেমেন্ট 70 টাকা দেয়া।",
-    amount: 371,
-    balance: 2137,
-  },
-  {
-    id: 31,
-    date: "2025-02-25",
-    time: "09:45:08",
-    description:
-      "202502253424441 অর্ডার লিং রেজিস্ট্রার চার্জ আপনার কাস্টমার থেকে পেমেন্ট করেছেন 70.00 টাকা।",
-    amount: -70,
-    balance: 1766,
-  },
-  {
-    id: 32,
-    date: "2025-05-24",
-    time: "13:17:20",
-    description: "hjyhgjhj - রিফিল, চার্জ করার হয়েছে।",
-    amount: -120,
-    balance: -103,
-  },
-  {
-    id: 33,
-    date: "2025-04-16",
-    time: "07:45:04",
-    description: "bKash - টাকা উত্তোলন",
-    amount: -491,
-    balance: 17,
-  },
-  {
-    id: 34,
-    date: "2025-04-15",
-    time: "14:55:02",
-    description:
-      "Mojahid - রেজিস্ট্রার হয়েছে, অর্ডার প্রিন্ট 491 টাকা। অর্ডার চার্জ 120 টাকা রিচার্জ। অর্ডার পেমেন্ট 120 টাকা দেয়া।",
-    amount: 491,
-    balance: 508,
-  },
-  {
-    id: 35,
-    date: "2025-03-10",
-    time: "12:26:01",
-    description: "M.h Sohel Rana - রিফিল, চার্জ করার হয়েছে।",
-    amount: 0,
-    balance: 17,
-  },
-  {
-    id: 36,
-    date: "2025-03-02",
-    time: "21:09:14",
-    description:
-      "202503023482394 অর্ডার লিং রেজিস্ট্রার চার্জ আপনার কাস্টমার থেকে পেমেন্ট করেছেন 120.00 টাকা।",
-    amount: -120,
-    balance: 17,
-  },
-  {
-    id: 37,
-    date: "2025-03-02",
-    time: "19:44:15",
-    description: "bKash - টাকা উত্তোলন",
-    amount: -2000,
-    balance: 137,
-  },
-  {
-    id: 38,
-    date: "2025-02-27",
-    time: "19:04:27",
-    description:
-      "Moynul Hasan - রেজিস্ট্রার হয়েছে, অর্ডার প্রিন্ট 301 টাকা। অর্ডার পেমেন্ট 70 টাকা দেয়া।",
-    amount: 371,
-    balance: 2137,
-  },
-  {
-    id: 39,
-    date: "2025-02-25",
-    time: "09:45:08",
-    description:
-      "202502253424441 অর্ডার লিং রেজিস্ট্রার চার্জ আপনার কাস্টমার থেকে পেমেন্ট করেছেন 70.00 টাকা।",
-    amount: -70,
-    balance: 1766,
-  },
-];
 
 interface StatementsProps {
   statements: {
@@ -363,10 +20,6 @@ interface StatementsProps {
 }
 
 export default function BalanceStatement({ statements }: StatementsProps) {
-
-  const filteredTransactions = transactions.filter((transaction) =>
-    transaction.description.toLowerCase()
-  );
 
   const formatAmount = (amount: number) => {
     const isPositive = amount > 0;
@@ -495,7 +148,7 @@ export default function BalanceStatement({ statements }: StatementsProps) {
 
       {/* Mobile/Tablet Card View */}
       <div className="lg:hidden space-y-4">
-        {filteredTransactions.map((transaction) => {
+        {statements.map((transaction) => {
           const amount = formatAmount(transaction.amount);
           return (
             <Card
@@ -506,10 +159,10 @@ export default function BalanceStatement({ statements }: StatementsProps) {
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <div className="font-medium text-gray-900">
-                      {transaction.date}
+                      {format(transaction.createdAt, 'yyyy-MM-dd')}
                     </div>
                     <div className="text-sm text-gray-500">
-                      {transaction.time}
+                      {formatDistanceToNow(transaction.createdAt)}
                     </div>
                   </div>
                   <div className="text-right">
@@ -529,12 +182,12 @@ export default function BalanceStatement({ statements }: StatementsProps) {
                       </Badge>
                     )}
                     <div className="text-sm text-gray-600 mt-1">
-                      Balance: {transaction.balance.toLocaleString()}
+                      Balance: {transaction.walletBalance.toLocaleString()}
                     </div>
                   </div>
                 </div>
                 <div className="text-sm text-gray-700 leading-relaxed">
-                  {transaction.description}
+                  {transaction.details}
                 </div>
               </CardContent>
             </Card>

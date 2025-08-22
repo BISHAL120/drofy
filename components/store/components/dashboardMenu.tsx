@@ -18,102 +18,77 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Link from "next/link";
 
 interface ServiceItem {
   id: string;
-  title: {
-    bn: string;
-    en: string;
-  };
+  title: string;
   icon: React.ReactNode;
   color: string;
   route: string;
+  target?: string;
 }
 
 const topBannerButtons = [
-  { title: { bn: "অফার ডিটেইলস", en: "Offer Details" }, route: "/order-details" },
-  { title: { bn: "টপ সেলিং প্রোডাক্ট", en: "Top Selling Products" }, route: "/top-selling" },
-  { title: { bn: "অ্যাক্টিভ অর্ডারস", en: "Active Orders" }, route: "/update-order" },
-  { title: { bn: "কাস্টমাইজ প্রিন্ট", en: "Customize Print" }, route: "/customize-print" },
+  { title: "অফার ডিটেইলস ", route: "/order-details" },
+  { title: "টপ সেলিং প্রোডাক্ট", route: "/top-selling" },
+  { title: "অ্যাক্টিভ অর্ডারস ", route: "/update-order" },
+  { title: "কাস্টমাইজ প্রিন্ট", route: "/customize-print" },
 ];
 
 const services: ServiceItem[] = [
   {
     id: "1",
-    title: {
-      bn: "সকল প্রোডাক্ট",
-      en: "All Products",
-    },
+    title: "সকল প্রোডাক্ট",
     icon: <Folder className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "store/categories",
   },
   {
     id: "2",
-    title: {
-      bn: "ছবি দিয়ে সার্চ করুন",
-      en: "Search by Image",
-    },
+    title: "ছবি দিয়ে সার্চ করুন",
     icon: <ImageIcon className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "/store/product-search",
   },
   /* {
         id: "2",
-        title: {
-            bn: "প্রোডাক্টের নতুন পোস্ট",
-            en: "New Product Post",
-        },
+        title: "প্রোডাক্টের নতুন পোস্ট",
         icon: <Facebook className="w-8 h-8" />,
         color: "bg-blue-500",
         route: "/facebook-page",
     }, */
   {
     id: "3",
-    title: {
-      bn: "ভেরিফাইড প্রোডাক্ট",
-      en: "Verified Products",
-    },
+    title: "ভেরিফাইড প্রোডাক্ট",
     icon: <Star className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "/store/favorites",
   },
   /*  {
          id: "4",
-         title: {
-            bn: "বুস্টিং প্রোডাক্ট",
-            en: "Boosting Products",
-         },
+         title: "বুস্টিং প্রোডাক্ট",
          icon: <Megaphone className="w-8 h-8" />,
          color: "bg-orange-500",
          route: "/promotion",
      }, */
   {
     id: "5",
-    title: {
-      bn: "সেলস গাইডলাইন",
-      en: "Sales Guidelines",
-    },
+    title: "সেলস গাইডলাইন",
     icon: <Gift className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "/store/guide-line",
   },
-  {
-    id: "6",
-    title: {
-      bn: "প্যাসিভ ইনকাম",
-      en: "Passive Income",
+ {
+        id: "6",
+        title: "প্যাসিভ ইনকাম",
+        icon: <UserPlus2 className="w-8 h-8" />,
+        color: "bg-emerald-500",
+        route: "/store/pasive-income",
     },
-    icon: <UserPlus2 className="w-8 h-8" />,
-    color: "bg-emerald-500",
-    route: "/store/pasive-income",
-  },
-  /*  {
+    /*  {
         id: "7",
-        title: {
-            bn: "ডিজিটাল পেমেন্ট",
-            en: "Digital Payment",
-        },
+        title: "ডিজিটাল পেমেন্ট",
         icon: <CreditCard className="w-8 h-8" />,
         color: "bg-blue-500",
         route: "/payment",
@@ -155,43 +130,32 @@ const services: ServiceItem[] = [
     }, */
   {
     id: "13",
-    title: {
-      bn: "ব্যালেন্স স্টেটমেন্ট",
-      en: "Balance Statement",
-    },
+    title: "ব্যালেন্স স্টেটমেন্ট",
     icon: <HelpCircle className="w-8 h-8" />,
     color: "bg-emerald-500",
     route: "/store/balance",
   },
   {
     id: "14",
-    title: {
-      bn: "টেলিগ্রাম সাপোর্ট গ্রুপ",
-      en: "Telegram Support Group",
-    },
+    title: "টেলিগ্রাম সাপোর্ট গ্রুপ",
     icon: <CheckCircle className="w-8 h-8" />,
     color: "bg-emerald-500",
-    route: "#",
+    route: "https://t.me/restockbd",
+    target: "_blank",
   },
   {
     id: "15",
-    title: {
-      bn: "সাপোর্ট সেন্টার",
-      en: "Support Center",
-    },
+    title: "সাপোর্ট সেন্টার",
     icon: <Headphones className="w-8 h-8" />,
     color: "bg-emerald-500",
-    route: "/store/support",
+    route: "https://www.facebook.com/restockbdofficial",
+    target: "_blank",
   },
 ];
 
 export function DashboardMenu() {
   const router = useRouter();
-  const [showMobileBanner, setShowMobileBanner] = useState(true);
-
-  const handleServiceClick = (route: string) => {
-    router.push(route);
-  };
+  const [showMobileBanner, setShowMobileBanner] = useState(false);
 
   const handleBannerClick = (route: string) => {
     router.push(route);
@@ -201,7 +165,7 @@ export function DashboardMenu() {
     <div className="w-full h-full max-w-7xl mx-auto p-4 space-y-6">
       {/* Mobile Promotional Banner */}
       {showMobileBanner && (
-        <div className="relative">
+        <div className=" relative">
           <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white p-6 rounded-xl shadow-lg overflow-hidden">
             <Button
               variant="ghost"
@@ -214,24 +178,16 @@ export function DashboardMenu() {
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <h3 className="text-lg font-bold mb-1">
-                  {process.env.LANGUAGE === 'bn' 
-                    ? "এই ঈদে টপ ৩০ জন সেলার পাবেন সর্বোচ্চ"
-                    : "This Eid, top 30 sellers will receive maximum"}
+                  এই ঈদে টপ ৩০ জন সেলার পাবেন সর্বোচ্চ
                 </h3>
                 <p className="text-2xl font-bold text-yellow-300">
-                  {process.env.LANGUAGE === 'bn'
-                    ? "৫০ হাজার টাকা বোনাস"
-                    : "50 thousand taka bonus"}
+                  ৫০ হাজার টাকা বোনাস
                 </p>
                 <p className="text-sm opacity-90 mt-1">
-                  {process.env.LANGUAGE === 'bn'
-                    ? "ক্যাম্পেইনে অংশগ্রহণ করে আজই ঈদ বোনাস পান"
-                    : "Participate in the campaign and get Eid bonus today"}
+                  ক্যাম্পেইনে অংশগ্রহণ করে আজই ঈদ বোনাস পান
                 </p>
                 <p className="text-xs opacity-75 mt-2">
-                  {process.env.LANGUAGE === 'bn'
-                    ? "এখন টপ ৩০ জন সেলার পাবেন কর্পোরেট গিফট ও আকর্ষণীয় পুরস্কার"
-                    : "Now top 30 sellers will receive corporate gifts and attractive prizes"}
+                  এখন টপ ৩০ জন সেলার পাবেন কর্পোরেট গিফট ও আকর্ষণীয় পুরস্কার
                 </p>
               </div>
               <div className="flex-shrink-0 ml-4">
@@ -254,7 +210,7 @@ export function DashboardMenu() {
                 onClick={() => handleBannerClick(button.route)}
                 className="bg-orange-500 hover:bg-orange-600 text-white py-4 px-6 rounded-lg font-medium text-sm md:text-base transition-all duration-200 hover:shadow-lg hover:scale-105 group"
               >
-                {process.env.LANGUAGE === 'bn' ? button.title.bn : button.title.en}
+                {button.title}
                 <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             ))}
@@ -263,20 +219,25 @@ export function DashboardMenu() {
           {/* Service Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {services.map((service) => (
-              <Card
-                key={service.id}
-                className={`${service.color} hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer group border-0`}
-                onClick={() => handleServiceClick(service.route)}
+              <Link
+              href={service.route}
+              target={service.target}
+              key={service.id}
               >
+              <Card
+                className={`${service.color} hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer group border-0`}
+               
+                >
                 <div className="p-6 text-center text-white">
                   <div className="flex justify-center mb-3 group-hover:scale-110 transition-transform duration-200">
                     {service.icon}
                   </div>
                   <h3 className="font-semibold text-sm leading-tight">
-                    {process.env.LANGUAGE === 'bn' ? service.title.bn : service.title.en}
+                    {service.title}
                   </h3>
                 </div>
               </Card>
+                </Link>
             ))}
           </div>
         </div>

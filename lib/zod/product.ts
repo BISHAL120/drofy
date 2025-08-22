@@ -9,7 +9,10 @@ export const productSchema = z.object({
     cost: z.string({ required_error: "Making cost is required" }).min(1, { message: "Cost is required" }),
     sellingPrice: z.string({ required_error: "Selling price is required" }).min(1, { message: "Selling price is required" }),
     deliveryCharge: z.string().min(1, { message: "Delivery charge is required" }),
-    variant: z.array(z.object({ variantType: z.enum(["XS", "S", "M", "L", "XL", "XXL", "XXXL"]), stock: z.number() }), { required_error: "Variant is required, Please select at least one variant" }),
+    variant: z.array(z.object({
+        variantType: z.enum(["XS", "S", "M", "L", "XL", "XXL", "XXXL"]),
+        stock: z.number()
+    })).optional(),
     videoUrl: z.array(z.object({ videoUrl: z.string() })).optional(),
     ratings: z.string().optional(),
     stock: z.string().optional(),

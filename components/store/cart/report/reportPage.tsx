@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import axios from "axios";
 import { TriangleAlert } from "lucide-react";
 import Image from "next/image";
@@ -86,7 +86,7 @@ const ReportPage = () => {
         });
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("subscription or payment expired!", {
+      toast.error("দুঃখিত, ডেটা লোড করা যায়নি", {
         duration: 5000,
         icon: <TriangleAlert className="h-4 w-4" />,
         style: {
@@ -126,7 +126,7 @@ const ReportPage = () => {
             <div className="flex justify-center items-center space-x-2">
               <Image
                 src="/assets/logo.webp"
-                alt="Drofy"
+                alt="Restock BD"
                 unoptimized
                 width={40}
                 height={40}
@@ -256,21 +256,19 @@ const ReportPage = () => {
                 </div>
 
                 {/* Courier Tabs */}
-                <div className="flex justify-between border-b border-gray-200 text-sm">
-                  <button className="px-4 py-2 font-medium border-b-2 border-blue-500">
-                    কুরিয়ার
-                  </button>
-                  <button className="px-4 py-2 text-gray-500">অর্ডার</button>
-                  <button className="px-4 py-2 text-gray-500">ডেলিভারি</button>
-                  <button className="px-4 py-2 text-gray-500">বাতিল</button>
-                  <button className="px-4 py-2 text-gray-500">
-                    ডেলিভারি হার
-                  </button>
-                </div>
-
-                {/* Courier Data Table */}
                 <div className="overflow-x-auto">
                   <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="font-medium">কুরিয়ার</TableHead>
+                        <TableHead className="text-center">অর্ডার</TableHead>
+                        <TableHead className="text-center">ডেলিভারি</TableHead>
+                        <TableHead className="text-center">বাতিল</TableHead>
+                        <TableHead className="text-center">
+                          ডেলিভারি হার
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
                     <TableBody>
                       {Object.entries(searchResults.apis).map(
                         ([key, courier]) => (

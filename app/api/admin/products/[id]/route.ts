@@ -99,7 +99,11 @@ export async function DELETE(
 
         // Find the product first
         const product = await db.product.findUnique({
-            where: { id }
+            where: { id },
+            select: {
+                isDeleted: true,
+                status: true,
+            }
         })
 
         if (!product) {

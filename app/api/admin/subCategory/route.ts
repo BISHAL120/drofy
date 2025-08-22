@@ -118,6 +118,9 @@ export async function DELETE(request: Request) {
         const isProductExist = await db.product.findFirst({
             where: {
                 subCategoryId: id
+            },
+            select: {
+                id: true,
             }
         });
 

@@ -40,21 +40,21 @@ import { Separator } from "./separator";
 import AdminButton from "../auth/adminButton";
 
 const menuItems = [
-  { icon: Home, label: { bn: "হোম", en: "Home" }, href: "/store" },
-  { icon: User, label: { bn: "প্রোফাইল", en: "Profile" }, href: "/store/profile" },
+  { icon: Home, label: "হোম", href: "/store" },
+  { icon: User, label: "প্রোফাইল", href: "/store/profile" },
   // { icon: FileText, label: "নতুন পোস্ট", href: "/store/posts" },
-  { icon: Folder, label: { bn: "সকল প্রোডাক্ট", en: "All Products" }, href: "/store/categories" },
+  { icon: Folder, label: "সকল প্রোডাক্ট", href: "/store/categories" },
   // { icon: Video, label: "প্রোডাক্টের ভিডিও", href: "/store#" },
-  { icon: Heart, label: { bn: "ফেভরিট প্রোডাক্ট", en: "Favorite Products" }, href: "/store/favorites" },
-  { icon: Clock, label: { bn: "স্টকআউট প্রোডাক্ট", en: "Stock Out Products" }, href: "/store/stock-out" },
-  { icon: List, label: { bn: "অর্ডার লিস্ট", en: "Order List" }, href: "/store/orders" },
-  { icon: List, label: { bn: "অ্যাক্টিভ অর্ডার", en: "Active Orders" }, href: "/store/active-orders" },
-  { icon: ShoppingCart, label: { bn: "কার্ট লিস্ট", en: "Cart List" }, href: "/store/cart" },
-  { icon: BarChart2, label: { bn: "সেলস & প্রফিট", en: "Sales & Profit" }, href: "/store/sales-profit" },
-  { icon: FileCheck, label: { bn: "ব্যালেন্স স্টেটমেন্ট", en: "Balance Statement" }, href: "/store/balance" },
-  { icon: CreditCard, label: { bn: "অ্যাড একাউন্ট", en: "Add Account" }, href: "/store/paymentMethod" },
-  { icon: CreditCard, label: { bn: "টাকা উত্তোলন", en: "Withdraw Money" }, href: "/store/withdraw" },
-  { icon: HelpCircle, label: { bn: "সাপোর্ট টিকেট", en: "Support Ticket" }, href: "/store/support" },
+  { icon: Heart, label: "ফেভরিট প্রোডাক্ট", href: "/store/favorites" },
+  { icon: Clock, label: "স্টকআউট প্রোডাক্ট", href: "/store/stock-out" },
+  { icon: List, label: "অর্ডার লিস্ট", href: "/store/orders" },
+  { icon: List, label: "অ্যাক্টিভ অর্ডার", href: "/store/active-orders" },
+  { icon: ShoppingCart, label: "কার্ট লিস্ট", href: "/store/cart" },
+  { icon: BarChart2, label: "সেলস & প্রফিট", href: "/store/sales-profit" },
+  { icon: FileCheck, label: "ব্যালেন্স স্টেটমেন্ট", href: "/store/balance" },
+  { icon: CreditCard, label: "অ্যাড একাউন্ট", href: "/store/paymentMethod" },
+  { icon: CreditCard, label: "টাকা উত্তোলন", href: "/store/withdraw" },
+  { icon: HelpCircle, label: "সাপোর্ট টিকেট", href: "/store/support" },
 ];
 
 export function AppSidebar() {
@@ -68,10 +68,10 @@ export function AppSidebar() {
             <SidebarMenu>
               <Link
                 href="/store"
-                className="flex justify-center items-center h-16 overflow-hidden border-blue-500 bg-[#bbddd8] border-b "
+                className="flex justify-center items-center h-14 overflow-hidden border-blue-500 bg-[#bbddd8] border-b "
               >
                 <Image
-                  src="/assets/logo.png"
+                  src="/assets/logo.webp"
                   alt="Your Logo"
                   width={200}
                   height={50}
@@ -104,9 +104,7 @@ export function AppSidebar() {
                         }`}
                       />
                       <span className="font-semibold text-base">
-                        {process.env.LANGUAGE === "bn"
-                          ? item.label.bn
-                          : item.label.en}
+                        {item.label}
                       </span>
                     </Link>
                   </SidebarMenuItem>
@@ -168,11 +166,7 @@ export function MobileSidebar() {
                                 : "text-primary"
                             }`}
                           />
-                          <span>
-                            {process.env.LANGUAGE === "bn"
-                              ? item.label.bn
-                              : item.label.en}
-                          </span>
+                          <span>{item.label}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

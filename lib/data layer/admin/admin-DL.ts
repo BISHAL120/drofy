@@ -24,6 +24,7 @@ export const getAllCategories = async () => {
                 select: {
                     id: true,
                     isActive: true,
+                    isFeatured: true,
                     name: true,
                     productCount: true
                 }
@@ -180,7 +181,7 @@ export const getProduct = async (id: string) => {
 }
 
 export const getDeletedProducts = async (currentPage: number) => {
-   await isAdmin();
+    await isAdmin();
     const products = await db.product.findMany({
         where: {
             isDeleted: true
@@ -239,7 +240,7 @@ export const getAllResellers = async ({
     status: string,
     currentPage: number
 }) => {
-   await isAdmin();
+    await isAdmin();
     interface WhereClause {
         status?: UserStatus;
         resellerLevel?: ResellerLevel;
@@ -312,7 +313,7 @@ export const getAllResellers = async ({
 }
 
 export const getNewResellers = async ({ search }: { search: string }) => {
-   await isAdmin();
+    await isAdmin();
     const resellers = await db.user.findMany({
         where: {
             isActive: false,
@@ -358,7 +359,7 @@ export const getNewResellers = async ({ search }: { search: string }) => {
 }
 
 export const getResellerById = async (id: string) => {
-   await isAdmin();
+    await isAdmin();
     const reseller = await db.user.findUnique({
         where: {
             id: id
@@ -410,7 +411,7 @@ export const getAllOrders = async ({
     status: string,
     payment: string
 }) => {
-   await isAdmin();
+    await isAdmin();
 
     interface WhereClauseProps {
         status?: OrderStatus;
@@ -541,4 +542,51 @@ export const getOrderDetailsById = async (id: string) => {
     })
 
     return order
+}
+
+export const getWithdrawRequests = async () => {
+    await isAdmin();
+    const requests = await db.withdrawalRequest.findMany({
+        orderBy: {
+            createdAt: 'desc'
+        },
+        select: {
+            id: true,
+            requestId: true,
+            number: true,
+            reseller: {
+                select: {
+                    name: true,
+                    profileImage: true,
+                }
+            },
+            amount: true,
+            status: true,
+            createdAt: true,
+            processedDate: true,
+            method: true,
+        }
+    })
+    return requests;
+}
+
+export const getPendingRequest = async () => {
+    await isAdmin();
+    const currentMonth = new Date().getMonth() + 1;
+
+    const result = await db.withdrawalRequest.findMany({
+        where: {
+            status: "PENDING",
+            createdAt: {
+                gte: new Date(new Date().getFullYear(), currentMonth - 1, 1),
+                lte: new Date(new Date().getFullYear(), currentMonth, 0),
+            }
+        },
+        select: {
+            id: true,
+            amount: true,
+        }
+    })
+
+    return result
 }

@@ -14,6 +14,7 @@ import {
   FolderTree,
   Star,
   Headphones,
+  Layout,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -143,6 +144,24 @@ const supportMenuItems = [
     ],
   },
 ];
+
+const contentMenuItems = [
+  {
+    title: "Content Management",
+    url: "/content",
+    icon: Layout,
+    subItems: [
+      {
+        title: "All Content",
+        url: "/admin/content",
+      },
+      {
+        title: "Add Content",
+        url: "/admin/content/new",
+      },
+    ],
+  },
+]
 
 const financeMenuItems = [
   {
@@ -349,6 +368,57 @@ export function AdminSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {supportMenuItems.map((item) => (
+                <Collapsible
+                  key={item.title}
+                  defaultOpen={hasActiveSubItem(item.subItems || [])}
+                >
+                  <SidebarMenuItem>
+                    {item.subItems ? (
+                      <>
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuButton isActive={isActive(item.url)}>
+                            <item.icon className="h-4 w-4" />
+                            <span>{item.title}</span>
+                          </SidebarMenuButton>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <SidebarMenuSub>
+                            {item.subItems.map((subItem) => (
+                              <SidebarMenuSubItem key={subItem.title}>
+                                <SidebarMenuSubButton
+                                  asChild
+                                  isActive={pathname === subItem.url}
+                                >
+                                  <Link href={subItem.url}>
+                                    <span>{subItem.title}</span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            ))}
+                          </SidebarMenuSub>
+                        </CollapsibleContent>
+                      </>
+                    ) : (
+                      <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                        <Link href={item.url}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    )}
+                  </SidebarMenuItem>
+                </Collapsible>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Content Management */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Content Management</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {contentMenuItems.map((item) => (
                 <Collapsible
                   key={item.title}
                   defaultOpen={hasActiveSubItem(item.subItems || [])}

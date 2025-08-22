@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ImageObj } from "@prisma/client";
 
 export interface FeaturedContentProps {
+  isActive: boolean | undefined;
   featuredContent: {
     name: string;
     id: string;
@@ -21,7 +22,7 @@ export interface FeaturedContentProps {
   }[];
 }
 
-const FeaturedSection = ({ featuredContent }: FeaturedContentProps) => {
+const FeaturedSection = ({ isActive, featuredContent }: FeaturedContentProps) => {
   if (featuredContent.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-4">
@@ -83,7 +84,11 @@ const FeaturedSection = ({ featuredContent }: FeaturedContentProps) => {
               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {category.products.length > 0 ? (
                   category.products.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard
+                      isActive={isActive}
+                      key={product.id}
+                      product={product}
+                    />
                   ))
                 ) : (
                   <p className="text-center py-10 text-gray-500 col-span-full">

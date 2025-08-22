@@ -181,21 +181,22 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
   };
 
   return (
-    <div className="p-4 mb-20 lg:p-6 max-w-[1400px] mx-auto">
+    <div className="md:p-4 mb-20 lg:p-6 max-w-[1400px] mx-auto">
       {product?.note && (
         <div className="py-2 px-4 mb-3 rounded-sm font-semibold text-center bg-emerald-300">
           {product?.note}
         </div>
       )}
-      <div className="grid md:grid-cols-2 gap-8 bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="grid lg:grid-cols-2 gap-8 bg-white rounded-xl shadow-sm">
         {/* Left side - Product Image */}
-        <div className="flex flex-col items-center p-4">
-          <div className="relative w-full max-w-md aspect-[3/4] mb-4">
+        <div className="flex flex-col items-center py-3 md:p-4">
+          <div className="relative w-full max-w-md lg:aspect-[3/4] mb-4">
             <Image
               src={product?.images[0].imageUrl || ""}
               alt={`${product?.name}`}
-              fill
-              className="object-cover rounded-md"
+              width={600}
+              height={600}
+              className="w-full h-[300px] md:h-[400px] xl:w-[800px] object-contain rounded-md"
               priority
             />
           </div>
@@ -227,10 +228,10 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
         {/* Right side - Product Details */}
         <div className="p-4 lg:p-6">
-          <h1 className="text-2xl font-bold mb-4">{product?.name}</h1>
+          <h1 className="text-2xl text-wrap font-bold mb-4">{product?.name}</h1>
           <p className="text-gray-600 mb-6">{product?.shortDescription}</p>
           {/* Price */}
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-wrap items-center justify-between mb-3">
             <h2 className="text-lg font-medium">
               প্রাইস:{" "}
               {product?.discountPrice
@@ -273,67 +274,69 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
           <div className="border-t border-b py-2 my-2 ">
             <p className="font-medium mb-4">{product?.sku}</p>
-            <div className="mb-6">
-              <p className="mb-3 font-medium text-lg">সাইজ:</p>
-              <RadioGroup
-                value={selectedSize}
-                onValueChange={(value) => {
-                  setSelectedSize(value);
-                  // Reset quantity when size changes
-                  setQuantity(1);
-                }}
-                className="flex gap-4"
-              >
-                {product?.variant.map((size, idx) => (
-                  <div className="flex items-center space-x-1.5" key={idx}>
-                    <RadioGroupItem
-                      value={size.variantType}
-                      id={`size-${size.variantType}`}
-                      className={`h-5 w-5 ${
-                        size.stock <= 0 ? "cursor-not-allowed" : ""
-                      }`}
-                      disabled={size.stock <= 0}
-                    />
-                    <Label
-                      htmlFor={`size-${size.variantType}`}
-                      onClick={() =>
-                        size.stock === 0 &&
-                        toast.error("সাইজের স্টক শেষ!", {
-                          duration: 5000,
-                          icon: <TriangleAlert className="h-4 w-4" />,
-                          style: {
-                            borderRadius: "6px",
-                            background: "red",
-                            color: "white",
-                            border: "1px solid #ff0000",
-                            fontSize: "16px",
-                            fontWeight: "bold",
-                          },
-                        })
-                      }
-                      className={`text-base ${
-                        size.stock <= 0
-                          ? "cursor-not-allowed text-gray-400"
-                          : ""
-                      }`}
-                    >
-                      {size.variantType}{" "}
-                      <span
-                        className={`text-sm ${size.stock <= 0 ? "text-gray-500" : "text-black"}`}
+            {product?.variant.length ? (
+              <div className="mb-6">
+                <p className="mb-3 font-medium text-lg">সাইজ:</p>
+                <RadioGroup
+                  value={selectedSize}
+                  onValueChange={(value) => {
+                    setSelectedSize(value);
+                    // Reset quantity when size changes
+                    setQuantity(1);
+                  }}
+                  className="flex gap-4"
+                >
+                  {product?.variant.map((size, idx) => (
+                    <div className="flex items-center space-x-1.5" key={idx}>
+                      <RadioGroupItem
+                        value={size.variantType}
+                        id={`size-${size.variantType}`}
+                        className={`h-5 w-5 ${
+                          size.stock <= 0 ? "cursor-not-allowed" : ""
+                        }`}
+                        disabled={size.stock <= 0}
+                      />
+                      <Label
+                        htmlFor={`size-${size.variantType}`}
+                        onClick={() =>
+                          size.stock === 0 &&
+                          toast.error("সাইজের স্টক শেষ!", {
+                            duration: 5000,
+                            icon: <TriangleAlert className="h-4 w-4" />,
+                            style: {
+                              borderRadius: "6px",
+                              background: "red",
+                              color: "white",
+                              border: "1px solid #ff0000",
+                              fontSize: "16px",
+                              fontWeight: "bold",
+                            },
+                          })
+                        }
+                        className={`text-base ${
+                          size.stock <= 0
+                            ? "cursor-not-allowed text-gray-400"
+                            : ""
+                        }`}
                       >
-                        (
-                        {convertToBengaliNumber(
-                          size.stock <= 0 ? 0 : size.stock
-                        )}{" "}
-                        পিস)
-                      </span>
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
-            </div>
+                        {size.variantType}{" "}
+                        <span
+                          className={`text-sm ${size.stock <= 0 ? "text-gray-500" : "text-black"}`}
+                        >
+                          (
+                          {convertToBengaliNumber(
+                            size.stock <= 0 ? 0 : size.stock
+                          )}{" "}
+                          পিস)
+                        </span>
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
+            ) : null}
 
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className={`${product?.variant.length ? null : "mt-20"} grid grid-cols-2 gap-4 mb-4`}>
               <div>
                 <p className="mb-2 font-medium">পরিমাণ/পিস</p>
                 <Input
@@ -474,6 +477,45 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             )
         )}
+      </div>
+      {/* Product Images */}
+      <div className="mt-8 bg-white rounded-xl">
+        <div className="flex justify-between items-center mb-10">
+          <h3 className="text-xl font-semibold">সকল ছবি</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {product.images?.slice(1, product.images.length).map(
+            (image: { imageUrl: string }, index: number) =>
+              image.imageUrl && (
+                <div
+                  key={index}
+                  className="group relative overflow-hidden rounded-xl shadow-md transition-transform duration-300 hover:scale-105"
+                >
+                  <div className="aspect-square w-full relative">
+                    <Image
+                      src={image.imageUrl}
+                      alt={`Product image ${index + 1}`}
+                      fill
+                      className="object-contain transition-all duration-300"
+                      priority={index === 0}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
+                    <div className="absolute inset-0 bg-black/5 transition-opacity duration-300">
+                      <Button
+                        asChild
+                        variant="ghost"
+                        className="absolute top-2 right-2 bg-slate-700 text-white shadow-sm"
+                      >
+                        <Link href={image.imageUrl}>
+                          <Download className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )
+          )}
+        </div>
       </div>
     </div>
   );

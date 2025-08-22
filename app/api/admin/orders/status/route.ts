@@ -42,14 +42,15 @@ export async function PATCH(req: Request) {
         })
 
         // find the user wallet
-        const userWallet = await db.user.findUnique({
+        // TODO: Active when payment i automated
+        /* const userWallet = await db.user.findUnique({
             where: {
                 id: order.resellerId
             },
             select: {
                 wallet: true
             }
-        })
+        }) */
 
 
         // Uncomment for auto profit distribution
@@ -94,7 +95,8 @@ export async function PATCH(req: Request) {
             })
 
             // Add a transactio history
-            await db.walletTransaction.create({
+            // TODO: active when automation is on for payment
+           /*  await db.walletTransaction.create({
                 data: {
                     userId: order.resellerId,
                     amount: -20,
@@ -102,7 +104,7 @@ export async function PATCH(req: Request) {
                     details: `রিটার্ন, চার্জ কর্তন হয়েছে। কাস্টমারের নাম: ${order.customerName}`,
                     walletBalance: (userWallet?.wallet as number) - 20
                 }
-            })
+            }) */
         }
 
         return NextResponse.json(

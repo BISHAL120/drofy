@@ -25,7 +25,7 @@ export default async function StoreLayout({
         <div className="flex w-full min-h-screen relative">
           <AppSidebar />
           <SidebarInset className="flex flex-col">
-            <header className="flex h-16 items-center justify-between gap-4  sticky top-0 z-50 px-2 md:px-6 bg-[#bbddd8] border-b border-blue-500">
+            <header className="flex h-14 items-center justify-between gap-4  sticky top-0 z-50 px-2 md:px-6 bg-[#bbddd8] border-b border-blue-500">
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2 h-full">
                   <SidebarTrigger className="hidden md:flex border bg-slate-700 text-white cursor-pointer" />
@@ -41,6 +41,7 @@ export default async function StoreLayout({
                 </div>
                 <CartButton />
                 <WaletBalance />
+                {/* <UserButton /> */}
               </div>
             </header>
             <main className="flex-1">

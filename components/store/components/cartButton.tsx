@@ -8,6 +8,9 @@ import React from "react";
 const CartButton = () => {
   const cart = useCart();
   const itemCount = cart.items.length;
+  if (itemCount === 0) {
+    return null;
+  }
 
   return (
     <Link 

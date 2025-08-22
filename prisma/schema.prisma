@@ -268,7 +268,7 @@ model WithdrawalRequest {
   method        String
   amount        Float
   number        String
-  processedDate String?
+  processedDate DateTime?
   note          String?
   status        WithdrawalStatus @default(PENDING)
   reseller      User             @relation(fields: [resellerId], references: [id])

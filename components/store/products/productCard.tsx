@@ -20,9 +20,10 @@ interface ProductCardProps {
     discountPrice: number | null;
     createdAt: Date;
   };
+  isActive?: boolean;
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
+const ProductCard = ({ isActive, product }: ProductCardProps) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   const toggleWishlist = () => {
@@ -52,7 +53,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <div>
-      <Card className="overflow-hidden p-0 transition-all duration-300 border-none hover:shadow-xl hover:shadow-indigo-300 group">
+      <Card className="overflow-hidden gap-3 lg:gap-6 p-0 transition-all duration-300 border-none hover:shadow-xl hover:shadow-indigo-300 group">
         <div className="relative">
           <Link href={`/store/products/${product.id}`}>
             <Image
@@ -60,7 +61,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               alt={product.name}
               width={210}
               height={210}
-              className="w-full h-[210px] object-cover"
+              className="w-full h-[150px] md:h-[180px] lg:h-[210px] object-cover"
             />
           </Link>
 
@@ -80,7 +81,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             return null;
           })()}
 
-          <div className="absolute top-2 right-2 flex space-x-2">
+          <div className="hidden absolute top-2 right-2 md:flex items-center space-x-2">
             <button
               onClick={toggleWishlist}
               className="bg-white rounded-full p-1.5 shadow-md hover:bg-gray-100 transition-colors"
@@ -100,14 +101,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
             </div>
           </div>
         </div>
-        <CardContent className="p-3">
+        <CardContent className="p-1 md:p-3">
           <h3 className="font-medium text-sm line-clamp-2 mb-1 hover:underline ">
             <Link href={"/store/products/product"} className="w-fit">
-              {product.name}
+              {product.name.length > 16 ? product.name.slice(0, 16) + "..." : product.name} 
             </Link>
           </h3>
 
-          {
+          {isActive && (
             <div className="flex items-center justify-between">
               <div className="w-full flex items-center justify-between gap-2">
                 <div className="text-sm font-medium text-gray-600">মূল্য:</div>
@@ -126,7 +127,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 </div>
               </div>
             </div>
-          }
+          )}
           <div>
             <div className="flex justify-between items-center mt-3 gap-2">
               <Button
@@ -135,7 +136,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 className="flex-1 h-9 hover:border-orange-500 hover:bg-orange-100 transition-colors duration-300"
               >
                 <Link href={product.images[0].imageUrl}>
-                  <Download size={16} className="mr-1" />
+                  <Download size={16} className="sm:mr-1" />
                 </Link>
               </Button>
 
@@ -150,7 +151,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               >
                 <Heart
                   size={16}
-                  className={`mr-1 ${
+                  className={`sm:mr-1 ${
                     isWishlisted ? "fill-orange-500 text-orange-500" : ""
                   }`}
                 />

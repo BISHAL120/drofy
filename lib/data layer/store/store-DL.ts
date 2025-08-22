@@ -7,15 +7,23 @@ export const getUserDetails = async (id: string) => {
         },
         select: {
             id: true,
-            name: true,
             phone: true,
-            companyName: true,
+            name: true,
             email: true,
             district: true,
             address: true,
+            companyName: true,
+            profileImage: true,
+            wallet: true,
+            orderCount: true,
+            totalRevenue: true,
+            resellerLevel: true,
+            referralCode: true,
+            verified: true,
+            isActive: true,
         }
     })
-
+    
     return userDetails;
 }
 
@@ -80,7 +88,9 @@ export const getStoreProducts = async (subCatId: string | undefined) => {
 export const getProductDetails = async (id: string) => {
     const product = await db.product.findUnique({
         where: {
-            id: id
+            id: id,
+            isDeleted: false,
+            status: "ACTIVE"
         },
         select: {
             id: true,
@@ -119,7 +129,7 @@ export const getProductDetails = async (id: string) => {
 export const getFeaturedContent = async () => {
     const result = await db.subCategory.findMany({
         where: {
-            isActive: true,
+            // isActive: true,
             isFeatured: true,
         },
         select: {
@@ -149,8 +159,8 @@ export const getFeaturedContent = async () => {
     return result
 }
 
-export const getFeaturedCategory = async () => {
-    const result = await db.category.findMany({
+export const getFeaturedSubCategory = async () => {
+    const result = await db.subCategory.findMany({
         where: {
             isActive: true,
             isFeatured: true,

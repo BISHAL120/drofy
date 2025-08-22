@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import ProductGridWithTittle from "@/components/shared/productGridWithTittle";
 import InvalidIdError from "@/components/store/components/invalidIdError";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,8 @@ const Page = async ({
   }
 
   const products = await getStoreProducts(id);
+  const session = await auth()
+  const isActive = session?.user.isActive ?? false;
 
   if (!id || products.length === 0) {
     return (
@@ -74,6 +77,7 @@ const Page = async ({
         <ProductGridWithTittle
           products={products}
           title={products[0]?.SubCategory?.name}
+          isActive={isActive}
         />
       </div>
     </div>

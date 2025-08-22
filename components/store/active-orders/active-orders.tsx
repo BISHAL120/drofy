@@ -3,19 +3,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { OrderStatus } from "@prisma/client";
 import { format } from "date-fns";
 import {
   Calendar,
-  ChevronDown,
   Clock,
   Eye,
   Hash,
@@ -89,7 +81,6 @@ export default function ActiveOrders({
 }: {
   activeOrders: OrderProps[];
 }) {
-  const [selectedFilter, setSelectedFilter] = useState("all");
 
   const totalOrders = activeOrders.length;
   const totalValue = activeOrders.reduce(
@@ -175,9 +166,9 @@ export default function ActiveOrders({
             </div>
           </div>
         </div>
-
+        <Separator className="my-6" />
         {/* Filters */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <div className="bg-white rounded-xl p-4 shadow-sm border border-orange-100">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
@@ -204,7 +195,7 @@ export default function ActiveOrders({
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Orders List */}
         <div className="space-y-4">

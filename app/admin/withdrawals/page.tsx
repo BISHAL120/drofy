@@ -1,10 +1,14 @@
 import AllWithdrawalsPage from '@/components/admin/withdrawals/allWithdrawals'
-import React from 'react'
+import { getPendingRequest, getWithdrawRequests } from '@/lib/data layer/admin/admin-DL'
 
-const Page = () => {
+const Page = async () => {
+  const allrequests = await getWithdrawRequests()
+  const pendingRequests = await getPendingRequest()
+  
+
   return (
     <div>
-      <AllWithdrawalsPage />
+      <AllWithdrawalsPage pendingRequests={pendingRequests} requests={allrequests} />
     </div>
   )
 }

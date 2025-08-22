@@ -85,15 +85,13 @@ export default function WithdrawPage({ userId }: { userId: string }) {
       })
       .then((res) => {
         toast.dismiss();
-        router.push("/store/balance");
+        // router.push("/store/balance");
         toast.success(res.data.message, {
           duration: 5000
         });
         setLoading(false);
         form.reset();
-        setTimeout(() => {
-          router.refresh();
-        }, 1000);
+        
       })
       .catch((err) => {
         toast.dismiss();
@@ -116,9 +114,9 @@ export default function WithdrawPage({ userId }: { userId: string }) {
   }
 
   const watchedValues = form.watch();
-  const selectedMethod = paymentMethods.find(
+/*   const selectedMethod = paymentMethods.find(
     (m) => m.id === watchedValues.paymentType
-  );
+  ); */
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 flex flex-col gap-10 items-center justify-center">
@@ -231,7 +229,7 @@ export default function WithdrawPage({ userId }: { userId: string }) {
                 />
               </div>
 
-              {/* Number INput Value */}
+              {/* Account Number Input */}
               <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-300">
                 <FormField
                   control={form.control}
@@ -240,12 +238,12 @@ export default function WithdrawPage({ userId }: { userId: string }) {
                     <FormItem>
                       <FormLabel className="text-lg font-semibold text-slate-800">
                         {" "}
-                        বিকাশ নাম্বার
+                        অ্যাকাউন্ট নাম্বার
                       </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
-                          placeholder="Enter bkash number"
+                          placeholder="Enter account number"
                           maxLength={11}
                           className="pl-8 h-14 text-lg border-2 focus:border-violet-500 rounded-xl"
                         />
@@ -268,7 +266,7 @@ export default function WithdrawPage({ userId }: { userId: string }) {
                       <div className="flex justify-between">
                         <span>উত্তোলনের মাধ্যম:</span>
                         <span className="font-medium">
-                          {selectedMethod?.name}
+                          {watchedValues?.paymentType}
                         </span>
                       </div>
                       <div className="flex justify-between">
@@ -286,7 +284,7 @@ export default function WithdrawPage({ userId }: { userId: string }) {
                       <div className="flex justify-between ">
                         <span>ফি:</span>
                         <span className="font-medium">
-                          ৳{selectedMethod?.fee}
+                          ৳{paymentMethods.find((method) => method.id === watchedValues.paymentType)?.fee}
                         </span>
                       </div>
                       <div className="flex justify-between border-violet-200 pt-2 mt-2 border-t">
@@ -294,7 +292,7 @@ export default function WithdrawPage({ userId }: { userId: string }) {
                         <span className="font-medium">
                           ৳
                           {Number(watchedValues.amount) +
-                            Number(selectedMethod?.fee)}
+                            Number(paymentMethods.find((method) => method.id === watchedValues.paymentType)?.fee)}
                         </span>
                       </div>
                     </div>
